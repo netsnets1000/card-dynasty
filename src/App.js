@@ -857,8 +857,7 @@ function ProfileSetupStep(props) {
 // Handles signup (post-genesis) and login modes.
 // Google SSO uses standard OAuth2 redirect — swap GOOGLE_CLIENT_ID for your real
 // client ID from console.cloud.google.com when connecting a backend.
-var GOOGLE_CLIENT_ID="123169883717-dl41n7ivn7brh0ell0fpghq3f2c6cs7v.apps.googleusercontent.com
-";
+var GOOGLE_CLIENT_ID="123169883717-dl41n7ivn7brh0ell0fpghq3f2c6cs7v.apps.googleusercontent.com";
 
 function AuthForm(props) {
   var mode=props.mode; var onComplete=props.onComplete; var cards=props.cards||[]; var onBack=props.onBack;
