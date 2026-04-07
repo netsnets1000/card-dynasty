@@ -2408,7 +2408,7 @@ export default function App() {
   function dbLoadUser(uid) {
     sb(function(db){
       return Promise.all([
-        db.from("profiles").select("*").eq("id",uid).single(),
+        db.from("profiles").select("*").eq("id",uid).maybeSingle(),
         db.from("user_cards").select("*").eq("user_id",uid),
       ]).then(function(results){
         var profileRes=results[0]; var cardsRes=results[1];
@@ -2427,10 +2427,15 @@ export default function App() {
           setOnboarded(true);
           setIsNewUser(false);
         } else {
-          // New user — no cards yet, show profile setup then pack opening
+          // New user — no cards yet, route to profile setup then pack opening
           setIsNewUser(true);
           setOnboarded(false);
         }
+      }).catch(function(e){
+        console.error("dbLoadUser error:",e);
+        // On any DB error, treat as new user so they can still onboard
+        setIsNewUser(true);
+        setOnboarded(false);
       });
     });
   }
