@@ -2490,7 +2490,16 @@ export default function App() {
   function saveProfileAndState(updated) {
     setProfile(updated);
     saveProfile(updated);
-    if(userId) dbSaveProfile(userId,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});
+    var uid=userId;
+    if(!uid&&supabase){
+      supabase.auth.getSession().then(function(res){
+        var session=res&&res.data&&res.data.session;
+        var freshUid=session&&session.user&&session.user.id;
+        if(freshUid){setUserId(freshUid);dbSaveProfile(freshUid,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});}
+      });
+    } else if(uid){
+      dbSaveProfile(uid,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});
+    }
   }
   var listingsState=useState(function(){return Array.from({length:8},function(){return genListing();});});
   var listings=listingsState[0]; var setListings=listingsState[1];
@@ -2568,9 +2577,22 @@ export default function App() {
     setOnboarded(true);
     setIsNewUser(false);
     setTab("shop");
-    if(userId){
-      dbSaveCards(userId,cards);
-      dbSaveProfile(userId,{coins:coins,packs_opened:0});
+    // Get userId from state OR directly from Supabase session
+    // (userId state may still be null if onAuthStateChange hasn't updated it yet)
+    var uid=userId;
+    if(!uid&&supabase){
+      supabase.auth.getSession().then(function(res){
+        var session=res&&res.data&&res.data.session;
+        var freshUid=session&&session.user&&session.user.id;
+        if(freshUid){
+          setUserId(freshUid);
+          dbSaveCards(freshUid,cards);
+          dbSaveProfile(freshUid,{coins:coins,packs_opened:0});
+        }
+      });
+    } else if(uid){
+      dbSaveCards(uid,cards);
+      dbSaveProfile(uid,{coins:coins,packs_opened:0});
     }
   }
 
@@ -2637,7 +2659,16 @@ export default function App() {
     var newInv=opening?opening.cards.concat(inventory):inventory;
     if(opening) setInventory(function(){return newInv;});
     setOpening(null);setTab("inventory");setInvSubTab("cards");
-    if(userId) dbSaveCards(userId,newInv);
+    var uid=userId;
+    if(!uid&&supabase){
+      supabase.auth.getSession().then(function(res){
+        var session=res&&res.data&&res.data.session;
+        var freshUid=session&&session.user&&session.user.id;
+        if(freshUid){setUserId(freshUid);dbSaveCards(freshUid,newInv);}
+      });
+    } else if(uid){
+      dbSaveCards(uid,newInv);
+    }
   }
 
   function simulateNextDay(){
@@ -2708,10 +2739,6 @@ export default function App() {
       saveProfile(Object.assign({},loadProfile(),{packsOpened:next}));
       return next;
     });
-  }
-  function finishOpening(){
-    if(opening)setInventory(function(inv){return opening.cards.concat(inv);});
-    setOpening(null);setTab("inventory");setInvSubTab("cards");
   }
   function simGameDay(){
     if(inventory.length===0)return;
