@@ -2397,7 +2397,7 @@ export default function App() {
     });
   }
 
-  function dbLoadUser(uid, isNew) {
+  function dbLoadUser(uid) {
     sb(function(db){
       return Promise.all([
         db.from("profiles").select("*").eq("id",uid).single(),
@@ -2430,29 +2430,48 @@ export default function App() {
   // ── AUTH STATE ─────────────────────────────────────────────────────────────
   useEffect(function(){
     if(!supabase){setAuthReady(true);return;}
-    supabase.auth.getSession().then(function(res){
-      var session=res&&res.data&&res.data.session;
-      if(session&&session.user){
-        setUserId(session.user.id);
-        dbLoadUser(session.user.id, false);
-      }
-      setAuthReady(true);
-    });
+
+    // Register onAuthStateChange FIRST — before getSession — so it catches
+    // the access_token in the URL hash fragment on OAuth redirect
     var sub=supabase.auth.onAuthStateChange(function(event,session){
       if(event==="SIGNED_IN"&&session&&session.user){
         setUserId(session.user.id);
-        // INITIAL_SESSION fires for returning users, SIGNED_IN fires for new logins
-        var isNew=event==="SIGNED_IN";
-        dbLoadUser(session.user.id, isNew);
+        dbLoadUser(session.user.id);
+        setAuthReady(true);
+      }
+      if(event==="INITIAL_SESSION"){
+        // Fires on every page load — session is null if not logged in
+        if(session&&session.user){
+          setUserId(session.user.id);
+          dbLoadUser(session.user.id);
+        }
+        setAuthReady(true);
       }
       if(event==="SIGNED_OUT"){
         setUserId(null);
         setOnboarded(false);
+        setIsNewUser(false);
         setInventory([]);
         setBalance(0);
+        setAuthReady(true);
       }
     });
-    return function(){if(sub&&sub.data&&sub.data.subscription)sub.data.subscription.unsubscribe();};
+
+    // getSession as a fallback for browsers that don't fire INITIAL_SESSION
+    supabase.auth.getSession().then(function(res){
+      var session=res&&res.data&&res.data.session;
+      if(session&&session.user){
+        setUserId(session.user.id);
+        dbLoadUser(session.user.id);
+      }
+      // authReady will be set by onAuthStateChange — but set it here too
+      // as a safety net in case neither INITIAL_SESSION nor SIGNED_IN fires
+      setTimeout(function(){setAuthReady(true);},2000);
+    });
+
+    return function(){
+      if(sub&&sub.data&&sub.data.subscription) sub.data.subscription.unsubscribe();
+    };
   },[]);
 
   function saveProfileAndState(updated) {
