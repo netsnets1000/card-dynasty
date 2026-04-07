@@ -988,7 +988,8 @@ function AuthForm(props) {
 function Onboarding(props) {
   var onComplete=props.onComplete;
   var onSavePrefs=props.onSavePrefs||function(){};
-  var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var isNewUser=props.isNewUser||false;
+  var phaseState=useState(isNewUser?"profile_setup":"landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
   var glowingState=useState(false); var glowing=glowingState[0]; var setGlowing=glowingState[1];
   var cardsState=useState([]); var cards=cardsState[0]; var setCards=cardsState[1];
   var flippedState=useState([]); var flippedIds=flippedState[0]; var setFlippedIds=flippedState[1];
@@ -2374,6 +2375,7 @@ export default function App() {
   var packsState=useState(function(){var p=loadProfile();return p.packsOpened||0;}); var packsOpened=packsState[0]; var setPacksOpened=packsState[1];
   var userIdState=useState(null); var userId=userIdState[0]; var setUserId=userIdState[1];
   var authReadyState=useState(!supabase); var authReady=authReadyState[0]; var setAuthReady=authReadyState[1];
+  var isNewUserState=useState(false); var isNewUser=isNewUserState[0]; var setIsNewUser=isNewUserState[1];
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
@@ -2395,7 +2397,7 @@ export default function App() {
     });
   }
 
-  function dbLoadUser(uid) {
+  function dbLoadUser(uid, isNew) {
     sb(function(db){
       return Promise.all([
         db.from("profiles").select("*").eq("id",uid).single(),
@@ -2404,15 +2406,22 @@ export default function App() {
         var profileRes=results[0]; var cardsRes=results[1];
         if(profileRes&&profileRes.data){
           var p=profileRes.data;
-          var prof={username:p.username||"Dynasty Rookie",avatarColor:p.avatar_color||"#f5c518",avatarInitials:p.avatar_initials||"ME",bio:p.bio||"",favSport:p.fav_sport||"",favTeam:p.fav_team||"",joinDate:p.created_at||new Date().toISOString(),pinnedIds:p.pinned_ids||[],packsOpened:p.packs_opened||0};
+          var prof={username:p.username||"",avatarColor:p.avatar_color||"#f5c518",avatarInitials:p.avatar_initials||"ME",bio:p.bio||"",favSport:p.fav_sport||"",favTeam:p.fav_team||"",joinDate:p.created_at||new Date().toISOString(),pinnedIds:p.pinned_ids||[],packsOpened:p.packs_opened||0};
           setProfile(prof); saveProfile(prof);
           setBalance(p.coins||0);
           setPacksOpened(p.packs_opened||0);
         }
-        if(cardsRes&&cardsRes.data&&cardsRes.data.length){
+        var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
+        if(hasCards){
+          // Returning user — restore cards and go straight to vault
           var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp};});
           setInventory(cards);
           setOnboarded(true);
+          setIsNewUser(false);
+        } else {
+          // New user — no cards yet, show profile setup then pack opening
+          setIsNewUser(true);
+          setOnboarded(false);
         }
       });
     });
@@ -2421,22 +2430,20 @@ export default function App() {
   // ── AUTH STATE ─────────────────────────────────────────────────────────────
   useEffect(function(){
     if(!supabase){setAuthReady(true);return;}
-    // Restore existing session on page load (returning user)
     supabase.auth.getSession().then(function(res){
       var session=res&&res.data&&res.data.session;
       if(session&&session.user){
         setUserId(session.user.id);
-        dbLoadUser(session.user.id);
-        setOnboarded(true);
+        dbLoadUser(session.user.id, false);
       }
       setAuthReady(true);
     });
-    // Listen for sign-in / sign-out events
     var sub=supabase.auth.onAuthStateChange(function(event,session){
       if(event==="SIGNED_IN"&&session&&session.user){
         setUserId(session.user.id);
-        dbLoadUser(session.user.id);
-        setOnboarded(true);
+        // INITIAL_SESSION fires for returning users, SIGNED_IN fires for new logins
+        var isNew=event==="SIGNED_IN";
+        dbLoadUser(session.user.id, isNew);
       }
       if(event==="SIGNED_OUT"){
         setUserId(null);
@@ -2467,7 +2474,7 @@ export default function App() {
   var shakeTeamsState=useState({}); var shakeTeams=shakeTeamsState[0]; var setShakeTeams=shakeTeamsState[1];
   var inventoryRef=useRef(inventory);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
-  var showOnboarding=!onboarded&&inventory.length===0;
+  var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
   function triggerShake(team) {
     setShakeTeams(function(prev){
       var n=Object.assign({},prev);
@@ -2527,6 +2534,7 @@ export default function App() {
     setInventory(cards);
     setBalance(coins);
     setOnboarded(true);
+    setIsNewUser(false);
     setTab("shop");
     if(userId){
       dbSaveCards(userId,cards);
@@ -2705,7 +2713,7 @@ export default function App() {
   if(showOnboarding) return (
     <div style={{background:"#04040a",minHeight:"100vh"}}>
       <style>{CSS}</style>
-      <Onboarding onComplete={completeOnboarding} onSavePrefs={function(prefs){
+      <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser} userId={userId} onSavePrefs={function(prefs){
         if(!prefs) return;
         var updated=loadProfile();
         if(prefs.username) updated.username=prefs.username;
