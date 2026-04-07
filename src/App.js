@@ -857,7 +857,7 @@ function ProfileSetupStep(props) {
 // Handles signup (post-genesis) and login modes.
 // Google SSO uses standard OAuth2 redirect — swap GOOGLE_CLIENT_ID for your real
 // client ID from console.cloud.google.com when connecting a backend.
-var GOOGLE_CLIENT_ID="123169883717-dl41n7ivn7brh0ell0fpghq3f2c6cs7v.apps.googleusercontent.com";
+var GOOGLE_CLIENT_ID=process.env.REACT_APP_GOOGLE_CLIENT_ID||"YOUR_GOOGLE_CLIENT_ID";
 
 function AuthForm(props) {
   var mode=props.mode; var onComplete=props.onComplete; var cards=props.cards||[]; var onBack=props.onBack;
@@ -869,13 +869,66 @@ function AuthForm(props) {
   var isSignup=mode==="signup";
 
   function handleGoogle() {
-    var redirectUri=typeof window!=="undefined"?window.location.origin+"/auth/callback":"";
-    var params="client_id="+GOOGLE_CLIENT_ID+"&redirect_uri="+encodeURIComponent(redirectUri)+"&response_type=code&scope="+encodeURIComponent("openid email profile")+"&access_type=offline&prompt=select_account";
+    var redirectUri=window.location.origin+"/auth/callback";
+    var params=[
+      "client_id="+GOOGLE_CLIENT_ID,
+      "redirect_uri="+encodeURIComponent(redirectUri),
+      "response_type=token",
+      "scope="+encodeURIComponent("openid email profile"),
+      "prompt=select_account",
+    ].join("&");
     var googleUrl="https://accounts.google.com/o/oauth2/v2/auth?"+params;
-    console.log("[Card Dynasty] Google OAuth URL (add real client ID to activate):", googleUrl);
-    // Prototype simulation — remove this block and use real redirect when backend is live
+
+    // Open real Google account chooser in a centered popup window
+    var w=500; var h=600;
+    var left=Math.round(window.screenX+(window.outerWidth-w)/2);
+    var top=Math.round(window.screenY+(window.outerHeight-h)/2);
+    var popup=window.open(googleUrl,"google_oauth","width="+w+",height="+h+",left="+left+",top="+top+",toolbar=no,menubar=no,scrollbars=yes");
+
+    if(!popup){
+      // Popup blocked — fall back to full page redirect
+      window.location.href=googleUrl;
+      return;
+    }
+
     setLoading(true);
-    setTimeout(function(){setLoading(false);onComplete(cards,500);},1400);
+
+    // Poll every 500ms to detect when the popup closes or redirects back
+    var timer=setInterval(function(){
+      try {
+        // If popup navigated to our origin we can read the URL
+        if(popup.closed){
+          clearInterval(timer);
+          setLoading(false);
+          return;
+        }
+        var href=popup.location.href;
+        if(href&&href.indexOf(window.location.origin)===0){
+          // Extract access_token from hash fragment
+          var hash=popup.location.hash||popup.location.search;
+          popup.close();
+          clearInterval(timer);
+          setLoading(false);
+          if(hash&&(hash.indexOf("access_token")>=0||hash.indexOf("code=")>=0)){
+            // Successfully authenticated — proceed into the app
+            // When Supabase is connected, exchange this token here:
+            // supabase.auth.signInWithIdToken({ provider:'google', token: accessToken })
+            onComplete(cards,500);
+          } else {
+            setErr("Google sign-in was cancelled. Please try again.");
+          }
+        }
+      } catch(e){
+        // Cross-origin error means popup is on Google's domain — still in progress, keep polling
+      }
+    },500);
+
+    // Safety timeout — stop polling after 3 minutes
+    setTimeout(function(){
+      clearInterval(timer);
+      if(popup&&!popup.closed) popup.close();
+      setLoading(false);
+    },180000);
   }
 
   function handleSubmit() {
