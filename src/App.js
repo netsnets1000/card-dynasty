@@ -997,7 +997,13 @@ function Onboarding(props) {
   var onComplete=props.onComplete;
   var onSavePrefs=props.onSavePrefs||function(){};
   var isNewUser=props.isNewUser||false;
-  var phaseState=useState(isNewUser?"profile_setup":"landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
+
+  // When auth completes and isNewUser becomes true, jump to profile_setup
+  // (useState initial value only runs once, so we need useEffect to react to prop changes)
+  useEffect(function(){
+    if(isNewUser) setPhase("profile_setup");
+  },[isNewUser]);
   var glowingState=useState(false); var glowing=glowingState[0]; var setGlowing=glowingState[1];
   var cardsState=useState([]); var cards=cardsState[0]; var setCards=cardsState[1];
   var flippedState=useState([]); var flippedIds=flippedState[0]; var setFlippedIds=flippedState[1];
