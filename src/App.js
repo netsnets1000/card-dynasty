@@ -5,7 +5,13 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 var SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || "";
 var SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || "";
 var supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+      }
+    })
   : null;
 
 // Helper — only calls Supabase if client is configured
@@ -912,11 +918,13 @@ function AuthForm(props) {
     sb(function(db){
       return db.auth.signInWithOAuth({
         provider:"google",
-        options:{redirectTo:window.location.origin},
+        options:{
+          redirectTo:window.location.origin,
+          queryParams:{access_type:"online",prompt:"select_account"},
+        },
       });
     }).then(function(res){
       setLoading(false);
-      // Supabase redirects the page — onAuthStateChange in App picks up the session
       if(res&&res.error) setErr(res.error.message||"Google sign-in failed.");
     });
   }
@@ -2431,16 +2439,18 @@ export default function App() {
   useEffect(function(){
     if(!supabase){setAuthReady(true);return;}
 
-    // Register onAuthStateChange FIRST — before getSession — so it catches
-    // the access_token in the URL hash fragment on OAuth redirect
+    // Register onAuthStateChange FIRST so it catches the token on OAuth redirect
     var sub=supabase.auth.onAuthStateChange(function(event,session){
-      if(event==="SIGNED_IN"&&session&&session.user){
+      if((event==="SIGNED_IN"||event==="TOKEN_REFRESHED")&&session&&session.user){
         setUserId(session.user.id);
         dbLoadUser(session.user.id);
         setAuthReady(true);
+        // Clean up the hash fragment from the URL without triggering a reload
+        if(window.location.hash&&window.location.hash.indexOf("access_token")>=0){
+          window.history.replaceState(null,"",window.location.pathname);
+        }
       }
       if(event==="INITIAL_SESSION"){
-        // Fires on every page load — session is null if not logged in
         if(session&&session.user){
           setUserId(session.user.id);
           dbLoadUser(session.user.id);
@@ -2457,19 +2467,11 @@ export default function App() {
       }
     });
 
-    // getSession as a fallback for browsers that don't fire INITIAL_SESSION
-    supabase.auth.getSession().then(function(res){
-      var session=res&&res.data&&res.data.session;
-      if(session&&session.user){
-        setUserId(session.user.id);
-        dbLoadUser(session.user.id);
-      }
-      // authReady will be set by onAuthStateChange — but set it here too
-      // as a safety net in case neither INITIAL_SESSION nor SIGNED_IN fires
-      setTimeout(function(){setAuthReady(true);},2000);
-    });
+    // Safety net — if onAuthStateChange never fires, unblock the app after 3s
+    var fallback=setTimeout(function(){setAuthReady(true);},3000);
 
     return function(){
+      clearTimeout(fallback);
       if(sub&&sub.data&&sub.data.subscription) sub.data.subscription.unsubscribe();
     };
   },[]);
