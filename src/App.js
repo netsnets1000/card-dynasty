@@ -2393,22 +2393,30 @@ export default function App() {
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
-    sb(function(db){
-      return db.from("profiles").upsert(Object.assign({id:uid},data),{onConflict:"id"});
-    });
+    if(!supabase||!uid) return;
+    supabase.from("profiles").upsert(Object.assign({id:uid},data),{onConflict:"id"})
+      .then(function(res){
+        if(res.error) console.error("dbSaveProfile error:",res.error);
+        else console.log("[CardDynasty] Profile saved for user",uid);
+      });
   }
 
   function dbSaveCards(uid, cards) {
-    sb(function(db){
-      return db.from("user_cards")
-        .delete().eq("user_id",uid)
-        .then(function(){
-          if(!cards.length) return;
-          return db.from("user_cards").insert(
-            cards.map(function(c){return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily,win:c.win,mp:c.mp,card_id:c.id};})
-          );
+    if(!supabase||!uid) return;
+    // Delete all existing cards for this user first, then insert fresh
+    supabase.from("user_cards").delete().eq("user_id",uid)
+      .then(function(delRes){
+        if(delRes.error){console.error("dbSaveCards delete error:",delRes.error);return;}
+        if(!cards||!cards.length) return;
+        var rows=cards.map(function(c){
+          return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId()};
         });
-    });
+        supabase.from("user_cards").insert(rows)
+          .then(function(insRes){
+            if(insRes.error) console.error("dbSaveCards insert error:",insRes.error);
+            else console.log("[CardDynasty] Saved",rows.length,"cards for user",uid);
+          });
+      });
   }
 
   function dbLoadUser(uid) {
