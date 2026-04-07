@@ -1,4 +1,15 @@
 import { useState, useEffect, useRef } from "react";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+// ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
+var SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || "";
+var SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || "";
+var supabase = (SUPABASE_URL && SUPABASE_ANON_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+// Helper — only calls Supabase if client is configured
+function sb(fn) { if(supabase) return fn(supabase); return Promise.resolve(null); }
 function fmt(n){ return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,","); }
 function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function genId(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
@@ -194,6 +205,7 @@ var CSS=`
   @keyframes redZoneShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-2px)}30%{transform:translateX(2px)}45%{transform:translateX(-2px)}60%{transform:translateX(2px)}75%{transform:translateX(-1px)}90%{transform:translateX(1px)}}
   @keyframes highlightFlash{0%,100%{outline:0px solid transparent}30%{outline:3px solid #00ff50}70%{outline:3px solid #00ff50}}
   @keyframes liveBorderFlash{0%,100%{opacity:1}50%{opacity:0.4}}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   @keyframes avatarGlow{0%,100%{box-shadow:0 0 20px rgba(245,197,24,0.5),0 0 60px rgba(245,197,24,0.2)}50%{box-shadow:0 0 40px rgba(245,197,24,0.85),0 0 90px rgba(245,197,24,0.4)}}
   @keyframes badgeUnlock{0%{transform:scale(0.6) rotate(-12deg);opacity:0}70%{transform:scale(1.18) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
   @keyframes spotlightPulse{0%,100%{opacity:0.45}50%{opacity:0.75}}
@@ -869,66 +881,44 @@ function AuthForm(props) {
   var isSignup=mode==="signup";
 
   function handleGoogle() {
-    var redirectUri=window.location.origin+"/auth/callback";
-    var params=[
-      "client_id="+GOOGLE_CLIENT_ID,
-      "redirect_uri="+encodeURIComponent(redirectUri),
-      "response_type=token",
-      "scope="+encodeURIComponent("openid email profile"),
-      "prompt=select_account",
-    ].join("&");
-    var googleUrl="https://accounts.google.com/o/oauth2/v2/auth?"+params;
-
-    // Open real Google account chooser in a centered popup window
-    var w=500; var h=600;
-    var left=Math.round(window.screenX+(window.outerWidth-w)/2);
-    var top=Math.round(window.screenY+(window.outerHeight-h)/2);
-    var popup=window.open(googleUrl,"google_oauth","width="+w+",height="+h+",left="+left+",top="+top+",toolbar=no,menubar=no,scrollbars=yes");
-
-    if(!popup){
-      // Popup blocked — fall back to full page redirect
-      window.location.href=googleUrl;
+    if(!supabase){
+      // No Supabase yet — use raw OAuth popup as fallback
+      var redirectUri=window.location.origin+"/auth/callback";
+      var params=["client_id="+GOOGLE_CLIENT_ID,"redirect_uri="+encodeURIComponent(redirectUri),"response_type=token","scope="+encodeURIComponent("openid email profile"),"prompt=select_account"].join("&");
+      var googleUrl="https://accounts.google.com/o/oauth2/v2/auth?"+params;
+      var w=500; var h=600;
+      var left=Math.round(window.screenX+(window.outerWidth-w)/2);
+      var top=Math.round(window.screenY+(window.outerHeight-h)/2);
+      var popup=window.open(googleUrl,"google_oauth","width="+w+",height="+h+",left="+left+",top="+top+",toolbar=no,menubar=no");
+      if(!popup){window.location.href=googleUrl;return;}
+      setLoading(true);
+      var timer=setInterval(function(){
+        try{
+          if(popup.closed){clearInterval(timer);setLoading(false);return;}
+          var href=popup.location.href;
+          if(href&&href.indexOf(window.location.origin)===0){
+            var hash=popup.location.hash||popup.location.search;
+            popup.close();clearInterval(timer);setLoading(false);
+            if(hash&&(hash.indexOf("access_token")>=0||hash.indexOf("code=")>=0)){onComplete(cards,500);}
+            else{setErr("Google sign-in was cancelled.");}
+          }
+        }catch(e){}
+      },500);
+      setTimeout(function(){clearInterval(timer);if(popup&&!popup.closed)popup.close();setLoading(false);},180000);
       return;
     }
-
+    // Supabase handles the full OAuth flow — one line
     setLoading(true);
-
-    // Poll every 500ms to detect when the popup closes or redirects back
-    var timer=setInterval(function(){
-      try {
-        // If popup navigated to our origin we can read the URL
-        if(popup.closed){
-          clearInterval(timer);
-          setLoading(false);
-          return;
-        }
-        var href=popup.location.href;
-        if(href&&href.indexOf(window.location.origin)===0){
-          // Extract access_token from hash fragment
-          var hash=popup.location.hash||popup.location.search;
-          popup.close();
-          clearInterval(timer);
-          setLoading(false);
-          if(hash&&(hash.indexOf("access_token")>=0||hash.indexOf("code=")>=0)){
-            // Successfully authenticated — proceed into the app
-            // When Supabase is connected, exchange this token here:
-            // supabase.auth.signInWithIdToken({ provider:'google', token: accessToken })
-            onComplete(cards,500);
-          } else {
-            setErr("Google sign-in was cancelled. Please try again.");
-          }
-        }
-      } catch(e){
-        // Cross-origin error means popup is on Google's domain — still in progress, keep polling
-      }
-    },500);
-
-    // Safety timeout — stop polling after 3 minutes
-    setTimeout(function(){
-      clearInterval(timer);
-      if(popup&&!popup.closed) popup.close();
+    sb(function(db){
+      return db.auth.signInWithOAuth({
+        provider:"google",
+        options:{redirectTo:window.location.origin},
+      });
+    }).then(function(res){
       setLoading(false);
-    },180000);
+      // Supabase redirects the page — onAuthStateChange in App picks up the session
+      if(res&&res.error) setErr(res.error.message||"Google sign-in failed.");
+    });
   }
 
   function handleSubmit() {
@@ -936,13 +926,30 @@ function AuthForm(props) {
     if(pass.length<6){setErr("Password must be at least 6 characters.");return;}
     if(isSignup&&!name.trim()){setErr("Please enter your name.");return;}
     setErr("");setLoading(true);
-    // ── Backend hook ──────────────────────────────────────────────────────────
-    // Replace setTimeout with:
-    // supabase.auth.signUp({ email, password, options:{ data:{ name } } })
-    // or: supabase.auth.signInWithPassword({ email, password })
-    // then call onComplete(cards, 500) on success
-    // ─────────────────────────────────────────────────────────────────────────
-    setTimeout(function(){setLoading(false);onComplete(cards,500);},900);
+    if(!supabase){
+      // No Supabase — prototype mode, just proceed
+      setTimeout(function(){setLoading(false);onComplete(cards,500);},900);
+      return;
+    }
+    if(isSignup){
+      sb(function(db){
+        return db.auth.signUp({email:email,password:pass,options:{data:{name:name}}});
+      }).then(function(res){
+        setLoading(false);
+        if(res&&res.error){setErr(res.error.message||"Sign up failed.");return;}
+        // signUp returns session immediately if email confirmation is off in Supabase
+        if(res&&res.data&&res.data.session){onComplete(cards,500);}
+        else{setErr("Check your email for a confirmation link, then log in.");}
+      });
+    } else {
+      sb(function(db){
+        return db.auth.signInWithPassword({email:email,password:pass});
+      }).then(function(res){
+        setLoading(false);
+        if(res&&res.error){setErr(res.error.message||"Sign in failed.");return;}
+        onComplete(cards,500);
+      });
+    }
   }
 
   return (
@@ -2365,9 +2372,86 @@ export default function App() {
   var pityState=useState(0); var pity=pityState[0]; var setPity=pityState[1];
   var profileState=useState(function(){return loadProfile();}); var profile=profileState[0]; var setProfile=profileState[1];
   var packsState=useState(function(){var p=loadProfile();return p.packsOpened||0;}); var packsOpened=packsState[0]; var setPacksOpened=packsState[1];
+  var userIdState=useState(null); var userId=userIdState[0]; var setUserId=userIdState[1];
+  var authReadyState=useState(!supabase); var authReady=authReadyState[0]; var setAuthReady=authReadyState[1];
+
+  // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
+  function dbSaveProfile(uid, data) {
+    sb(function(db){
+      return db.from("profiles").upsert(Object.assign({id:uid},data),{onConflict:"id"});
+    });
+  }
+
+  function dbSaveCards(uid, cards) {
+    sb(function(db){
+      return db.from("user_cards")
+        .delete().eq("user_id",uid)
+        .then(function(){
+          if(!cards.length) return;
+          return db.from("user_cards").insert(
+            cards.map(function(c){return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily,win:c.win,mp:c.mp,card_id:c.id};})
+          );
+        });
+    });
+  }
+
+  function dbLoadUser(uid) {
+    sb(function(db){
+      return Promise.all([
+        db.from("profiles").select("*").eq("id",uid).single(),
+        db.from("user_cards").select("*").eq("user_id",uid),
+      ]).then(function(results){
+        var profileRes=results[0]; var cardsRes=results[1];
+        if(profileRes&&profileRes.data){
+          var p=profileRes.data;
+          var prof={username:p.username||"Dynasty Rookie",avatarColor:p.avatar_color||"#f5c518",avatarInitials:p.avatar_initials||"ME",bio:p.bio||"",favSport:p.fav_sport||"",favTeam:p.fav_team||"",joinDate:p.created_at||new Date().toISOString(),pinnedIds:p.pinned_ids||[],packsOpened:p.packs_opened||0};
+          setProfile(prof); saveProfile(prof);
+          setBalance(p.coins||0);
+          setPacksOpened(p.packs_opened||0);
+        }
+        if(cardsRes&&cardsRes.data&&cardsRes.data.length){
+          var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp};});
+          setInventory(cards);
+          setOnboarded(true);
+        }
+      });
+    });
+  }
+
+  // ── AUTH STATE ─────────────────────────────────────────────────────────────
+  useEffect(function(){
+    if(!supabase){setAuthReady(true);return;}
+    // Restore existing session on page load (returning user)
+    supabase.auth.getSession().then(function(res){
+      var session=res&&res.data&&res.data.session;
+      if(session&&session.user){
+        setUserId(session.user.id);
+        dbLoadUser(session.user.id);
+        setOnboarded(true);
+      }
+      setAuthReady(true);
+    });
+    // Listen for sign-in / sign-out events
+    var sub=supabase.auth.onAuthStateChange(function(event,session){
+      if(event==="SIGNED_IN"&&session&&session.user){
+        setUserId(session.user.id);
+        dbLoadUser(session.user.id);
+        setOnboarded(true);
+      }
+      if(event==="SIGNED_OUT"){
+        setUserId(null);
+        setOnboarded(false);
+        setInventory([]);
+        setBalance(0);
+      }
+    });
+    return function(){if(sub&&sub.data&&sub.data.subscription)sub.data.subscription.unsubscribe();};
+  },[]);
+
   function saveProfileAndState(updated) {
     setProfile(updated);
     saveProfile(updated);
+    if(userId) dbSaveProfile(userId,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});
   }
   var listingsState=useState(function(){return Array.from({length:8},function(){return genListing();});});
   var listings=listingsState[0]; var setListings=listingsState[1];
@@ -2439,7 +2523,17 @@ export default function App() {
     setNotifs(function(p){return p.slice(-2).concat([{id:id,title:title,msg:msg,type:t}]);});
     setTimeout(function(){setNotifs(function(p){return p.filter(function(n){return n.id!==id;});});},4200);
   }
-  function completeOnboarding(cards,coins){setInventory(cards);setBalance(coins);setOnboarded(true);setTab("shop");}
+  function completeOnboarding(cards,coins){
+    setInventory(cards);
+    setBalance(coins);
+    setOnboarded(true);
+    setTab("shop");
+    if(userId){
+      dbSaveCards(userId,cards);
+      dbSaveProfile(userId,{coins:coins,packs_opened:0});
+    }
+  }
+
   function handleClaim(reward){
     var today=new Date().toDateString();
     var yesterday=new Date(Date.now()-86400000).toDateString();
@@ -2449,21 +2543,72 @@ export default function App() {
     var next={currentStreak:newStreak>7?1:capped,lastLoginDate:today,claimedDays:streakData.claimedDays.concat([today])};
     setStreakData(next);
     saveStreak(next);
-    if(reward.coins>0)setBalance(function(b){return b+reward.coins;});
-    if(reward.pack==="standard"){var c1=buildPack(PACK_TYPES[0],false);setInventory(function(inv){return c1.concat(inv);});pushNotif("Daily Pack!","Standard Pro Case added","info");}
-    if(reward.pack==="jumbo"){var c2=buildPack(PACK_TYPES[1],false);setInventory(function(inv){return c2.concat(inv);});pushNotif("Daily Pack!","Division Jumbo added","info");}
-    if(reward.pack==="elite"){var ec=genCard({Elite:60,Legacy:25,Legendary:14,Dynasty:1},null,null);setInventory(function(inv){return [ec].concat(inv);});pushNotif("Elite Pull!","Guaranteed Elite+ card added","sale");}
+    var newBalance=balance;
+    if(reward.coins>0){newBalance=balance+reward.coins;setBalance(function(b){return b+reward.coins;});}
+    var newCards=inventory.slice();
+    if(reward.pack==="standard"){var c1=buildPack(PACK_TYPES[0],false);setInventory(function(inv){newCards=c1.concat(inv);return newCards;});pushNotif("Daily Pack!","Standard Pro Case added","info");}
+    if(reward.pack==="jumbo"){var c2=buildPack(PACK_TYPES[1],false);setInventory(function(inv){newCards=c2.concat(inv);return newCards;});pushNotif("Daily Pack!","Division Jumbo added","info");}
+    if(reward.pack==="elite"){var ec=genCard({Elite:60,Legacy:25,Legendary:14,Dynasty:1},null,null);setInventory(function(inv){newCards=[ec].concat(inv);return newCards;});pushNotif("Elite Pull!","Guaranteed Elite+ card added","sale");}
     if(reward.coins>0)pushNotif("Streak Bonus!","+"+fmt(reward.coins)+" coins claimed","sale");
+    if(userId){
+      dbSaveProfile(userId,{coins:newBalance});
+      if(newCards!==inventory) dbSaveCards(userId,newCards);
+    }
   }
+
+  function buyFromMarket(listing){
+    if(balance<listing.price)return;
+    var newBal=balance-listing.price;
+    setBalance(function(b){return b-listing.price;});
+    var newInv=inventory.slice();
+    setInventory(function(p){newInv=[listing.card].concat(p);return newInv;});
+    setListings(function(p){return p.map(function(l){return l.id===listing.id?genListing():l;});});
+    pushNotif("Purchased!","You bought "+listing.card.team+" "+listing.card.rarity+" for "+fmt(listing.price)+" coins","buy");
+    if(["Legacy","Legendary","Dynasty"].includes(listing.card.rarity))setGrailFeed(function(p){return [{card:listing.card,msg:"You sniped a "+listing.card.rarity+" "+listing.card.team+" for "+fmt(listing.price)+" coins"}].concat(p).slice(0,3);});
+    if(userId){dbSaveProfile(userId,{coins:newBal});dbSaveCards(userId,newInv);}
+  }
+
+  function listCard(card,price){
+    var newInv=inventory.filter(function(c){return c.id!==card.id;});
+    setInventory(function(){return newInv;});
+    setMyListings(function(p){return p.concat([{id:genId(),card:card,price:price,listedAt:Date.now(),duration:rand(30,120),seller:"You"}]);});
+    setListModal(null);
+    pushNotif("Listed!",card.team+" "+card.rarity+" listed for "+fmt(price)+" coins","info");
+    if(userId) dbSaveCards(userId,newInv);
+  }
+
+  function buyPack(pt){
+    if(balance<pt.cost)return;
+    var newBal=balance-pt.cost;
+    setBalance(function(b){return b-pt.cost;});
+    var pa=pt.id==="standard"&&pity>=10;
+    var cards=buildPack(pt,pa);
+    var hasElite=cards.some(function(c){return ["Elite","Legacy","Legendary","Dynasty"].includes(c.rarity);});
+    if(pt.id==="standard")setPity(hasElite?0:function(p){return p+1;});
+    setOpening({pack:pt,cards:cards});
+    setTab("opening");
+    var nextPacks=packsOpened+1;
+    setPacksOpened(nextPacks);
+    saveProfile(Object.assign({},loadProfile(),{packsOpened:nextPacks}));
+    if(userId) dbSaveProfile(userId,{coins:newBal,packs_opened:nextPacks});
+  }
+
+  function finishOpening(){
+    var newInv=opening?opening.cards.concat(inventory):inventory;
+    if(opening) setInventory(function(){return newInv;});
+    setOpening(null);setTab("inventory");setInvSubTab("cards");
+    if(userId) dbSaveCards(userId,newInv);
+  }
+
   function simulateNextDay(){
     var yesterday=new Date().toDateString();
     var newStreak=streakData.currentStreak>=7?1:streakData.currentStreak+1;
     var next=Object.assign({},streakData,{lastLoginDate:yesterday,currentStreak:newStreak});
-    setStreakData(next);
-    saveStreak(next);
+    setStreakData(next);saveStreak(next);
     setShowLoginModal(true);
     pushNotif("Day Simulated","Streak advanced to Day "+newStreak,"info");
   }
+
   function rotateMkt(){
     setListings(function(prev){
       var next=prev.slice();
@@ -2547,6 +2692,16 @@ export default function App() {
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
   var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Inv ("+inventory.length+")"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
+  if(!authReady) return (
+    <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <style>{CSS}</style>
+      <div style={{textAlign:"center"}}>
+        <div className="gold-logo" style={{fontSize:28,fontWeight:900,letterSpacing:3,marginBottom:16}}>CARD DYNASTY</div>
+        <div style={{width:32,height:32,border:"3px solid rgba(245,197,24,0.2)",borderTop:"3px solid #f5c518",borderRadius:"50%",animation:"spin 0.8s linear infinite",margin:"0 auto"}}/>
+      </div>
+    </div>
+  );
+
   if(showOnboarding) return (
     <div style={{background:"#04040a",minHeight:"100vh"}}>
       <style>{CSS}</style>
@@ -2614,7 +2769,7 @@ export default function App() {
               {gdResult.hasLiveBonus&&<div style={{fontSize:9,color:"#00ff50",textAlign:"right",fontWeight:700}}>⚡ Includes 1.5x live multiplier</div>}
             </div>
             <div style={{display:"flex",gap:8}}>
-              <button onClick={function(){setBalance(function(b){return b+gdResult.grandTotal;});setShowGD(false);}} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
+              <button onClick={function(){var newBal=balance+gdResult.grandTotal;setBalance(function(b){return b+gdResult.grandTotal;});setShowGD(false);if(userId)dbSaveProfile(userId,{coins:newBal});}} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
               <button onClick={function(){setShowGD(false);}} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#444",fontWeight:700,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer",fontSize:12}}>Close</button>
             </div>
           </div>
