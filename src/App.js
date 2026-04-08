@@ -1700,7 +1700,7 @@ function OracleBar(props) {
             cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}
         >{g.home}</span>
         <span style={{fontFamily:"'Oswald',sans-serif",fontSize:8,color:"#00ff50",fontWeight:700}}>
-          Q{g.quarter} {g.timeLeft}
+          {g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q")}{g.quarter} {g.timeLeft}
         </span>
         <span style={{color:"#1a1a2e",fontSize:12,marginLeft:8}}>·</span>
       </span>
@@ -2016,10 +2016,13 @@ function useLiveOracle(onBigPlay, onGameEnd) {
     if(g.status==="live"){
       liveTeams.add(g.home);
       liveTeams.add(g.away);
-      if(g.quarter>=4&&Math.abs(g.homeScore-g.awayScore)<=4){
-        redZoneTeams.add(g.home);
-        redZoneTeams.add(g.away);
-      }
+      var diff=Math.abs(g.homeScore-g.awayScore);
+      var isRZ=false;
+      if(g.sport==="NFL"||g.sport==="College") isRZ=g.quarter>=4&&diff<=4;
+      else if(g.sport==="NBA") isRZ=g.quarter>=4&&diff<=5;
+      else if(g.sport==="MLB") isRZ=g.quarter>=8&&diff<=1;
+      else if(g.sport==="MLS") isRZ=diff<=1; // any 1-goal game is tense in soccer
+      if(isRZ){redZoneTeams.add(g.home);redZoneTeams.add(g.away);}
     }
     if(g.status==="pre"){preTeams[g.home]=g.kickoffMins;preTeams[g.away]=g.kickoffMins;}
   });
@@ -2165,6 +2168,32 @@ function LiveGamesTab(props){
   var sc2={NFL:"#4488ff",NBA:"#ff6622",MLB:"#44cc88"};
   var by={live:[],pre:[],final:[]};
   liveGames.forEach(function(g){if(by[g.status])by[g.status].push(g);});
+  // Returns the right period label per sport: Q for NFL/NBA, Inn for MLB, H for MLS/soccer
+  function periodLabel(sport, period) {
+    if(!period) return "";
+    if(sport==="MLB") return "Inn "+period;
+    if(sport==="MLS") return "H"+period;
+    if(sport==="College") return "Q"+period;
+    return "Q"+period; // NFL, NBA default
+  }
+
+  // Red Zone: critical late-game moment. Only meaningful for NFL and NBA.
+  // MLB = 1-run game in the 8th/9th. MLS = 1-goal game in 80th+ min. Otherwise off.
+  function isRedZoneGame(g) {
+    if(g.status!=="live") return false;
+    var diff=Math.abs(g.homeScore-g.awayScore);
+    if(g.sport==="NFL") return g.quarter>=4&&diff<=4;
+    if(g.sport==="NBA") return g.quarter>=4&&diff<=5;
+    if(g.sport==="MLB") return g.quarter>=8&&diff<=1;
+    if(g.sport==="MLS") {
+      // timeLeft for soccer comes back as mm:00 — check if past 75 min
+      var mins=parseInt(g.timeLeft)||0;
+      return mins>=75&&diff<=1;
+    }
+    if(g.sport==="College") return g.quarter>=4&&diff<=7;
+    return false;
+  }
+
   function GCard(p){
     var g=p.game; var isLive=g.status==="live"; var isFinal=g.status==="final";
     var hOwned=myTeams.has(g.home); var aOwned=myTeams.has(g.away);
@@ -2175,7 +2204,7 @@ function LiveGamesTab(props){
         {isLive&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ff50,transparent)",animation:"shimmerSweep 2s ease-in-out infinite"}}/>}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
           <span style={{fontSize:9,fontWeight:700,color:sc2[g.sport]||"#aaa",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>{si[g.sport]} {g.sport}</span>
-          {isLive&&<div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:10,fontWeight:900,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>LIVE Q{g.quarter} {g.timeLeft}</span></div>}
+          {isLive&&<div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:10,fontWeight:900,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>LIVE {periodLabel(g.sport,g.quarter)} {g.timeLeft}</span></div>}
           {g.status==="pre"&&<span style={{fontSize:9,color:"#555",fontFamily:"'JetBrains Mono',monospace"}}>in {g.kickoffMins}m</span>}
           {isFinal&&<span style={{fontSize:9,color:"#555",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Final</span>}
         </div>
@@ -2199,7 +2228,7 @@ function LiveGamesTab(props){
           </div>
         </div>
         {isLive&&(hOwned||aOwned)&&<div style={{marginTop:8,background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:9,color:"#f5c518",fontFamily:"'Oswald',sans-serif",fontWeight:700}}>YOUR CARD IS LIVE - 1.5x YIELD</div>}
-        {isLive&&(redZoneTeams.has(g.home)||redZoneTeams.has(g.away))&&<div style={{marginTop:4,background:"rgba(255,48,48,0.1)",border:"1px solid rgba(255,48,48,0.4)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:9,color:"#ff6060",fontFamily:"'Oswald',sans-serif",fontWeight:900,animation:"pulse 0.8s ease-in-out infinite"}}>🔴 RED ZONE — CRITICAL MOMENT</div>}
+        {isLive&&(redZoneTeams.has(g.home)||redZoneTeams.has(g.away))&&isRedZoneGame(g)&&<div style={{marginTop:4,background:"rgba(255,48,48,0.1)",border:"1px solid rgba(255,48,48,0.4)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:9,color:"#ff6060",fontFamily:"'Oswald',sans-serif",fontWeight:900,animation:"pulse 0.8s ease-in-out infinite"}}>🔴 {g.sport==="MLB"?"LATE GAME — CLUTCH MOMENT":g.sport==="MLS"?"FINAL MINUTES":"RED ZONE — CRITICAL MOMENT"}</div>}
         {isFinal&&((hWin&&hOwned)||(aWin&&aOwned))&&<div style={{marginTop:8,background:"rgba(52,211,153,0.1)",border:"1px solid rgba(52,211,153,0.3)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:9,color:"#34d399",fontFamily:"'Oswald',sans-serif",fontWeight:900}}>VICTORY! WIN BONUS COLLECTED</div>}
       </div>
     );
@@ -2226,7 +2255,7 @@ function LiveGamesTab(props){
         <div style={{display:"flex",gap:0,whiteSpace:"nowrap"}}>
           {liveGames.map(function(g,i){
             var col=g.status==="live"?"#00ff50":g.status==="final"?"#555":"#f5c518";
-            return <span key={i} style={{fontSize:10,color:col,fontFamily:"'Oswald',sans-serif",fontWeight:700,marginRight:32}}>{si[g.sport]} {g.away} {g.status==="live"?g.awayScore:""} {g.status!=="pre"?"-":""} {g.status==="live"?g.homeScore:""} {g.home} {g.status==="pre"?"| "+g.kickoffMins+"m":g.status==="live"?"| Q"+g.quarter+" "+g.timeLeft:"| FT"}</span>;
+            return <span key={i} style={{fontSize:10,color:col,fontFamily:"'Oswald',sans-serif",fontWeight:700,marginRight:32}}>{si[g.sport]} {g.away} {g.status==="live"?g.awayScore:""} {g.status!=="pre"?"-":""} {g.status==="live"?g.homeScore:""} {g.home} {g.status==="pre"?"| "+g.kickoffMins+"m":g.status==="live"?"| "+(g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q"))+g.quarter+" "+g.timeLeft:"| FT"}</span>;
           })}
         </div>
       </div>
@@ -2824,21 +2853,6 @@ export default function App() {
     pushNotif("Day Simulated","Streak advanced to Day "+newStreak,"info");
   }
 
-  function buyPack(pt){
-    if(balance<pt.cost)return;
-    setBalance(function(b){return b-pt.cost;});
-    var pa=pt.id==="standard"&&pity>=10;
-    var cards=buildPack(pt,pa);
-    var hasElite=cards.some(function(c){return ["Elite","Legacy","Legendary","Dynasty"].includes(c.rarity);});
-    if(pt.id==="standard")setPity(hasElite?0:function(p){return p+1;});
-    setOpening({pack:pt,cards:cards});
-    setTab("opening");
-    setPacksOpened(function(n){
-      var next=n+1;
-      saveProfile(Object.assign({},loadProfile(),{packsOpened:next}));
-      return next;
-    });
-  }
   function simGameDay(){
     if(inventory.length===0)return;
     var all=Object.values(ALL_TEAMS).reduce(function(a,b){return a.concat(b);},[]);
@@ -3009,7 +3023,7 @@ export default function App() {
               transition:"filter 0.3s",
               opacity:isOffseason?0.72:1,
              }}>
-             {isLiveCard&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:isRedZone?"#ff3030":"#00ff50",color:"#000",fontSize:8,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",filter:isRedZone?"drop-shadow(0 0 6px #ff3030)":"drop-shadow(0 0 6px #00ff50)"}}>{isRedZone?"🔴 RED ZONE":"LIVE · 1.5x"}</div>}
+             {isLiveCard&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:isRedZone?"#ff3030":"#00ff50",color:"#000",fontSize:8,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",filter:isRedZone?"drop-shadow(0 0 6px #ff3030)":"drop-shadow(0 0 6px #00ff50)"}}>{isRedZone?(c.sport==="MLB"?"🔴 CLUTCH":c.sport==="MLS"?"🔴 FINAL MINS":"🔴 RED ZONE"):"LIVE · 1.5x"}</div>}
              {offseasonBadge}
              {preTeams[c.team]&&!isLiveCard&&!isOffseason&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:"#f5c518",color:"#000",fontSize:8,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap"}}>IN {preTeams[c.team]}m</div>}
              <FlipCard card={c} autoFlip={true} winners={winners}/>
