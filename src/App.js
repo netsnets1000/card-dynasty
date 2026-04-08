@@ -2701,6 +2701,8 @@ export default function App() {
     var t=setInterval(loadMarketListings,60000);
     return function(){clearInterval(t);};
   },[]);
+
+  function buyPack(pt){
     if(balance<pt.cost)return;
     var newBal=balance-pt.cost;
     setBalance(function(b){return b-pt.cost;});
