@@ -2744,6 +2744,7 @@ export default function App() {
   var streakData=streakDataState[0]; var setStreakData=streakDataState[1];
   var shakeTeamsState=useState({}); var shakeTeams=shakeTeamsState[0]; var setShakeTeams=shakeTeamsState[1];
   var inventoryRef=useRef(inventory);
+  var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
   var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
   function triggerShake(team) {
@@ -2807,8 +2808,17 @@ export default function App() {
     setOnboarded(true);
     setIsNewUser(false);
     setTab("shop");
-    // Get userId from state OR directly from Supabase session
-    // (userId state may still be null if onAuthStateChange hasn't updated it yet)
+    // Build full profile data — merge any prefs set during profile setup step
+    var prefs=pendingPrefsRef.current||loadProfile();
+    var profileData={
+      coins:coins,
+      packs_opened:0,
+      username:prefs.username||"Dynasty Rookie",
+      avatar_color:prefs.avatarColor||"#f5c518",
+      avatar_initials:prefs.avatarInitials||"ME",
+      fav_sport:prefs.favSport||"",
+      fav_team:prefs.favTeam||"",
+    };
     var uid=userId;
     if(!uid&&supabase){
       supabase.auth.getSession().then(function(res){
@@ -2816,14 +2826,15 @@ export default function App() {
         var freshUid=session&&session.user&&session.user.id;
         if(freshUid){
           setUserId(freshUid);
+          dbSaveProfile(freshUid,profileData);
           dbSaveCards(freshUid,cards);
-          dbSaveProfile(freshUid,{coins:coins,packs_opened:0});
         }
       });
     } else if(uid){
+      dbSaveProfile(uid,profileData);
       dbSaveCards(uid,cards);
-      dbSaveProfile(uid,{coins:coins,packs_opened:0});
     }
+    pendingPrefsRef.current=null;
   }
 
   function handleClaim(reward){
@@ -3026,6 +3037,8 @@ export default function App() {
         if(prefs.favTeam) updated.favTeam=prefs.favTeam;
         if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
         saveProfileAndState(updated);
+        // Also store prefs in a ref so completeOnboarding can merge them
+        pendingPrefsRef.current=updated;
       }}/>
     </div>
   );
