@@ -56,6 +56,47 @@ var TC={
 };
 function getColors(t){ return TC[t]||["#334","#556"]; }
 function teamCode(t){
+  var CODES={
+    // NFL
+    "Chiefs":"KC","Eagles":"PHI","Cowboys":"DAL","49ers":"SF","Ravens":"BAL",
+    "Bills":"BUF","Dolphins":"MIA","Bengals":"CIN","Lions":"DET","Packers":"GB",
+    "Bears":"CHI","Vikings":"MIN","Giants":"NYG","Jets":"NYJ","Patriots":"NE",
+    "Steelers":"PIT","Broncos":"DEN","Raiders":"LV","Chargers":"LAC","Seahawks":"SEA",
+    "Titans":"TEN","Colts":"IND","Jaguars":"JAX","Texans":"HOU","Browns":"CLE",
+    "Panthers":"CAR","Saints":"NO","Buccaneers":"TB","Falcons":"ATL","Rams":"LAR",
+    "Cardinals":"ARI","Washington":"WAS",
+    // NBA
+    "Lakers":"LAL","Celtics":"BOS","Warriors":"GSW","Bucks":"MIL","Nuggets":"DEN",
+    "Heat":"MIA","Suns":"PHX","Clippers":"LAC","76ers":"PHI","Nets":"BKN",
+    "Bulls":"CHI","Knicks":"NYK","Mavericks":"DAL","Grizzlies":"MEM","Pelicans":"NOP",
+    "Hawks":"ATL","Raptors":"TOR","Blazers":"POR","Jazz":"UTA","Spurs":"SAS",
+    "Timberwolves":"MIN","Thunder":"OKC","Kings":"SAC","Pacers":"IND",
+    "Hornets":"CHA","Wizards":"WAS","Pistons":"DET","Magic":"ORL","Cavaliers":"CLE",
+    // MLB
+    "Yankees":"NYY","Dodgers":"LAD","Red Sox":"BOS","Cubs":"CHC","Giants":"SF",
+    "Cardinals":"STL","Braves":"ATL","Astros":"HOU","Mets":"NYM","Phillies":"PHI",
+    "Blue Jays":"TOR","Brewers":"MIL","Padres":"SD","Mariners":"SEA","Rangers":"TEX",
+    "Tigers":"DET","Twins":"MIN","White Sox":"CWS","Royals":"KC","Orioles":"BAL",
+    "Rays":"TB","Guardians":"CLE","Angels":"LAA","Athletics":"OAK",
+    "Pirates":"PIT","Rockies":"COL","Diamondbacks":"ARI","Reds":"CIN",
+    "Marlins":"MIA","Nationals":"WSH",
+    // MLS
+    "LA Galaxy":"LAG","LAFC":"LAFC","Atlanta United":"ATL","Seattle Sounders":"SEA",
+    "Portland Timbers":"POR","NYC FC":"NYC","Inter Miami":"MIA","Red Bulls":"RBNY",
+    "Chicago Fire":"CHI","Columbus Crew":"CLB","Toronto FC":"TOR","Revolution":"NE",
+    "DC United":"DC","Orlando City":"ORL","FC Dallas":"DAL","Houston Dynamo":"HOU",
+    "Colorado Rapids":"COL","Real Salt Lake":"RSL","Minnesota United":"MIN",
+    "Sporting KC":"SKC","Vancouver":"VAN","San Jose":"SJ","Philadelphia Union":"PHI",
+    "Nashville":"NSH","FC Cincinnati":"CIN","Austin FC":"ATX","Charlotte FC":"CLT",
+    "Montreal":"MTL","St. Louis City":"STL",
+    // College
+    "Alabama":"ALA","Ohio State":"OSU","Georgia":"UGA","Michigan":"MICH","LSU":"LSU",
+    "Clemson":"CLE","Oklahoma":"OU","Notre Dame":"ND","USC":"USC","Texas":"TEX",
+    "Penn State":"PSU","Florida":"UF","Tennessee":"TENN","Oregon":"ORE",
+    "Auburn":"AUB","Miami":"UM","Nebraska":"NEB","Iowa":"IOWA","Wisconsin":"WIS",
+    "Arkansas":"ARK",
+  };
+  if(CODES[t]) return CODES[t];
   var w=t.split(" ");
   return (w.length===1?t.slice(0,3):w.map(function(x){return x[0];}).join("").slice(0,4)).toUpperCase();
 }
@@ -238,207 +279,299 @@ var CSS=`
   .screen-jolt{animation:screenJolt 0.5s ease-out}
 `;
 function TeamEmblem(props) {
-  var team=props.team; var size=props.size||72;
+  var team=props.team; var size=props.size||80;
   var col=getColors(team); var c1=col[0]; var c2=col[1];
   var code=teamCode(team);
-  var uid="em"+team.replace(/\s/g,"");
+  var uid="em"+team.replace(/[^a-zA-Z]/g,"");
+  // Font size scales down for longer codes
+  var fs=code.length<=2?24:code.length===3?20:code.length===4?16:13;
   return (
     <svg width={size} height={size} viewBox="0 0 80 80">
       <defs>
-        <radialGradient id={uid} cx="40%" cy="30%" r="60%">
+        <radialGradient id={uid+"g"} cx="40%" cy="28%" r="65%">
           <stop offset="0%" stopColor={c1} stopOpacity="1"/>
-          <stop offset="55%" stopColor={c1} stopOpacity="0.8"/>
-          <stop offset="100%" stopColor={c2} stopOpacity="0.6"/>
+          <stop offset="60%" stopColor={c1} stopOpacity="0.85"/>
+          <stop offset="100%" stopColor={c2} stopOpacity="0.7"/>
         </radialGradient>
-        <filter id={"f"+uid}><feDropShadow dx="0" dy="1" stdDeviation="2" floodColor={c1} floodOpacity="0.8"/></filter>
+        <radialGradient id={uid+"sh"} cx="50%" cy="20%" r="60%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.28)"/>
+          <stop offset="100%" stopColor="rgba(255,255,255,0)"/>
+        </radialGradient>
+        <filter id={uid+"dr"}><feDropShadow dx="0" dy="2" stdDeviation="3" floodColor={c1} floodOpacity="0.7"/></filter>
+        <filter id={uid+"txt"}><feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="rgba(0,0,0,0.9)" floodOpacity="1"/></filter>
       </defs>
-      <path d="M40,4 L72,17 L72,44 Q72,66 40,76 Q8,66 8,44 L8,17 Z" fill={"url(#"+uid+")"} stroke={c2} strokeWidth="1.5" opacity="0.95"/>
-      <path d="M40,9 L67,20 L67,44 Q67,63 40,71 Q13,63 13,44 L13,20 Z" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8"/>
-      <text x="40" y="47" textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={code.length>3?16:20} fill="rgba(255,255,255,0.93)" filter={"url(#f"+uid+")"} letterSpacing="1">{code}</text>
+      {/* Shield body */}
+      <path d="M40,3 L74,16 L74,44 Q74,68 40,77 Q6,68 6,44 L6,16 Z" fill={"url(#"+uid+"g)"} filter={"url(#"+uid+"dr)"}/>
+      {/* Inner highlight */}
+      <path d="M40,3 L74,16 L74,44 Q74,68 40,77 Q6,68 6,44 L6,16 Z" fill={"url(#"+uid+"sh)"} opacity="0.6"/>
+      {/* Stroke */}
+      <path d="M40,3 L74,16 L74,44 Q74,68 40,77 Q6,68 6,44 L6,16 Z" fill="none" stroke={c2} strokeWidth="1.5" opacity="0.8"/>
+      {/* Inner stroke */}
+      <path d="M40,8 L69,19 L69,44 Q69,65 40,73 Q11,65 11,44 L11,19 Z" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8"/>
+      {/* Team code */}
+      <text x="40" y="48" textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={fs} fill="rgba(255,255,255,0.97)" filter={"url(#"+uid+"txt)"} letterSpacing="1.5">{code}</text>
     </svg>
   );
 }
-function DShield(props) {
+
+// CD monogram badge — replaces the old single "D"
+function CDBadge(props) {
   var rarity=props.rarity;
-  var premium=rarity==="Dynasty"||rarity==="Legendary"||rarity==="Legacy";
+  var isDyn=rarity==="Dynasty"; var isLeg=rarity==="Legendary"; var isLegacy=rarity==="Legacy";
+  var isPremium=isDyn||isLeg;
+  var bg1=isPremium?"#7c3aed":isLegacy?"#5b21b6":"#3b1f8a";
+  var bg2=isPremium?"#4c1d95":isLegacy?"#3b1f8a":"#1e1060";
+  var glow=isPremium?10:isLegacy?6:4;
   return (
-    <div style={{position:"absolute",top:9,right:9,zIndex:20,filter:"drop-shadow(0 0 "+(premium?8:4)+"px rgba(120,60,255,"+(premium?0.9:0.5)+"))"}}>
-      <svg width={30} height={34} viewBox="0 0 30 34">
+    <div style={{position:"absolute",top:8,right:8,zIndex:20,filter:"drop-shadow(0 0 "+glow+"px rgba(139,92,246,"+(isPremium?0.95:0.6)+"))"}}>
+      <svg width={32} height={36} viewBox="0 0 32 36">
         <defs>
-          <linearGradient id="dsg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={premium?"#8855ff":"#5533bb"}/>
-            <stop offset="100%" stopColor={premium?"#3311aa":"#221166"}/>
+          <linearGradient id={"cdg"+rarity} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={bg1}/>
+            <stop offset="100%" stopColor={bg2}/>
           </linearGradient>
         </defs>
-        <path d="M15,1.5 L28,7 L28,19 Q28,30 15,33 Q2,30 2,19 L2,7 Z" fill="url(#dsg)" stroke="rgba(180,140,255,0.7)" strokeWidth="1"/>
-        <text x="15" y="21" textAnchor="middle" fontSize="11" fontWeight="900" fill="white" fontFamily="Georgia,serif">D</text>
+        <path d="M16,1.5 L30,7.5 L30,20 Q30,32 16,35 Q2,32 2,20 L2,7.5 Z" fill={"url(#cdg"+rarity+")"} stroke="rgba(167,139,250,0.7)" strokeWidth="1.2"/>
+        {/* "CD" text */}
+        <text x="16" y="22" textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontSize="11" fontWeight="900" fill="rgba(255,255,255,0.95)" letterSpacing="0.5">CD</text>
       </svg>
     </div>
   );
 }
+
 function CrownBadge() {
   return (
-    <div style={{width:34,height:34,borderRadius:"50%",background:"rgba(0,0,0,0.65)",border:"1px solid rgba(180,140,0,0.6)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-      <svg width={22} height={22} viewBox="0 0 24 24">
-        <path d="M4,17 L4,11 L8,14 L12,7 L16,14 L20,11 L20,17 Z" fill="rgba(220,175,0,0.9)" stroke="rgba(255,220,50,0.7)" strokeWidth="0.5"/>
-        <path d="M5,19 L19,19" stroke="rgba(200,160,0,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+    <div style={{width:22,height:22,borderRadius:"50%",background:"rgba(0,0,0,0.5)",border:"1px solid rgba(200,155,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+      <svg width={14} height={14} viewBox="0 0 24 24">
+        <path d="M4,17 L4,11 L8,14 L12,7 L16,14 L20,11 L20,17 Z" fill="rgba(220,175,0,0.95)"/>
+        <path d="M5,19 L19,19" stroke="rgba(200,160,0,0.7)" strokeWidth="2" strokeLinecap="round"/>
       </svg>
     </div>
   );
 }
+
+// Sport badge — clear colored text pill instead of ambiguous icon
 function SportBadge(props) {
-  var sport=props.sport; var dark=props.dark||false;
-  var color=dark?"#556":"rgba(255,255,255,0.75)";
-  var icon=null;
-  if(sport==="NFL") icon=<><ellipse cx="12" cy="12" rx="8" ry="5.5" fill="none" stroke="currentColor" strokeWidth="1.4"/><line x1="4.5" y1="12" x2="19.5" y2="12" stroke="currentColor" strokeWidth="0.9"/><line x1="12" y1="6.5" x2="12" y2="17.5" stroke="currentColor" strokeWidth="0.9"/></>;
-  else if(sport==="NBA") icon=<><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.4"/><line x1="12" y1="3.5" x2="12" y2="20.5" stroke="currentColor" strokeWidth="0.9"/><path d="M3.5,12 Q7.5,7.5 12,12 Q16.5,16.5 20.5,12" fill="none" stroke="currentColor" strokeWidth="0.9"/></>;
-  else if(sport==="MLB") icon=<><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.4"/><path d="M5.5,6 Q12,10 12,12 Q12,14 5.5,18" fill="none" stroke="currentColor" strokeWidth="0.9"/><path d="M18.5,6 Q12,10 12,12 Q12,14 18.5,18" fill="none" stroke="currentColor" strokeWidth="0.9"/></>;
-  else icon=<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.4"/>;
+  var sport=props.sport; var small=props.small||false;
+  var configs={
+    NFL:{label:"NFL",bg:"rgba(0,53,148,0.85)",color:"#fff",border:"rgba(100,150,255,0.4)"},
+    NBA:{label:"NBA",bg:"rgba(200,16,46,0.85)",color:"#fff",border:"rgba(255,80,100,0.4)"},
+    MLB:{label:"MLB",bg:"rgba(0,45,114,0.85)",color:"#fff",border:"rgba(80,120,255,0.4)"},
+    MLS:{label:"MLS",bg:"rgba(16,24,80,0.85)",color:"#4ade80",border:"rgba(74,222,128,0.4)"},
+    College:{label:"NCAAF",bg:"rgba(60,20,0,0.85)",color:"#fb923c",border:"rgba(251,146,60,0.4)"},
+  };
+  var cfg=configs[sport]||{label:sport,bg:"rgba(30,30,50,0.85)",color:"#aaa",border:"rgba(255,255,255,0.2)"};
+  var sz=small?6:7;
   return (
-    <div style={{width:30,height:30,borderRadius:"50%",background:dark?"rgba(0,0,0,0.08)":"rgba(255,255,255,0.08)",border:"1px solid "+(dark?"rgba(0,0,0,0.18)":"rgba(255,255,255,0.18)"),display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-      <svg width={22} height={22} viewBox="0 0 24 24" color={color}>{icon}</svg>
+    <div style={{background:cfg.bg,border:"1px solid "+cfg.border,borderRadius:4,padding:small?"1px 4px":"2px 6px",flexShrink:0}}>
+      <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:sz,color:cfg.color,letterSpacing:"0.08em",textTransform:"uppercase"}}>{cfg.label}</span>
     </div>
   );
 }
+
+// Rarity banner — the key missing piece
+function RarityBanner(props) {
+  var rarity=props.rarity; var W=props.W;
+  var cfgs={
+    Dynasty:{bg:"linear-gradient(90deg,transparent,rgba(168,85,247,0.9),rgba(245,197,24,0.9),rgba(168,85,247,0.9),transparent)",color:"#fff",label:"✦ DYNASTY ✦",glow:"rgba(168,85,247,0.8)"},
+    Legendary:{bg:"linear-gradient(90deg,transparent,rgba(245,197,24,0.9),rgba(255,240,150,0.95),rgba(245,197,24,0.9),transparent)",color:"#000",label:"★ LEGENDARY ★",glow:"rgba(245,197,24,0.7)"},
+    Legacy:{bg:"linear-gradient(90deg,transparent,rgba(180,120,0,0.85),rgba(255,200,80,0.9),rgba(180,120,0,0.85),transparent)",color:"#000",label:"◆ LEGACY ◆",glow:"rgba(200,150,0,0.6)"},
+    Elite:{bg:"linear-gradient(90deg,transparent,rgba(16,120,60,0.85),rgba(52,211,153,0.9),rgba(16,120,60,0.85),transparent)",color:"#fff",label:"▲ ELITE ▲",glow:"rgba(52,211,153,0.5)"},
+    Rare:{bg:"linear-gradient(90deg,transparent,rgba(30,80,200,0.85),rgba(96,165,250,0.9),rgba(30,80,200,0.85),transparent)",color:"#fff",label:"◉ RARE ◉",glow:"rgba(96,165,250,0.5)"},
+    Base:{bg:"linear-gradient(90deg,transparent,rgba(140,155,170,0.6),rgba(180,190,205,0.7),rgba(140,155,170,0.6),transparent)",color:"#334",label:"BASE",glow:"transparent"},
+  };
+  var cfg=cfgs[rarity]||cfgs.Base;
+  return (
+    <div style={{position:"absolute",top:44,left:0,width:W,zIndex:12,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none",filter:rarity!=="Base"?"drop-shadow(0 0 4px "+cfg.glow+")":"none"}}>
+      <div style={{background:cfg.bg,width:"100%",padding:"3px 0",textAlign:"center"}}>
+        <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:8,letterSpacing:"0.25em",color:cfg.color,textTransform:"uppercase"}}>{cfg.label}</span>
+      </div>
+    </div>
+  );
+}
+
 function PremiumCard(props) {
   var card=props.card; var isWinner=props.isWinner||false;
   var col=getColors(card.team); var c1=col[0];
   var mouseState=useState({x:0.5,y:0.5}); var mouse=mouseState[0]; var setMouse=mouseState[1];
   var cardRef=useRef(null);
-  var W=148,H=212;
+  // Bigger card — real sports card proportions (2.5" × 3.5" = 1:1.4)
+  var W=170,H=240;
   var isBase=card.rarity==="Base"; var isRare=card.rarity==="Rare";
   var isElite=card.rarity==="Elite"; var isLegacy=card.rarity==="Legacy";
   var isLeg=card.rarity==="Legendary"; var isDyn=card.rarity==="Dynasty";
-  var isLight=isBase; // Only Base gets the light silver treatment now
   var isPremium=isLeg||isDyn; var isGold=isLegacy||isPremium;
+
   var cardBg=isBase
-    ?"linear-gradient(160deg,#e8ecf0,#f5f7fa,#dde2e8)"
+    ?"linear-gradient(160deg,#e8ecf0 0%,#f5f7fa 40%,#dde2e8 100%)"
     :isRare
-    ?"linear-gradient(160deg,#050d1f,#091830,#050d1f)"
+    ?"linear-gradient(160deg,#050d1f 0%,#091830 50%,#050d1f 100%)"
     :isElite
-    ?"linear-gradient(160deg,#061810,#0d2818,#061810)"
+    ?"linear-gradient(160deg,#061810 0%,#0d2818 50%,#061810 100%)"
     :isLegacy
-    ?"linear-gradient(160deg,#120d00,#221800,#120d00)"
-    :"linear-gradient(160deg,#070415,#10082a,#070415)";
-  var bshadow=isPremium
-    ?"0 0 28px rgba(245,197,24,0.55), 0 20px 50px rgba(0,0,0,0.85)"
-    :isLegacy
-    ?"0 0 18px rgba(200,155,0,0.35), 0 20px 50px rgba(0,0,0,0.85)"
-    :isElite
-    ?"0 0 14px rgba(40,180,100,0.3), 0 20px 50px rgba(0,0,0,0.85)"
-    :isRare
-    ?"0 0 16px rgba(96,165,250,0.45), 0 20px 50px rgba(0,0,0,0.85)"
-    :"0 20px 50px rgba(0,0,0,0.45)";
-  var bcolor=isPremium
-    ?"#f5c518"
-    :isLegacy
-    ?"rgba(200,155,0,0.8)"
-    :isElite
-    ?"rgba(40,180,100,0.7)"
-    :isRare
-    ?"rgba(96,165,250,0.75)"
-    :"rgba(170,180,195,0.5)";
-  var nameColor=isBase?"#111":isRare?"#93c5fd":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#90f0c0":"#fff";
-  var statColor=isBase?"#334":isRare?"#60a5fa":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#34d399":"#aac";
-  var plateBg=isBase
-    ?"linear-gradient(90deg,#cdd3db,#dde3ea,#cdd3db)"
-    :isRare
-    ?"linear-gradient(90deg,#06112a,#0a1e3d,#06112a)"
+    ?"linear-gradient(160deg,#120d00 0%,#221800 50%,#120d00 100%)"
+    :"linear-gradient(160deg,#070415 0%,#10082a 50%,#070415 100%)";
+
+  var borderCol=isDyn?"#e879f9":isPremium?"#f5c518":isLegacy?"rgba(200,155,0,0.85)":isElite?"rgba(52,211,153,0.7)":isRare?"rgba(96,165,250,0.75)":"rgba(160,172,190,0.6)";
+  var bshadow=isDyn
+    ?"0 0 32px rgba(168,85,247,0.6), 0 0 60px rgba(245,197,24,0.3), 0 24px 48px rgba(0,0,0,0.9)"
     :isPremium
-    ?"rgba(15,10,0,0.92)"
+    ?"0 0 24px rgba(245,197,24,0.55), 0 24px 48px rgba(0,0,0,0.9)"
     :isLegacy
-    ?"rgba(12,8,0,0.92)"
-    :"rgba(0,0,0,0.82)";
+    ?"0 0 16px rgba(200,155,0,0.35), 0 20px 40px rgba(0,0,0,0.85)"
+    :isElite
+    ?"0 0 12px rgba(52,211,153,0.3), 0 20px 40px rgba(0,0,0,0.85)"
+    :isRare
+    ?"0 0 14px rgba(96,165,250,0.4), 0 20px 40px rgba(0,0,0,0.85)"
+    :"0 8px 24px rgba(0,0,0,0.5)";
+
+  var nameColor=isBase?"#111":isRare?"#93c5fd":isDyn?"#e879f9":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#6ee7b7":"#fff";
+  var statColor=isBase?"#334":isRare?"#60a5fa":isDyn?"#d8b4fe":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#34d399":"#aac";
+  var plateBg=isBase
+    ?"linear-gradient(180deg,#c8d0da,#d8e0ea)"
+    :isRare
+    ?"linear-gradient(180deg,#06112a,#0d1e3d)"
+    :isDyn
+    ?"linear-gradient(180deg,#1a0535,#0d0220)"
+    :isPremium
+    ?"linear-gradient(180deg,#0f0a00,#1a1200)"
+    :isLegacy
+    ?"linear-gradient(180deg,#0c0800,#1a1000)"
+    :"linear-gradient(180deg,rgba(0,0,0,0.9),rgba(10,6,20,0.95))";
+
   function onMouseMove(e) {
     if(!cardRef.current) return;
     var r=cardRef.current.getBoundingClientRect();
     setMouse({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height});
   }
   function onMouseLeave(){ setMouse({x:0.5,y:0.5}); }
-  var bw=isPremium?"2px":isRare?"1.5px":"1.5px";
+
+  // Perspective tilt from mouse
+  var rotY=((mouse.x-0.5)*18).toFixed(1);
+  var rotX=(-(mouse.y-0.5)*14).toFixed(1);
+
   return (
     <div ref={cardRef} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}
-      style={{width:W,height:H,position:"relative",borderRadius:12,flexShrink:0,overflow:"hidden",border:bw+" solid "+bcolor,boxShadow:bshadow,animation:isPremium?"goldPulse 2.5s ease-in-out infinite":isRare?"rareShimmer 3s ease-in-out infinite":"none"}}>
-      <div style={{position:"absolute",inset:0,background:cardBg}}/>
-      {/* Team color radial — same for all */}
-      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 75% 55% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, "+c1+"30 0%, transparent 70%)",transition:"background 0.15s"}}/>
-      {/* Rare: blue prismatic overlay */}
-      {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(30,60,160,0.35),rgba(60,130,255,0.2),rgba(120,80,255,0.25),rgba(30,60,160,0.3))",mixBlendMode:"screen"}}/>}
-      {/* Rare: diagonal blue shimmer sweep */}
-      {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(96,165,250,0.18) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 2.8s ease-in-out infinite",mixBlendMode:"screen",pointerEvents:"none"}}/>}
-      {isPremium&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,120,0,0.22),rgba(160,0,255,0.18),rgba(0,180,255,0.12),rgba(255,180,0,0.18))",mixBlendMode:"screen"}}/>}
-      {isLegacy&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,180,0,0.1),rgba(80,40,0,0.08),rgba(255,180,0,0.1))",mixBlendMode:"screen"}}/>}
-      <div style={{position:"absolute",inset:0,backgroundImage:NOISE,backgroundSize:"180px",opacity:isBase?0.3:0.55,mixBlendMode:"overlay",pointerEvents:"none"}}/>
-      {isGold&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.22) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 3s ease-in-out infinite",mixBlendMode:"screen",pointerEvents:"none"}}/>}
-      {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}><div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(245,197,24,0.12),transparent)",animation:"dynastyShine 3s ease-in-out infinite"}}/></div>}
-      <div style={{position:"absolute",inset:0,borderRadius:11,background:"radial-gradient(ellipse 60% 50% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, rgba(255,255,255,0.07) 0%, transparent 70%)",pointerEvents:"none",zIndex:6,transition:"background 0.15s"}}/>
-      {/* Rare: SVG blue corner accent lines */}
-      {isRare&&(
-        <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{position:"absolute",inset:0,zIndex:8,pointerEvents:"none"}}>
-          <defs>
-            <linearGradient id="rbrg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.9"/>
-              <stop offset="50%" stopColor="#93c5fd" stopOpacity="0.7"/>
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.9"/>
-            </linearGradient>
-          </defs>
-          {/* Inner border */}
-          <rect x="4" y="4" width={W-8} height={H-8} rx="9" fill="none" stroke="url(#rbrg)" strokeWidth="1.5"/>
-          {/* Corner accents — L-shaped ticks like Prizm Rookie cards */}
-          <polyline points="4,22 4,4 22,4" fill="none" stroke="#60a5fa" strokeWidth="2.5" opacity="0.9"/>
-          <polyline points={W-22+",4 "+W-4+",4 "+(W-4)+",22"} fill="none" stroke="#60a5fa" strokeWidth="2.5" opacity="0.9"/>
-          <polyline points={"4,"+(H-22)+" 4,"+(H-4)+" 22,"+(H-4)} fill="none" stroke="#60a5fa" strokeWidth="2.5" opacity="0.9"/>
-          <polyline points={(W-22)+","+(H-4)+" "+(W-4)+","+(H-4)+" "+(W-4)+","+(H-22)} fill="none" stroke="#60a5fa" strokeWidth="2.5" opacity="0.9"/>
-        </svg>
-      )}
-      {isGold&&(
-        <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{position:"absolute",inset:0,zIndex:8,pointerEvents:"none"}}>
-          <defs>
-            <linearGradient id="brg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={isPremium?"#f5c518":"#cc9000"} stopOpacity="0.9"/>
-              <stop offset="50%" stopColor="#fff8c0" stopOpacity="0.8"/>
-              <stop offset="100%" stopColor={isPremium?"#f5c518":"#cc9000"} stopOpacity="0.9"/>
-            </linearGradient>
-          </defs>
-          <rect x="4" y="4" width={W-8} height={H-8} rx="9" fill="none" stroke="url(#brg)" strokeWidth="2"/>
-          <circle cx="14" cy="14" r="3" fill={isPremium?"#f5c518":"#cc9000"} opacity="0.9"/>
-          <circle cx={W-14} cy="14" r="3" fill={isPremium?"#f5c518":"#cc9000"} opacity="0.9"/>
-          <circle cx="14" cy={H-14} r="3" fill={isPremium?"#f5c518":"#cc9000"} opacity="0.9"/>
-          <circle cx={W-14} cy={H-14} r="3" fill={isPremium?"#f5c518":"#cc9000"} opacity="0.9"/>
-        </svg>
-      )}
-      <DShield rarity={card.rarity}/>
-      <div style={{position:"absolute",left:7,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",whiteSpace:"nowrap",zIndex:9,pointerEvents:"none"}}>
-        <span style={{fontSize:7,letterSpacing:"0.25em",color:isBase?"rgba(0,0,0,0.12)":"rgba(255,255,255,0.1)",fontWeight:400,textTransform:"uppercase"}}>Card Dynasty</span>
-      </div>
-      <div style={{position:"absolute",left:"50%",top:"43%",transform:"translate(-50%,-50%)",zIndex:2,opacity:0.1,pointerEvents:"none"}}>
-        <TeamEmblem team={card.team} size={Math.round(W*0.62)}/>
-      </div>
-      <div style={{position:"absolute",left:"50%",top:"40%",transform:"translate(-50%,-50%)",zIndex:10,filter:isPremium?"drop-shadow(0 0 16px "+c1+"dd) drop-shadow(0 0 32px "+c1+"88)":isRare?"drop-shadow(0 0 8px "+c1+"cc)":"none"}}>
-        <TeamEmblem team={card.team} size={Math.round(W*0.5)}/>
-      </div>
-      <div style={{position:"absolute",top:0,left:0,right:0,zIndex:11,display:"flex",alignItems:"center",gap:5,padding:"7px 12px 5px",background:isBase?"rgba(200,208,218,0.8)":isRare?"rgba(4,10,30,0.85)":"rgba(0,0,0,0.6)"}}>
-        <span style={{fontSize:10}}>🪙</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,fontWeight:700,color:statColor}}>{card.daily}</span>
-        <span style={{color:"rgba(255,255,255,0.3)",fontSize:8,margin:"0 2px"}}>·</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,fontWeight:700,color:statColor}}>{card.win}</span>
-        <span style={{fontSize:7,color:"rgba(255,255,255,0.3)",textTransform:"uppercase"}}>win</span>
-        {isWinner&&<span style={{marginLeft:"auto",fontSize:7,fontWeight:900,background:"#34d399",color:"#000",padding:"1px 7px",borderRadius:999}}>WIN</span>}
-      </div>
-      <div style={{position:"absolute",bottom:52,right:8,zIndex:15}}>
-        <div style={{background:isPremium?"linear-gradient(135deg,#f5c518,#b8860b,#ffe066)":isLegacy?"linear-gradient(135deg,#cc9000,#8a6000,#f5c518)":isRare?"linear-gradient(135deg,#1e3a7a,#2563eb,#3b82f6)":isBase?"linear-gradient(135deg,#b0b8c8,#8090a0)":"linear-gradient(135deg,#222,#111)",borderRadius:6,padding:"3px 8px",border:isPremium?"1px solid rgba(255,255,255,0.35)":isRare?"1px solid rgba(96,165,250,0.5)":isBase?"1px solid rgba(0,0,0,0.15)":"1px solid rgba(255,255,255,0.1)"}}>
-          <div style={{fontSize:6,color:isPremium?"rgba(0,0,0,0.6)":isRare?"rgba(147,197,253,0.8)":"rgba(255,255,255,0.5)",letterSpacing:"0.1em",textTransform:"uppercase",lineHeight:1,fontWeight:700,textAlign:"center"}}>MAX POT</div>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,fontWeight:700,color:isPremium?"#000":isRare?"#93c5fd":isBase?"#223":"#eee",lineHeight:1.2,textAlign:"center"}}>{fmt(card.mp)}</div>
-        </div>
-      </div>
-      <div style={{position:"absolute",bottom:0,left:0,right:0,zIndex:11}}>
-        <div style={{height:1,background:isGold?"linear-gradient(90deg,transparent,rgba(245,197,24,0.5),transparent)":isRare?"linear-gradient(90deg,transparent,rgba(96,165,250,0.4),transparent)":"linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)"}}/>
-        <div style={{background:plateBg,padding:"7px 10px 9px",display:"flex",alignItems:"center",gap:7}}>
-          {isGold?<CrownBadge/>:<SportBadge sport={card.sport} dark={isBase}/>}
-          <div style={{flex:1,minWidth:0,textAlign:"center"}}>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:11,color:nameColor,letterSpacing:"0.1em",textTransform:"uppercase",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{card.team}</div>
+      style={{width:W,height:H,position:"relative",flexShrink:0,perspective:800,cursor:"default",
+        animation:isDyn?"goldPulse 2.5s ease-in-out infinite":isRare?"rareShimmer 3s ease-in-out infinite":"none"}}>
+      {/* Outer glow halo */}
+      {!isBase&&<div style={{position:"absolute",inset:-4,borderRadius:18,background:borderCol,filter:"blur(12px)",opacity:isPremium?0.5:0.25,pointerEvents:"none",zIndex:0}}/>}
+      <div style={{width:W,height:H,position:"relative",borderRadius:14,overflow:"hidden",
+        border:"2px solid "+borderCol,boxShadow:bshadow,
+        transform:"rotateY("+rotY+"deg) rotateX("+rotX+"deg)",
+        transition:"transform 0.1s ease-out",transformStyle:"preserve-3d",zIndex:1}}>
+
+        {/* ── LAYER 1: Base background ── */}
+        <div style={{position:"absolute",inset:0,background:cardBg}}/>
+
+        {/* ── LAYER 2: Team color radial spotlight ── */}
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 80% 60% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, "+c1+"38 0%, transparent 72%)",transition:"background 0.12s"}}/>
+
+        {/* ── LAYER 3: Rarity-specific overlays ── */}
+        {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(30,60,160,0.3),rgba(60,130,255,0.18),rgba(120,80,255,0.22),rgba(30,60,160,0.28))",mixBlendMode:"screen"}}/>}
+        {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(96,165,250,0.15) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 2.8s ease-in-out infinite",pointerEvents:"none"}}/>}
+        {isPremium&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,120,0,0.18),rgba(160,0,255,0.15),rgba(0,180,255,0.1),rgba(255,180,0,0.15))",mixBlendMode:"screen"}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(168,85,247,0.2),rgba(245,197,24,0.15),rgba(168,85,247,0.2))",mixBlendMode:"screen"}}/>}
+        {isLegacy&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,180,0,0.1),rgba(80,40,0,0.06),rgba(255,180,0,0.1))",mixBlendMode:"screen"}}/>}
+
+        {/* ── LAYER 4: Film grain ── */}
+        <div style={{position:"absolute",inset:0,backgroundImage:NOISE,backgroundSize:"160px",opacity:isBase?0.25:0.5,mixBlendMode:"overlay",pointerEvents:"none"}}/>
+
+        {/* ── LAYER 5: Shimmer sweep for gold tiers ── */}
+        {isGold&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.18) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 3s ease-in-out infinite",mixBlendMode:"screen",pointerEvents:"none"}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}><div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(245,197,24,0.1),transparent)",animation:"dynastyShine 3s ease-in-out infinite"}}/></div>}
+
+        {/* ── LAYER 6: Mouse glint ── */}
+        <div style={{position:"absolute",inset:0,borderRadius:13,background:"radial-gradient(ellipse 50% 40% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, rgba(255,255,255,0.09) 0%, transparent 70%)",pointerEvents:"none",zIndex:6}}/>
+
+        {/* ── LAYER 7: Border glow ring ── */}
+        {(isGold||isRare)&&(
+          <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{position:"absolute",inset:0,zIndex:8,pointerEvents:"none"}}>
+            <defs>
+              <linearGradient id={"brg"+card.rarity+W} x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor={borderCol} stopOpacity="0.9"/>
+                <stop offset="50%" stopColor={isBase?"#ccc":"#fff"} stopOpacity="0.6"/>
+                <stop offset="100%" stopColor={borderCol} stopOpacity="0.9"/>
+              </linearGradient>
+            </defs>
+            <rect x="4" y="4" width={W-8} height={H-8} rx="11" fill="none" stroke={"url(#brg"+card.rarity+W+")"} strokeWidth={isPremium?"1.5":"1"}/>
+            {/* Corner accents */}
+            <polyline points={"5,22 5,5 22,5"} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
+            <polyline points={(W-22)+",5 "+(W-5)+",5 "+(W-5)+",22"} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
+            <polyline points={"5,"+(H-22)+" 5,"+(H-5)+" 22,"+(H-5)} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
+            <polyline points={(W-22)+","+(H-5)+" "+(W-5)+","+(H-5)+" "+(W-5)+","+(H-22)} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
+          </svg>
+        )}
+
+        {/* ── HEADER BAR ── */}
+        <div style={{position:"absolute",top:0,left:0,right:0,zIndex:11,
+          display:"flex",alignItems:"center",justifyContent:"space-between",
+          padding:"6px 10px 5px",
+          background:isBase?"rgba(180,190,205,0.85)":isRare?"rgba(4,10,30,0.9)":"rgba(0,0,0,0.75)",
+          borderBottom:"1px solid "+(isGold?"rgba(245,197,24,0.2)":isRare?"rgba(96,165,250,0.2)":"rgba(255,255,255,0.08)")}}>
+          <SportBadge sport={card.sport}/>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,fontWeight:700,color:statColor}}>🪙{card.daily}</span>
+            <span style={{color:"rgba(255,255,255,0.2)",fontSize:7}}>·</span>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,fontWeight:700,color:statColor}}>{card.win}W</span>
+            {isWinner&&<span style={{fontSize:7,fontWeight:900,background:"#34d399",color:"#000",padding:"1px 6px",borderRadius:999,marginLeft:2}}>WIN</span>}
           </div>
-          <SportBadge sport={card.sport} dark={isBase}/>
+        </div>
+
+        {/* ── RARITY BANNER — right below header ── */}
+        <RarityBanner rarity={card.rarity} W={W}/>
+
+        {/* ── CD MONOGRAM BADGE ── */}
+        <CDBadge rarity={card.rarity}/>
+
+        {/* ── VERTICAL WATERMARK TEXT ── */}
+        <div style={{position:"absolute",left:5,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",whiteSpace:"nowrap",zIndex:9,pointerEvents:"none"}}>
+          <span style={{fontSize:6,letterSpacing:"0.3em",color:isBase?"rgba(0,0,0,0.1)":"rgba(255,255,255,0.08)",fontWeight:400,textTransform:"uppercase"}}>Card Dynasty</span>
+        </div>
+
+        {/* ── GHOST EMBLEM (background watermark) ── */}
+        <div style={{position:"absolute",left:"50%",top:"46%",transform:"translate(-50%,-50%)",zIndex:2,opacity:0.08,pointerEvents:"none"}}>
+          <TeamEmblem team={card.team} size={Math.round(W*0.72)}/>
+        </div>
+
+        {/* ── MAIN EMBLEM ── */}
+        <div style={{position:"absolute",left:"50%",top:"46%",transform:"translate(-50%,-50%)",zIndex:10,
+          filter:isDyn
+            ?"drop-shadow(0 0 18px "+c1+"ee) drop-shadow(0 0 36px rgba(168,85,247,0.6))"
+            :isPremium
+            ?"drop-shadow(0 0 16px "+c1+"dd) drop-shadow(0 0 32px "+c1+"88)"
+            :isRare
+            ?"drop-shadow(0 0 10px "+c1+"cc)"
+            :isElite
+            ?"drop-shadow(0 0 8px "+c1+"aa)"
+            :"none"}}>
+          <TeamEmblem team={card.team} size={Math.round(W*0.58)}/>
+        </div>
+
+        {/* ── BOTTOM NAME PLATE ── */}
+        <div style={{position:"absolute",bottom:0,left:0,right:0,zIndex:11}}>
+          {/* Separator line */}
+          <div style={{height:1,background:isGold?"linear-gradient(90deg,transparent,rgba(245,197,24,0.6),transparent)":isRare?"linear-gradient(90deg,transparent,rgba(96,165,250,0.5),transparent)":"linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent)"}}/>
+          <div style={{background:plateBg,padding:"8px 10px 10px"}}>
+            {/* Team name — full width, properly sized */}
+            <div style={{textAlign:"center",marginBottom:5}}>
+              <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,
+                fontSize:card.team.length>10?11:card.team.length>7?13:15,
+                color:nameColor,letterSpacing:"0.12em",textTransform:"uppercase",
+                display:"block",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"clip"}}>
+                {card.team}
+              </span>
+            </div>
+            {/* Stats row */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              {isGold?<CrownBadge/>:<div style={{width:6}}/>}
+              <div style={{background:isPremium?"rgba(20,14,0,0.8)":isRare?"rgba(3,8,22,0.8)":"rgba(0,0,0,0.6)",borderRadius:6,padding:"3px 10px",border:"1px solid "+(isGold?"rgba(245,197,24,0.25)":isRare?"rgba(96,165,250,0.25)":"rgba(255,255,255,0.08)")}}>
+                <div style={{fontSize:6,color:isGold?"rgba(245,197,24,0.5)":isRare?"rgba(96,165,250,0.5)":"rgba(255,255,255,0.35)",letterSpacing:"0.15em",textTransform:"uppercase",textAlign:"center",fontWeight:700,fontFamily:"'Oswald',sans-serif"}}>MAX POT</div>
+                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,fontWeight:700,color:isGold?"#f5c518":isRare?"#93c5fd":isBase?"#223":"#dde",textAlign:"center",lineHeight:1.2}}>{fmt(card.mp)}</div>
+              </div>
+              {isGold?<CrownBadge/>:<div style={{width:6}}/>}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -497,7 +630,7 @@ function FlipCard(props) {
   var flippedState=useState(false); var flipped=flippedState[0]; var setFlipped=flippedState[1];
   var sfxState=useState(null); var sfx=sfxState[0]; var setSfx=sfxState[1];
   var isWin=winners&&winners.has(card.team);
-  var W=compact?116:148; var H=compact?165:212;
+  var W=compact?128:170; var H=compact?179:240;
   var SFX={Rare:"SHINK!",Elite:"CRACK!",Legacy:"BLAZE!",Legendary:"FIRE!",Dynasty:"BOOM!"};
   var ac=RCOLORS[card.rarity]||"#aaa";
   useEffect(function(){if(autoFlip)setTimeout(function(){doFlip();},120);},[autoFlip]);
@@ -2434,7 +2567,7 @@ function ProfileView(props) {
                     <button onClick={function(){unpin(i);}} style={{position:"absolute",top:-8,right:-8,width:22,height:22,borderRadius:"50%",background:"rgba(0,0,0,0.85)",border:"1px solid rgba(255,255,255,0.15)",color:"#555",fontSize:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:30}}>x</button>
                   </div>
                 ):(
-                  <button onClick={function(){setPickingSlot(i);}} style={{width:148,height:212,borderRadius:12,border:"2px dashed rgba(245,197,24,0.2)",background:"rgba(245,197,24,0.03)",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
+                  <button onClick={function(){setPickingSlot(i);}} style={{width:170,height:240,borderRadius:14,border:"2px dashed rgba(245,197,24,0.2)",background:"rgba(245,197,24,0.03)",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
                     <span style={{fontSize:28,opacity:0.4}}>+</span>
                     <span style={{fontSize:10,color:"rgba(245,197,24,0.4)",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Pin Card</span>
                   </button>
