@@ -1068,9 +1068,9 @@ function AuthForm(props) {
       }).then(function(res){
         setLoading(false);
         if(res&&res.error){setErr(res.error.message||"Sign up failed.");return;}
-        // signUp returns session immediately if email confirmation is off in Supabase
-        if(res&&res.data&&res.data.session){onComplete(cards,500);}
-        else{setErr("Check your email for a confirmation link, then log in.");}
+        // Proceed immediately — no email confirmation required
+        // (Make sure "Enable email confirmations" is OFF in Supabase Auth settings)
+        onComplete(cards,500);
       });
     } else {
       sb(function(db){
