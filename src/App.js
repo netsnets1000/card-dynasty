@@ -1950,13 +1950,19 @@ function useLiveOracle(onBigPlay, onGameEnd) {
   });
   function fetchESPN() {
     var promises=ESPN_ENDPOINTS.map(function(ep){
-      return fetch(ep.url)
+      // Call our Vercel serverless proxy instead of ESPN directly
+      // This avoids CORS — ESPN blocks direct browser requests
+      var proxyUrl="/api/scores?sport="+ep.sport;
+      return fetch(proxyUrl)
         .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
         .then(function(data){
           var events=data.events||[];
           return events.map(function(e){return parseESPNEvent(e,ep.sport);}).filter(Boolean);
         })
-        .catch(function(){return [];});
+        .catch(function(err){
+          console.warn("Score fetch failed for "+ep.sport+":",err);
+          return [];
+        });
     });
     Promise.all(promises).then(function(results){
       var allGames=results.reduce(function(acc,arr){return acc.concat(arr);},[]);
