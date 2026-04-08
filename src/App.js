@@ -1775,10 +1775,35 @@ var ESPN_NAME_MAP={
   "Cleveland Guardians":"Guardians","Los Angeles Angels":"Angels","Oakland Athletics":"Athletics",
   "Pittsburgh Pirates":"Pirates","Colorado Rockies":"Rockies","Arizona Diamondbacks":"Diamondbacks",
   "Cincinnati Reds":"Reds","Miami Marlins":"Marlins","Washington Nationals":"Nationals",
-  "LA Galaxy":"LA Galaxy","Los Angeles FC":"LAFC","Atlanta United FC":"Atlanta United",
-  "Seattle Sounders FC":"Seattle Sounders","Portland Timbers":"Portland Timbers",
-  "New York City FC":"NYC FC","Inter Miami CF":"Inter Miami","New York Red Bulls":"Red Bulls",
-  "Chicago Fire FC":"Chicago Fire","Columbus Crew":"Columbus Crew",
+  "LA Galaxy":"LA Galaxy","Los Angeles Galaxy":"LA Galaxy","Los Angeles FC":"LAFC","LAFC":"LAFC",
+  "Atlanta United FC":"Atlanta United","Atlanta United":"Atlanta United",
+  "Seattle Sounders FC":"Seattle Sounders","Seattle Sounders":"Seattle Sounders",
+  "Portland Timbers":"Portland Timbers",
+  "New York City FC":"NYC FC","NYCFC":"NYC FC","NYC FC":"NYC FC",
+  "Inter Miami CF":"Inter Miami","Inter Miami":"Inter Miami",
+  "New York Red Bulls":"Red Bulls","Red Bulls":"Red Bulls",
+  "Chicago Fire FC":"Chicago Fire","Chicago Fire":"Chicago Fire",
+  "Columbus Crew":"Columbus Crew",
+  "Toronto FC":"Toronto FC","Toronto":"Toronto FC",
+  "CF Montréal":"Montreal","CF Montreal":"Montreal","Montreal":"Montreal",
+  "New England Revolution":"Revolution","Revolution":"Revolution",
+  "D.C. United":"DC United","DC United":"DC United",
+  "Orlando City SC":"Orlando City","Orlando City":"Orlando City",
+  "FC Dallas":"FC Dallas","Dallas":"FC Dallas",
+  "Houston Dynamo FC":"Houston Dynamo","Houston Dynamo":"Houston Dynamo",
+  "Colorado Rapids":"Colorado Rapids",
+  "Real Salt Lake":"Real Salt Lake",
+  "Minnesota United FC":"Minnesota United","Minnesota United":"Minnesota United",
+  "Sporting Kansas City":"Sporting KC","Sporting KC":"Sporting KC",
+  "Vancouver Whitecaps FC":"Vancouver","Vancouver Whitecaps":"Vancouver","Vancouver":"Vancouver",
+  "San Jose Earthquakes":"San Jose","San Jose":"San Jose",
+  "Philadelphia Union":"Philadelphia Union",
+  "Nashville SC":"Nashville","Nashville":"Nashville",
+  "FC Cincinnati":"FC Cincinnati","Cincinnati":"FC Cincinnati",
+  "Austin FC":"Austin FC","Austin":"Austin FC",
+  "St. Louis City SC":"St. Louis City","St Louis City":"St. Louis City",
+  "Charlotte FC":"Charlotte FC","Charlotte":"Charlotte FC",
+  "St. Louis City":"St. Louis City","Portland":"Portland Timbers",
   "Alabama Crimson Tide":"Alabama","Ohio State Buckeyes":"Ohio State","Georgia Bulldogs":"Georgia",
   "Michigan Wolverines":"Michigan","LSU Tigers":"LSU","Clemson Tigers":"Clemson",
   "Oklahoma Sooners":"Oklahoma","Notre Dame Fighting Irish":"Notre Dame",
@@ -1814,6 +1839,12 @@ var ESPN_ABBR_MAP={
   "MLS:LA":"LA Galaxy","MLS:LAFC":"LAFC","MLS:ATL":"Atlanta United",
   "MLS:SEA":"Seattle Sounders","MLS:POR":"Portland Timbers","MLS:NYC":"NYC FC",
   "MLS:MIA":"Inter Miami","MLS:RBNY":"Red Bulls","MLS:CHI":"Chicago Fire","MLS:CLB":"Columbus Crew",
+  "MLS:TOR":"Toronto FC","MLS:MTL":"Montreal","MLS:NE":"Revolution","MLS:DC":"DC United",
+  "MLS:ORL":"Orlando City","MLS:DAL":"FC Dallas","MLS:HOU":"Houston Dynamo",
+  "MLS:COL":"Colorado Rapids","MLS:RSL":"Real Salt Lake","MLS:MIN":"Minnesota United",
+  "MLS:SKC":"Sporting KC","MLS:VAN":"Vancouver","MLS:SJ":"San Jose",
+  "MLS:PHI":"Philadelphia Union","MLS:NSH":"Nashville","MLS:CIN":"FC Cincinnati",
+  "MLS:ATX":"Austin FC","MLS:STL":"St. Louis City","MLS:CLT":"Charlotte FC",
 };
 function resolveTeamName(displayName, abbr, sport) {
   if(ESPN_NAME_MAP[displayName]) return ESPN_NAME_MAP[displayName];
@@ -1824,6 +1855,26 @@ function resolveTeamName(displayName, abbr, sport) {
   if(known.indexOf(last)>=0) return last;
   if(words.length>=2){var twoWord=words.slice(-2).join(" ");if(known.indexOf(twoWord)>=0) return twoWord;}
   return last||displayName;
+}
+// Tries multiple name candidates in order — used for soccer where ESPN returns inconsistent fields
+function resolveTeamNameMulti(names, abbr, sport) {
+  for(var i=0;i<names.length;i++){
+    var n=names[i];
+    if(!n) continue;
+    if(ESPN_NAME_MAP[n]) return ESPN_NAME_MAP[n];
+    if(sport&&abbr&&ESPN_ABBR_MAP[sport+":"+abbr]) return ESPN_ABBR_MAP[sport+":"+abbr];
+    // Check if this name IS already one of our card names directly
+    var cardNames=Object.values(ESPN_NAME_MAP);
+    if(cardNames.indexOf(n)>=0) return n;
+    // Try last word
+    var words=n.split(" "); var last=words[words.length-1];
+    if(cardNames.indexOf(last)>=0) return last;
+    // Try last two words
+    if(words.length>=2){var tw=words.slice(-2).join(" ");if(cardNames.indexOf(tw)>=0) return tw;}
+  }
+  // Last resort: return the longest non-empty candidate
+  var best=names.filter(Boolean).sort(function(a,b){return b.length-a.length;})[0]||"";
+  return best;
 }
 // active is computed from the real current month so the app self-corrects
 // Month ranges are inclusive. JS months are 0-indexed (0=Jan, 11=Dec).
@@ -1890,8 +1941,11 @@ function parseESPNEvent(event, sport) {
   var home=competitors.find(function(c){return c.homeAway==="home";})||competitors[0]||{};
   var away=competitors.find(function(c){return c.homeAway==="away";})||competitors[1]||{};
   if(!home.team||!away.team) return null;
-  var homeName=resolveTeamName(home.team.displayName||"",home.team.abbreviation||"",sport);
-  var awayName=resolveTeamName(away.team.displayName||"",away.team.abbreviation||"",sport);
+  // For soccer ESPN returns name fields differently — try multiple fields in order
+  var homeNames=[home.team.displayName||"",home.team.shortDisplayName||"",home.team.name||"",home.team.nickname||""];
+  var awayNames=[away.team.displayName||"",away.team.shortDisplayName||"",away.team.name||"",away.team.nickname||""];
+  var homeName=resolveTeamNameMulti(homeNames,home.team.abbreviation||"",sport);
+  var awayName=resolveTeamNameMulti(awayNames,away.team.abbreviation||"",sport);
   var st=event.status||{};
   var stType=st.type||{};
   var state=stType.state||"pre";
