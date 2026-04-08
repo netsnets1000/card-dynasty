@@ -162,18 +162,8 @@ function makeCard(sport,team,rarity){
   var rm=RMAP[rarity];
   return {id:genId(),sport:sport,team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52,likes:rand(0,48)};
 }
-var SOCIAL_PLAYERS=[
-  {name:"DynastyKing",avatar:"DK",color:"#E31837",favTeam:"Chiefs",bio:"3x Dynasty pulls. Fear me.",yield:4820,power:1240,sets:["NFC East","NBA Atlantic"],change:"up",streak:5,
-   inventory:[makeCard("NFL","Chiefs","Dynasty"),makeCard("NBA","Lakers","Dynasty"),makeCard("MLB","Yankees","Legendary"),makeCard("NFL","Ravens","Legendary"),makeCard("College","Alabama","Legacy"),makeCard("NFL","Eagles","Elite"),makeCard("NBA","Warriors","Elite"),makeCard("MLB","Dodgers","Rare"),makeCard("NFL","Cowboys","Rare"),makeCard("MLS","LA Galaxy","Base")]},
-  {name:"GridironGhost",avatar:"GG",color:"#003594",favTeam:"Cowboys",bio:"NFL purist.",yield:3960,power:1085,sets:["AFC North","AFC East","NFC East"],change:"up",streak:3,
-   inventory:[makeCard("NFL","Chiefs","Legendary"),makeCard("NFL","Cowboys","Legendary"),makeCard("NFL","Ravens","Legacy"),makeCard("NFL","Eagles","Legacy"),makeCard("NFL","Bills","Elite"),makeCard("NFL","Packers","Elite"),makeCard("NFL","Steelers","Rare"),makeCard("NFL","Patriots","Rare"),makeCard("NFL","Bengals","Base"),makeCard("NFL","Bears","Base")]},
-  {name:"HoloHunter",avatar:"HH",color:"#552583",favTeam:"Lakers",bio:"Chasing the holo.",yield:3410,power:980,sets:["NBA Pacific","NBA Atlantic"],change:"down",streak:0,
-   inventory:[makeCard("NBA","Lakers","Dynasty"),makeCard("NBA","Celtics","Legendary"),makeCard("NBA","Warriors","Legendary"),makeCard("NBA","Bulls","Legacy"),makeCard("NBA","Bucks","Elite"),makeCard("College","Michigan","Elite"),makeCard("MLB","Yankees","Rare"),makeCard("NFL","Chiefs","Rare"),makeCard("NBA","Nets","Base"),makeCard("NBA","Heat","Base")]},
-  {name:"WaxPackWizard",avatar:"WW",color:"#007A33",favTeam:"Celtics",bio:"Opening packs since day one.",yield:2875,power:872,sets:["NBA Atlantic","AL East"],change:"up",streak:2,
-   inventory:[makeCard("MLB","Yankees","Legendary"),makeCard("NBA","Celtics","Legacy"),makeCard("MLB","Red Sox","Legacy"),makeCard("College","Ohio State","Elite"),makeCard("MLB","Blue Jays","Elite"),makeCard("NBA","76ers","Rare"),makeCard("MLB","Orioles","Rare"),makeCard("NFL","Patriots","Rare"),makeCard("MLS","Columbus Crew","Base"),makeCard("College","Georgia","Base")]},
-  {name:"ObsidianOwl",avatar:"OO",color:"#002244",favTeam:"Patriots",bio:"Slow and steady.",yield:2340,power:754,sets:["AFC East"],change:"down",streak:0,
-   inventory:[makeCard("NFL","Patriots","Legacy"),makeCard("NFL","Bills","Legacy"),makeCard("College","Alabama","Elite"),makeCard("MLB","Yankees","Elite"),makeCard("NFL","Jets","Rare"),makeCard("NFL","Dolphins","Rare"),makeCard("NBA","Nets","Rare"),makeCard("MLS","NYC FC","Base"),makeCard("College","Michigan","Base"),makeCard("NFL","Giants","Base")]},
-];
+// SOCIAL_PLAYERS is now loaded from Supabase — this is just a fallback empty array
+var SOCIAL_PLAYERS=[];
 var NOISE='url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.08\'/%3E%3C/svg%3E")';
 var CSS=`
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap');
@@ -1495,191 +1485,181 @@ function PublicVault(props) {
     </div>
   );
 }
-// CHANGE 6: Thread shakeTeams through to PublicVault
+function PlayerRow(props) {
+  var player=props.player; var followed=props.followed; var onFollow=props.onFollow; var onView=props.onView;
+  var isFollowing=followed.includes(player.name)||followed.includes(player.id);
+  var sortedInv=(player.inventory||[]).slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
+  var topRarity=sortedInv[0]?sortedInv[0].rarity:"Base";
+  var ac=RCOLORS[topRarity]||"#aaa";
+  return (
+    <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,background:"rgba(10,10,20,0.9)",border:isFollowing?"1px solid rgba(245,197,24,0.2)":"1px solid #1a1a2e"}}>
+      <div style={{width:42,height:42,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+        <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{player.avatar}</span>
+      </div>
+      <div style={{flex:1,minWidth:0,cursor:"pointer"}} onClick={onView}>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
+          <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#ddd",textTransform:"uppercase"}}>{player.name}</span>
+          <span style={{fontSize:7,fontWeight:700,padding:"1px 5px",borderRadius:999,background:ac+"22",color:ac,border:"1px solid "+ac+"44",textTransform:"uppercase"}}>{topRarity}</span>
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"center"}}>
+          <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:"#fbbf24"}}>🪙 {fmt(player.yield)}/day</span>
+          <span style={{fontSize:9,color:"#555"}}>{(player.inventory||[]).length} cards</span>
+        </div>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"flex-end"}}>
+        <button onClick={function(){onFollow(player.name);}} style={{padding:"5px 14px",borderRadius:999,border:isFollowing?"1px solid #f5c518":"1px solid rgba(255,255,255,0.15)",background:isFollowing?"linear-gradient(135deg,#f5c518,#b8860b)":"rgba(255,255,255,0.04)",color:isFollowing?"#000":"#888",fontSize:10,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{isFollowing?"Following":"+ Follow"}</button>
+        <button onClick={onView} style={{padding:"4px 12px",borderRadius:999,border:"1px solid rgba(68,136,255,0.3)",background:"rgba(68,136,255,0.06)",color:"#4488ff",fontSize:9,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>View Vault</button>
+      </div>
+    </div>
+  );
+}
 function Social(props) {
-  var inventory=props.inventory; var initialVault=props.initialVault||null; var onClearVault=props.onClearVault;
-  var shakeTeams=props.shakeTeams||{};
+  var inventory=props.inventory; var initialVault=props.initialVault||null; var onClearVault=props.onClearVault; var shakeTeams=props.shakeTeams||{};
   var searchState=useState(""); var search=searchState[0]; var setSearch=searchState[1];
   var followedState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_followed")||"[]");}catch(e){return [];}});
   var followed=followedState[0]; var setFollowed=followedState[1];
   var viewingState=useState(initialVault); var viewing=viewingState[0]; var setViewing=viewingState[1];
+  var playersState=useState([]); var players=playersState[0]; var setPlayers=playersState[1];
+  var loadingState=useState(true); var loading=loadingState[0]; var setLoading=loadingState[1];
   useEffect(function(){if(initialVault)setViewing(initialVault);},[initialVault]);
+  useEffect(function(){
+    if(!supabase){setLoading(false);return;}
+    supabase.from("profiles").select("*").limit(50).then(function(res){
+      if(res.error||!res.data){setLoading(false);return;}
+      var profileRows=res.data;
+      if(!profileRows.length){setLoading(false);return;}
+      var ids=profileRows.map(function(p){return p.id;});
+      supabase.from("user_cards").select("*").in("user_id",ids).then(function(cardRes){
+        var cardRows=cardRes.data||[];
+        var parsed=profileRows.map(function(p){
+          var pCards=cardRows.filter(function(c){return c.user_id===p.id;}).map(function(c){return {id:c.card_id||genId(),sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,likes:0};});
+          var yld=pCards.reduce(function(s,c){return s+c.daily;},0);
+          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",bio:p.bio||"",yield:yld,inventory:pCards};
+        }).filter(function(p){return p.inventory.length>0;});
+        setPlayers(parsed);
+        setLoading(false);
+      });
+    });
+  },[]);
   function toggleFollow(name){
     var next=followed.includes(name)?followed.filter(function(n){return n!==name;}):[].concat(followed,[name]);
     setFollowed(next);
     try{localStorage.setItem("cd_followed",JSON.stringify(next));}catch(e){}
   }
-  var filtered=SOCIAL_PLAYERS.filter(function(p){return p.name.toLowerCase().includes(search.toLowerCase());});
-  var following=SOCIAL_PLAYERS.filter(function(p){return followed.includes(p.name);});
   if(viewing){
-    var vPlayer=SOCIAL_PLAYERS.find(function(p){return p.name===viewing;});
-    if(vPlayer)return <PublicVault player={vPlayer} myInventory={inventory} shakeTeams={shakeTeams} onBack={function(){setViewing(null);if(onClearVault)onClearVault();}}/>;
+    var vPlayer=players.find(function(p){return p.name===viewing||p.id===viewing;});
+    if(vPlayer) return <PublicVault player={vPlayer} myInventory={inventory} shakeTeams={shakeTeams} onBack={function(){setViewing(null);if(onClearVault)onClearVault();}}/>;
+    return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"40vh"}}><div style={{color:"#444",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.15em"}}>Loading Vault...</div></div>;
   }
+  var filtered=players.filter(function(p){return p.name.toLowerCase().includes(search.toLowerCase());});
+  var following=players.filter(function(p){return followed.includes(p.name)||followed.includes(p.id);});
   return (
     <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px 40px"}}>
       <div style={{textAlign:"center",marginBottom:20}}>
         <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:4}}>Social</div>
-        <div style={{fontSize:11,color:"#444"}}>Discover collectors - Follow rivals - Raid vaults</div>
+        <div style={{fontSize:11,color:"#444"}}>Discover collectors · Follow rivals · Raid vaults</div>
       </div>
       <div style={{position:"relative",marginBottom:20}}>
-        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search players..."
-          style={{width:"100%",background:"rgba(8,8,18,0.9)",border:"1px solid #1e1e2e",borderRadius:12,padding:"11px 14px 11px 36px",color:"#fff",fontSize:13,outline:"none"}}/>
+        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search players..." style={{width:"100%",background:"rgba(8,8,18,0.9)",border:"1px solid #1e1e2e",borderRadius:12,padding:"11px 14px 11px 36px",color:"#fff",fontSize:13,outline:"none"}}/>
         <div style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#444",pointerEvents:"none"}}>🔍</div>
       </div>
-      {following.length>0&&!search&&(
-        <div style={{marginBottom:20}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>Following ({following.length})</div>
-          <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:4}}>
-            {following.map(function(p){
-              return (
-                <div key={p.name} onClick={function(){setViewing(p.name);}} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,cursor:"pointer",flexShrink:0}}>
-         <div style={{width:46,height:46,borderRadius:"50%",background:"linear-gradient(135deg,"+p.color+"cc,"+p.color+"55)",border:"2px solid "+p.color,display:"flex",alignItems:"center",justifyContent:"center"}}>
-          <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:12,color:"#fff"}}>{p.avatar}</span>
-         </div>
-         <span style={{fontSize:8,color:"#888",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{p.name.slice(0,8)}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-      <div style={{display:"flex",flexDirection:"column",gap:6}}>
-        {filtered.map(function(player,i){
-          var isFollowing=followed.includes(player.name);
-          var sortedInv=player.inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
-          var topRarity=sortedInv[0]?sortedInv[0].rarity:"Base";
-          var ac=RCOLORS[topRarity]||"#aaa";
-          return (
-            <div key={player.name} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,background:i%2===0?"rgba(12,12,22,0.9)":"rgba(8,8,18,0.9)",border:isFollowing?"1px solid rgba(245,197,24,0.2)":"1px solid transparent"}}>
-              <div style={{width:42,height:42,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{player.avatar}</span>
-              </div>
-              <div style={{flex:1,minWidth:0,cursor:"pointer"}} onClick={function(){setViewing(player.name);}}>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
-         <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#ddd",textTransform:"uppercase"}}>{player.name}</span>
-         <span style={{fontSize:7,fontWeight:700,padding:"1px 5px",borderRadius:999,background:ac+"22",color:ac,border:"1px solid "+ac+"44",textTransform:"uppercase"}}>{topRarity}</span>
-         <span style={{fontSize:9,color:player.change==="up"?"#34d399":"#f87171"}}>{player.change==="up"?"▲":"▼"}</span>
-                </div>
-                <div style={{display:"flex",gap:10,alignItems:"center"}}>
-         <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:"#fbbf24"}}>🪙 {fmt(player.yield)}/day</span>
-         <span style={{fontSize:9,color:"#555"}}>{player.inventory.length} cards</span>
-         {player.streak>0&&<span style={{fontSize:9,color:"#fb923c"}}>🔥{player.streak}</span>}
-                </div>
-                {player.sets.length>0&&(
-         <div style={{display:"flex",gap:3,marginTop:3,flexWrap:"wrap"}}>
-          {player.sets.map(function(s){return <span key={s} style={{fontSize:6,padding:"1px 5px",borderRadius:999,background:"rgba(245,197,24,0.08)",color:"rgba(245,197,24,0.6)",border:"1px solid rgba(245,197,24,0.15)",textTransform:"uppercase"}}>{s}</span>;})}
-         </div>
-                )}
-              </div>
-              <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"flex-end"}}>
-                <button onClick={function(){toggleFollow(player.name);}} style={{padding:"5px 14px",borderRadius:999,border:isFollowing?"1px solid #f5c518":"1px solid rgba(255,255,255,0.15)",background:isFollowing?"linear-gradient(135deg,#f5c518,#b8860b)":"rgba(255,255,255,0.04)",color:isFollowing?"#000":"#888",fontSize:10,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",whiteSpace:"nowrap"}}>
-         {isFollowing?"Following":"+ Follow"}
-                </button>
-                <button onClick={function(){setViewing(player.name);}} style={{padding:"4px 12px",borderRadius:999,border:"1px solid rgba(68,136,255,0.3)",background:"rgba(68,136,255,0.06)",color:"#4488ff",fontSize:9,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
-         View Vault
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {loading&&<div style={{textAlign:"center",padding:40,color:"#333",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>Loading Players...</div>}
+      {!loading&&players.length===0&&<div style={{textAlign:"center",padding:40}}><div style={{fontSize:32,marginBottom:12}}>👥</div><div style={{fontFamily:"'Oswald',sans-serif",color:"#444",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>No other collectors yet</div><div style={{fontSize:11,color:"#333"}}>Invite friends — their vaults will appear here</div></div>}
+      {!loading&&following.length>0&&!search&&<div style={{marginBottom:20}}><div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>Following ({following.length})</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{following.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div></div>}
+      {!loading&&filtered.length>0&&<div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"#555",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>{search?"Results":"All Collectors"} ({filtered.length})</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{filtered.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div></div>}
     </div>
   );
 }
 function Leaderboard(props) {
-  var inventory=props.inventory; var balance=props.balance; var onViewVault=props.onViewVault;
+  var inventory=props.inventory; var balance=props.balance; var onViewVault=props.onViewVault; var profile=props.profile;
   var modeState=useState("yield"); var mode=modeState[0]; var setMode=modeState[1];
   var hovState=useState(null); var hovered=hovState[0]; var setHovered=hovState[1];
+  var playersState=useState([]); var players=playersState[0]; var setPlayers=playersState[1];
+  var loadingState=useState(true); var loading=loadingState[0]; var setLoading=loadingState[1];
   var userYield=inventory.reduce(function(s,c){return s+c.daily;},0);
   var userPower=inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50;
-  var userPlayer={name:"You",avatar:"ME",color:"#f5c518",favTeam:"Chiefs",yield:userYield,power:userPower,sets:[],change:"up",streak:0,isUser:true};
-  var allPlayers=SOCIAL_PLAYERS.concat([userPlayer]).sort(function(a,b){return mode==="yield"?b.yield-a.yield:b.power-a.power;});
+  var userInitials=(profile&&profile.avatarInitials)||"ME";
+  var userColor=(profile&&profile.avatarColor)||"#f5c518";
+  var userName=(profile&&profile.username)||"You";
+  var userPlayer={id:"__me",name:userName,avatar:userInitials,color:userColor,favTeam:(profile&&profile.favTeam)||"",yield:userYield,power:userPower,isUser:true};
+  useEffect(function(){
+    if(!supabase){setLoading(false);return;}
+    supabase.from("profiles").select("id,username,avatar_color,avatar_initials,fav_team").limit(50).then(function(res){
+      if(res.error||!res.data){setLoading(false);return;}
+      var ids=res.data.map(function(p){return p.id;});
+      if(!ids.length){setLoading(false);return;}
+      supabase.from("user_cards").select("user_id,daily,rarity").in("user_id",ids).then(function(cardRes){
+        var cardRows=cardRes.data||[];
+        var parsed=res.data.map(function(p){
+          var pCards=cardRows.filter(function(c){return c.user_id===p.id;});
+          var yld=pCards.reduce(function(s,c){return s+(c.daily||0);},0);
+          var pwr=pCards.length*10+pCards.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50;
+          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",yield:yld,power:pwr,cardCount:pCards.length};
+        }).filter(function(p){return p.cardCount>0;});
+        setPlayers(parsed);
+        setLoading(false);
+      });
+    });
+  },[]);
+  var allPlayers=players.filter(function(p){return p.id!=="__me";}).concat([userPlayer]).sort(function(a,b){return mode==="yield"?b.yield-a.yield:b.power-a.power;});
   var userRank=allPlayers.findIndex(function(p){return p.isUser;})+1;
-  var top3=allPlayers.slice(0,3);
-  var rest=allPlayers.slice(3);
+  var top3=allPlayers.slice(0,3); var rest=allPlayers.slice(3);
   var podiumOrder=[top3[1],top3[0],top3[2]].filter(Boolean);
-  var podiumHeights=[80,110,65];
-  var podiumRanks=[2,1,3];
-  var podiumColors=["#b0b8c8","#f5c518","#cd7f32"];
+  var podiumColors=["#b0b8c8","#f5c518","#cd7f32"]; var podiumHeights=[80,110,65]; var podiumRanks=[2,1,3];
   return (
     <div style={{maxWidth:680,margin:"0 auto",padding:"16px 16px 80px"}}>
       <div style={{textAlign:"center",marginBottom:20}}>
         <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:4}}>Rankings</div>
-        <div style={{fontSize:11,color:"#444"}}>Live leaderboard</div>
+        <div style={{fontSize:11,color:"#444"}}>Live leaderboard · Real players</div>
       </div>
       <div style={{display:"flex",justifyContent:"center",marginBottom:24}}>
         <div style={{display:"flex",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:999,padding:3,gap:2}}>
           {[["yield","🪙 Highest Yield"],["power","⚡ Collection Power"]].map(function(pair){
-            var m=pair[0]; var lbl=pair[1];
-            return <button key={m} onClick={function(){setMode(m);}} style={{padding:"7px 18px",borderRadius:999,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",background:mode===m?"linear-gradient(135deg,#f5c518,#b8860b)":"transparent",color:mode===m?"#000":"#555"}}>{lbl}</button>;
+            return <button key={pair[0]} onClick={function(){setMode(pair[0]);}} style={{padding:"7px 18px",borderRadius:999,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",background:mode===pair[0]?"linear-gradient(135deg,#f5c518,#b8860b)":"transparent",color:mode===pair[0]?"#000":"#555"}}>{pair[1]}</button>;
           })}
         </div>
       </div>
-      <div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:12,marginBottom:28}}>
+      {loading&&<div style={{textAlign:"center",padding:40,color:"#333",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.1em"}}>Loading Rankings...</div>}
+      {!loading&&allPlayers.length<2&&<div style={{textAlign:"center",padding:40}}><div style={{fontSize:32,marginBottom:12}}>🏆</div><div style={{fontFamily:"'Oswald',sans-serif",color:"#444",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>You're the first!</div><div style={{fontSize:11,color:"#333"}}>Invite friends to compete</div></div>}
+      {!loading&&allPlayers.length>=2&&<div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:12,marginBottom:28}}>
         {podiumOrder.map(function(player,pi){
-          var rank=podiumRanks[pi]; var h=podiumHeights[pi]; var col=podiumColors[pi];
-          var isFirst=rank===1;
+          var rank=podiumRanks[pi]; var h=podiumHeights[pi]; var col=podiumColors[pi]; var isFirst=rank===1;
           var val=mode==="yield"?fmt(player.yield)+"/d":fmt(player.power)+" pts";
-          return (
-            <div key={player.name} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-              {isFirst&&<div style={{fontFamily:"'Oswald',sans-serif",fontSize:8,fontWeight:900,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:999,padding:"2px 10px",marginBottom:2}}>Dynasty King</div>}
-              {isFirst&&<div style={{fontSize:20}}>👑</div>}
-              <div style={{width:isFirst?52:40,height:isFirst?52:40,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"66)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 10px "+player.color+"55"}}>
-                <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?14:11,color:"#fff"}}>{player.avatar}</span>
-              </div>
-              <div style={{fontSize:9,fontWeight:700,color:"#ccc",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",maxWidth:80,textAlign:"center",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{player.name}</div>
-              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,color:col,fontWeight:700}}>{val}</div>
-              <div style={{width:isFirst?90:75,height:h,borderRadius:"8px 8px 0 0",background:"linear-gradient(180deg,"+col+"33,"+col+"11)",border:"1px solid "+col+"55",borderBottom:"none",display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:8,boxShadow:"0 -4px 20px "+col+"44"}}>
-                <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?28:22,color:col+"88"}}>#{rank}</span>
-              </div>
-            </div>
-          );
+          return <div key={player.id||player.name} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+            {isFirst&&<div style={{fontFamily:"'Oswald',sans-serif",fontSize:8,fontWeight:900,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:999,padding:"2px 10px",marginBottom:2}}>Dynasty King</div>}
+            {isFirst&&<div style={{fontSize:20}}>👑</div>}
+            <div style={{width:isFirst?52:40,height:isFirst?52:40,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"66)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 10px "+player.color+"55"}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?14:11,color:"#fff"}}>{player.avatar}</span></div>
+            <div style={{fontSize:9,fontWeight:700,color:player.isUser?"#f5c518":"#ccc",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",maxWidth:80,textAlign:"center",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{player.name}</div>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,color:col,fontWeight:700}}>{val}</div>
+            <div style={{width:isFirst?90:75,height:h,borderRadius:"8px 8px 0 0",background:"linear-gradient(180deg,"+col+"33,"+col+"11)",border:"1px solid "+col+"55",borderBottom:"none",display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:8}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?28:22,color:col+"88"}}>#{rank}</span></div>
+          </div>;
         })}
-      </div>
+      </div>}
       <div style={{display:"flex",flexDirection:"column",gap:4}}>
         {rest.map(function(player,i){
-          var rank=i+4; var isUser=player.isUser;
-          var isHov=hovered===rank;
-          var col=getColors(player.favTeam||"Chiefs"); var hc=col[0];
+          var rank=i+4; var isUser=player.isUser; var isHov=hovered===rank;
+          var hc=getColors(player.favTeam||"")[0]||"#888";
           var val=mode==="yield"?fmt(player.yield)+"/day":fmt(player.power)+" pts";
-          return (
-            <div key={player.name}
-              onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}}
-              style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:10,background:isHov?hc+"18":isUser?"rgba(245,197,24,0.06)":i%2===0?"rgba(12,12,22,0.9)":"rgba(8,8,18,0.9)",border:isUser?"1px solid rgba(245,197,24,0.3)":isHov?"1px solid "+hc+"44":"1px solid transparent",transition:"all 0.15s"}}>
-              <div style={{width:28,textAlign:"center",fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:isUser?"#f5c518":"#444",flexShrink:0}}>#{rank}</div>
-              <div style={{width:14,flexShrink:0,fontSize:10,color:player.change==="up"?"#34d399":"#f87171"}}>{player.change==="up"?"▲":"▼"}</div>
-              <div style={{width:34,height:34,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:11,color:"#fff"}}>{player.avatar}</span>
-              </div>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
-         <span onClick={function(){if(!isUser&&onViewVault)onViewVault(player.name);}} style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:isUser?"#f5c518":"#ddd",textTransform:"uppercase",cursor:!isUser&&onViewVault?"pointer":"default"}}>{player.name}</span>
-         {isUser&&<span style={{fontSize:7,fontWeight:900,background:"#f5c518",color:"#000",padding:"1px 6px",borderRadius:999,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>You</span>}
-                </div>
-                {player.sets&&player.sets.length>0&&(
-         <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-          {player.sets.map(function(s){return <span key={s} style={{fontSize:6,padding:"1px 6px",borderRadius:999,background:"rgba(245,197,24,0.1)",color:"rgba(245,197,24,0.7)",border:"1px solid rgba(245,197,24,0.2)",textTransform:"uppercase"}}>{s}</span>;})}
-         </div>
-                )}
-              </div>
-              {player.streak>0&&<div style={{fontSize:9,color:"#fb923c",fontWeight:700,flexShrink:0}}>🔥{player.streak}</div>}
-              <div style={{textAlign:"right",flexShrink:0}}>
-                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:isUser?"#f5c518":"#ccd"}}>{val}</div>
-                <div style={{fontSize:8,color:"#444",textTransform:"uppercase"}}>{mode==="yield"?"yield":"power"}</div>
+          return <div key={player.id||player.name} onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:10,background:isHov?hc+"18":isUser?"rgba(245,197,24,0.06)":i%2===0?"rgba(12,12,22,0.9)":"rgba(8,8,18,0.9)",border:isUser?"1px solid rgba(245,197,24,0.3)":isHov?"1px solid "+hc+"44":"1px solid transparent",transition:"all 0.15s"}}>
+            <div style={{width:28,textAlign:"center",fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:isUser?"#f5c518":"#444",flexShrink:0}}>#{rank}</div>
+            <div style={{width:34,height:34,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:11,color:"#fff"}}>{player.avatar}</span></div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <span onClick={function(){if(!isUser&&onViewVault)onViewVault(player.name);}} style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:isUser?"#f5c518":"#ddd",textTransform:"uppercase",cursor:!isUser?"pointer":"default"}}>{player.name}</span>
+                {isUser&&<span style={{fontSize:7,fontWeight:900,background:"#f5c518",color:"#000",padding:"1px 6px",borderRadius:999,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>You</span>}
               </div>
             </div>
-          );
+            <div style={{textAlign:"right",flexShrink:0}}>
+              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:isUser?"#f5c518":"#ccd"}}>{val}</div>
+              <div style={{fontSize:8,color:"#444",textTransform:"uppercase"}}>{mode==="yield"?"yield":"power"}</div>
+            </div>
+          </div>;
         })}
       </div>
-      <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:100,background:"rgba(4,4,10,0.97)",backdropFilter:"blur(16px)",borderTop:"1px solid rgba(245,197,24,0.25)",padding:"10px 20px",display:"flex",alignItems:"center",gap:12,justifyContent:"space-between",boxShadow:"0 -4px 30px rgba(245,197,24,0.1)"}}>
+      <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:100,background:"rgba(4,4,10,0.97)",backdropFilter:"blur(16px)",borderTop:"1px solid rgba(245,197,24,0.25)",padding:"10px 20px",display:"flex",alignItems:"center",gap:12,justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:36,height:36,borderRadius:"50%",background:"linear-gradient(135deg,#f5c518,#b8860b)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:11,color:"#000"}}>ME</span>
-          </div>
-          <div>
-            <div style={{fontSize:9,color:"#666",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>Your Standing</div>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#f5c518"}}>Rank #{userRank} of {allPlayers.length}</div>
-          </div>
+          <div style={{width:36,height:36,borderRadius:"50%",background:"linear-gradient(135deg,"+userColor+","+userColor+"88)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:11,color:"#000"}}>{userInitials}</span></div>
+          <div><div style={{fontSize:9,color:"#666",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>Your Standing</div><div style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#f5c518"}}>Rank #{userRank} of {allPlayers.length}</div></div>
         </div>
         <div style={{textAlign:"right"}}>
           <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fbbf24"}}>🪙 {fmt(userYield)}/day</div>
@@ -2239,9 +2219,9 @@ function ProfileView(props) {
   var dailyYield=inventory.reduce(function(s,c){return s+c.daily;},0);
   var legendaryCount=inventory.filter(function(c){return c.rarity==="Legendary"||c.rarity==="Dynasty";}).length;
   var completedSets=Object.keys(DIVISIONS).filter(function(div){var info=DIVISIONS[div];var owned=new Set(inventory.filter(function(c){return c.sport===info.sport;}).map(function(c){return c.team;}));return info.teams.filter(function(t){return owned.has(t);}).length===info.teams.length;}).length;
-  var allYields=SOCIAL_PLAYERS.map(function(p){return p.yield;}).concat([dailyYield]);
+  var allYields=[dailyYield]; // real comparison will come from leaderboard data
   allYields.sort(function(a,b){return b-a;});
-  var myRank=allYields.indexOf(dailyYield)+1;
+  var myRank=1; // shown as #1 until leaderboard loads with real data
   var isTop100=myRank<=3;
   var pinnedCards=profile.pinnedIds.map(function(id){return inventory.find(function(c){return c.id===id;});}).filter(Boolean);
   while(pinnedCards.length<3) pinnedCards.push(null);
@@ -2509,8 +2489,7 @@ export default function App() {
       dbSaveProfile(uid,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});
     }
   }
-  var listingsState=useState(function(){return Array.from({length:8},function(){return genListing();});});
-  var listings=listingsState[0]; var setListings=listingsState[1];
+  var listingsState=useState([]); var listings=listingsState[0]; var setListings=listingsState[1];
   var myListingsState=useState([]); var myListings=myListingsState[0]; var setMyListings=myListingsState[1];
   var grailFeedState=useState([]); var grailFeed=grailFeedState[0]; var setGrailFeed=grailFeedState[1];
   var lastRefreshState=useState(Date.now()); var lastRefresh=lastRefreshState[0]; var setLastRefresh=lastRefreshState[1];
@@ -2626,28 +2605,102 @@ export default function App() {
     }
   }
 
+  // ── MARKETPLACE ────────────────────────────────────────────────────────────
+  function loadMarketListings() {
+    if(!supabase) return;
+    supabase.from("marketplace_listings").select("*").order("created_at",{ascending:false}).limit(20)
+      .then(function(res){
+        if(res.error){console.error("loadMarketListings error:",res.error);return;}
+        var rows=res.data||[];
+        var parsed=rows.map(function(r){
+          var card=null;
+          try{card=typeof r.card_data==="string"?JSON.parse(r.card_data):r.card_data;}catch(e){card=null;}
+          if(!card) return null;
+          return {id:r.id,card:card,price:r.price,seller:r.seller_name||"Collector",trend:Math.random()>0.5?"up":"down",trendPct:rand(1,18),listedAt:new Date(r.created_at).getTime(),sellerId:r.seller_id};
+        }).filter(Boolean);
+        setListings(parsed);
+        setLastRefresh(Date.now());
+        // Update grail feed with top rarity listings
+        var grails=parsed.filter(function(l){return ["Legacy","Legendary","Dynasty"].includes(l.card.rarity);}).slice(0,3)
+          .map(function(l){return {card:l.card,msg:l.seller+" listed a "+l.card.rarity+" "+l.card.team+" for "+fmt(l.price)+" coins"};});
+        if(grails.length) setGrailFeed(grails);
+      });
+  }
+
   function buyFromMarket(listing){
-    if(balance<listing.price)return;
+    if(balance<listing.price) return;
+    if(!supabase){
+      // No backend — local only fallback
+      var newBal=balance-listing.price;
+      setBalance(function(b){return b-listing.price;});
+      var newInv=[listing.card].concat(inventory);
+      setInventory(function(){return newInv;});
+      setListings(function(p){return p.filter(function(l){return l.id!==listing.id;});});
+      pushNotif("Purchased!","You bought "+listing.card.team+" "+listing.card.rarity+" for "+fmt(listing.price)+" coins","buy");
+      return;
+    }
     var newBal=balance-listing.price;
     setBalance(function(b){return b-listing.price;});
-    var newInv=inventory.slice();
-    setInventory(function(p){newInv=[listing.card].concat(p);return newInv;});
-    setListings(function(p){return p.map(function(l){return l.id===listing.id?genListing():l;});});
+    var newInv=[listing.card].concat(inventory);
+    setInventory(function(){return newInv;});
+    setListings(function(p){return p.filter(function(l){return l.id!==listing.id;});});
     pushNotif("Purchased!","You bought "+listing.card.team+" "+listing.card.rarity+" for "+fmt(listing.price)+" coins","buy");
-    if(["Legacy","Legendary","Dynasty"].includes(listing.card.rarity))setGrailFeed(function(p){return [{card:listing.card,msg:"You sniped a "+listing.card.rarity+" "+listing.card.team+" for "+fmt(listing.price)+" coins"}].concat(p).slice(0,3);});
-    if(userId){dbSaveProfile(userId,{coins:newBal});dbSaveCards(userId,newInv);}
+    if(["Legacy","Legendary","Dynasty"].includes(listing.card.rarity))
+      setGrailFeed(function(p){return [{card:listing.card,msg:"You sniped a "+listing.card.rarity+" "+listing.card.team+" for "+fmt(listing.price)+" coins"}].concat(p).slice(0,3);});
+    // Remove the listing from DB and credit the seller
+    supabase.from("marketplace_listings").delete().eq("id",listing.id)
+      .then(function(){
+        // Credit seller — update their coins
+        if(listing.sellerId){
+          supabase.from("profiles").select("coins").eq("id",listing.sellerId).maybeSingle()
+            .then(function(res){
+              var sellerCoins=(res&&res.data&&res.data.coins)||0;
+              supabase.from("profiles").update({coins:sellerCoins+listing.price}).eq("id",listing.sellerId);
+            });
+        }
+        // Save buyer's new inventory and balance
+        var uid=userId;
+        if(uid){dbSaveCards(uid,newInv);dbSaveProfile(uid,{coins:newBal});}
+      });
   }
 
   function listCard(card,price){
     var newInv=inventory.filter(function(c){return c.id!==card.id;});
     setInventory(function(){return newInv;});
-    setMyListings(function(p){return p.concat([{id:genId(),card:card,price:price,listedAt:Date.now(),duration:rand(30,120),seller:"You"}]);});
     setListModal(null);
     pushNotif("Listed!",card.team+" "+card.rarity+" listed for "+fmt(price)+" coins","info");
-    if(userId) dbSaveCards(userId,newInv);
+    var uid=userId;
+    var sellerName=(profile&&profile.username)||"Collector";
+    if(supabase&&uid){
+      // Save to marketplace_listings table
+      var cardData=JSON.stringify({id:card.id,sport:card.sport,team:card.team,rarity:card.rarity,daily:card.daily,win:card.win,mp:card.mp});
+      supabase.from("marketplace_listings").insert({seller_id:uid,seller_name:sellerName,card_data:cardData,price:price,created_at:new Date().toISOString()})
+        .then(function(res){
+          if(res.error){console.error("listCard error:",res.error);}
+          else{
+            loadMarketListings(); // Refresh listings for everyone
+            // Track as my listing for sold notification
+            setMyListings(function(p){return p.concat([{id:res.data&&res.data[0]&&res.data[0].id,card:card,price:price,listedAt:Date.now()}]);});
+          }
+        });
+      dbSaveCards(uid,newInv);
+    } else {
+      // No backend fallback
+      setMyListings(function(p){return p.concat([{id:genId(),card:card,price:price,listedAt:Date.now(),seller:sellerName}]);});
+      dbSaveCards(uid||"",newInv);
+    }
   }
 
-  function buyPack(pt){
+  function rotateMkt(){
+    loadMarketListings();
+  }
+
+  // Load marketplace on mount and every 60s
+  useEffect(function(){
+    loadMarketListings();
+    var t=setInterval(loadMarketListings,60000);
+    return function(){clearInterval(t);};
+  },[]);
     if(balance<pt.cost)return;
     var newBal=balance-pt.cost;
     setBalance(function(b){return b-pt.cost;});
@@ -2688,51 +2741,6 @@ export default function App() {
     pushNotif("Day Simulated","Streak advanced to Day "+newStreak,"info");
   }
 
-  function rotateMkt(){
-    setListings(function(prev){
-      var next=prev.slice();
-      var idxs=[rand(0,next.length-1),rand(0,next.length-1)].filter(function(v,i,a){return a.indexOf(v)===i;});
-      idxs.forEach(function(idx){
-        var l=next[idx];
-        if(["Legacy","Legendary","Dynasty"].includes(l.card.rarity))setGrailFeed(function(p){return [{card:l.card,msg:l.seller+" sold a "+l.card.rarity+" "+l.card.team+" for "+fmt(l.price)+" coins"}].concat(p).slice(0,3);});
-        next[idx]=genListing();
-      });
-      return next;
-    });
-    setLastRefresh(Date.now());
-  }
-  useEffect(function(){var t=setInterval(rotateMkt,60000);return function(){clearInterval(t);};},[]);
-  useEffect(function(){
-    if(myListings.length===0)return;
-    var t=setInterval(function(){
-      setMyListings(function(prev){
-        var rem=[];
-        prev.forEach(function(l){
-          if(Date.now()-l.listedAt>=l.duration*1000){
-            setBalance(function(b){return b+l.price;});
-            pushNotif("Card Sold!","Your "+l.card.team+" "+l.card.rarity+" sold for "+fmt(l.price)+" coins","sale");
-            if(["Legacy","Legendary","Dynasty"].includes(l.card.rarity))setGrailFeed(function(p){return [{card:l.card,msg:"You sold a "+l.card.rarity+" "+l.card.team+" for "+fmt(l.price)+" coins"}].concat(p).slice(0,3);});
-          }else rem.push(l);
-        });
-        return rem;
-      });
-    },2000);
-    return function(){clearInterval(t);};
-  },[myListings.length]);
-  function buyFromMarket(listing){
-    if(balance<listing.price)return;
-    setBalance(function(b){return b-listing.price;});
-    setInventory(function(p){return [listing.card].concat(p);});
-    setListings(function(p){return p.map(function(l){return l.id===listing.id?genListing():l;});});
-    pushNotif("Purchased!","You bought "+listing.card.team+" "+listing.card.rarity+" for "+fmt(listing.price)+" coins","buy");
-    if(["Legacy","Legendary","Dynasty"].includes(listing.card.rarity))setGrailFeed(function(p){return [{card:listing.card,msg:"You sniped a "+listing.card.rarity+" "+listing.card.team+" for "+fmt(listing.price)+" coins"}].concat(p).slice(0,3);});
-  }
-  function listCard(card,price){
-    setInventory(function(p){return p.filter(function(c){return c.id!==card.id;});});
-    setMyListings(function(p){return p.concat([{id:genId(),card:card,price:price,listedAt:Date.now(),duration:rand(30,120),seller:"You"}]);});
-    setListModal(null);
-    pushNotif("Listed!",card.team+" "+card.rarity+" listed for "+fmt(price)+" coins","info");
-  }
   function buyPack(pt){
     if(balance<pt.cost)return;
     setBalance(function(b){return b-pt.cost;});
@@ -2863,7 +2871,7 @@ export default function App() {
         {tab==="market"&&<Marketplace balance={balance} onBuy={buyFromMarket} listings={listings} myListings={myListings} grailFeed={grailFeed} onRefresh={rotateMkt} lastRefresh={lastRefresh} shakeTeams={shakeTeams}/>}
         {/* CHANGE 8: Pass shakeTeams to Social (threads to PublicVault) */}
         {tab==="social"&&<Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>}
-        {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
+        {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
         {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
         {tab==="inventory"&&(
           <div style={{padding:16,maxWidth:720,margin:"0 auto"}}>
