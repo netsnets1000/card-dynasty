@@ -1750,21 +1750,31 @@ var ESPN_NAME_MAP={
   "Green Bay Packers":"Packers","Chicago Bears":"Bears","Minnesota Vikings":"Vikings",
   "New York Giants":"Giants","New York Jets":"Jets","New England Patriots":"Patriots",
   "Pittsburgh Steelers":"Steelers","Denver Broncos":"Broncos","Las Vegas Raiders":"Raiders",
-  "Los Angeles Chargers":"Chargers","Seattle Seahawks":"Seahawks",
+  "Los Angeles Chargers":"Chargers","Seattle Seahawks":"Seahawks","Tennessee Titans":"Titans",
+  "Indianapolis Colts":"Colts","Jacksonville Jaguars":"Jaguars","Houston Texans":"Texans",
+  "Cleveland Browns":"Browns","Carolina Panthers":"Panthers","New Orleans Saints":"Saints",
+  "Tampa Bay Buccaneers":"Buccaneers","Atlanta Falcons":"Falcons","Los Angeles Rams":"Rams",
+  "Arizona Cardinals":"Cardinals","Washington Commanders":"Washington",
   "Los Angeles Lakers":"Lakers","Boston Celtics":"Celtics","Golden State Warriors":"Warriors",
   "Milwaukee Bucks":"Bucks","Denver Nuggets":"Nuggets","Miami Heat":"Heat",
   "Phoenix Suns":"Suns","Los Angeles Clippers":"Clippers","Philadelphia 76ers":"76ers",
   "Brooklyn Nets":"Nets","Chicago Bulls":"Bulls","New York Knicks":"Knicks",
   "Dallas Mavericks":"Mavericks","Memphis Grizzlies":"Grizzlies","New Orleans Pelicans":"Pelicans",
   "Atlanta Hawks":"Hawks","Toronto Raptors":"Raptors","Portland Trail Blazers":"Blazers",
-  "Utah Jazz":"Jazz","San Antonio Spurs":"Spurs",
+  "Utah Jazz":"Jazz","San Antonio Spurs":"Spurs","Minnesota Timberwolves":"Timberwolves",
+  "Oklahoma City Thunder":"Thunder","Sacramento Kings":"Kings","Indiana Pacers":"Pacers",
+  "Charlotte Hornets":"Hornets","Washington Wizards":"Wizards","Detroit Pistons":"Pistons",
+  "Orlando Magic":"Magic","Cleveland Cavaliers":"Cavaliers",
   "New York Yankees":"Yankees","Los Angeles Dodgers":"Dodgers","Boston Red Sox":"Red Sox",
   "Chicago Cubs":"Cubs","San Francisco Giants":"Giants","St. Louis Cardinals":"Cardinals",
   "Atlanta Braves":"Braves","Houston Astros":"Astros","New York Mets":"Mets",
   "Philadelphia Phillies":"Phillies","Toronto Blue Jays":"Blue Jays","Milwaukee Brewers":"Brewers",
   "San Diego Padres":"Padres","Seattle Mariners":"Mariners","Texas Rangers":"Rangers",
   "Detroit Tigers":"Tigers","Minnesota Twins":"Twins","Chicago White Sox":"White Sox",
-  "Kansas City Royals":"Royals","Baltimore Orioles":"Orioles",
+  "Kansas City Royals":"Royals","Baltimore Orioles":"Orioles","Tampa Bay Rays":"Rays",
+  "Cleveland Guardians":"Guardians","Los Angeles Angels":"Angels","Oakland Athletics":"Athletics",
+  "Pittsburgh Pirates":"Pirates","Colorado Rockies":"Rockies","Arizona Diamondbacks":"Diamondbacks",
+  "Cincinnati Reds":"Reds","Miami Marlins":"Marlins","Washington Nationals":"Nationals",
   "LA Galaxy":"LA Galaxy","Los Angeles FC":"LAFC","Atlanta United FC":"Atlanta United",
   "Seattle Sounders FC":"Seattle Sounders","Portland Timbers":"Portland Timbers",
   "New York City FC":"NYC FC","Inter Miami CF":"Inter Miami","New York Red Bulls":"Red Bulls",
@@ -1778,30 +1788,41 @@ var ESPN_NAME_MAP={
   "Iowa Hawkeyes":"Iowa","Wisconsin Badgers":"Wisconsin","Arkansas Razorbacks":"Arkansas",
 };
 var ESPN_ABBR_MAP={
-  KC:"Chiefs",PHI:"Eagles",DAL:"Cowboys",SF:"49ers",BAL:"Ravens",BUF:"Bills",
-  MIA:"Dolphins",CIN:"Bengals",DET:"Lions",GB:"Packers",CHI:"Bears",MIN:"Vikings",
-  NYG:"Giants",NYJ:"Jets",NE:"Patriots",PIT:"Steelers",DEN:"Broncos",LV:"Raiders",
-  LAC:"Chargers",SEA:"Seahawks",
-  LAL:"Lakers",BOS:"Celtics",GSW:"Warriors",MIL:"Bucks",DEN:"Nuggets",MIA:"Heat",
-  PHX:"Suns",LAC:"Clippers",PHI:"76ers",BKN:"Nets",CHI:"Bulls",NYK:"Knicks",
-  DAL:"Mavericks",MEM:"Grizzlies",NOP:"Pelicans",ATL:"Hawks",TOR:"Raptors",
-  POR:"Blazers",UTA:"Jazz",SAS:"Spurs",
-  NYY:"Yankees",LAD:"Dodgers",BOS:"Red Sox",CHC:"Cubs",SF:"Giants",STL:"Cardinals",
-  ATL:"Braves",HOU:"Astros",NYM:"Mets",PHI:"Phillies",TOR:"Blue Jays",MIL:"Brewers",
-  SD:"Padres",SEA:"Mariners",TEX:"Rangers",DET:"Tigers",MIN:"Twins",CWS:"White Sox",
-  KC:"Royals",BAL:"Orioles",
+  "NFL:KC":"Chiefs","NFL:PHI":"Eagles","NFL:DAL":"Cowboys","NFL:SF":"49ers",
+  "NFL:BAL":"Ravens","NFL:BUF":"Bills","NFL:MIA":"Dolphins","NFL:CIN":"Bengals",
+  "NFL:DET":"Lions","NFL:GB":"Packers","NFL:CHI":"Bears","NFL:MIN":"Vikings",
+  "NFL:NYG":"Giants","NFL:NYJ":"Jets","NFL:NE":"Patriots","NFL:PIT":"Steelers",
+  "NFL:DEN":"Broncos","NFL:LV":"Raiders","NFL:LAC":"Chargers","NFL:SEA":"Seahawks",
+  "NFL:TEN":"Titans","NFL:IND":"Colts","NFL:JAX":"Jaguars","NFL:HOU":"Texans",
+  "NFL:CLE":"Browns","NFL:CAR":"Panthers","NFL:NO":"Saints","NFL:TB":"Buccaneers",
+  "NFL:ATL":"Falcons","NFL:LAR":"Rams","NFL:ARI":"Cardinals","NFL:WSH":"Washington",
+  "NBA:LAL":"Lakers","NBA:BOS":"Celtics","NBA:GSW":"Warriors","NBA:MIL":"Bucks",
+  "NBA:DEN":"Nuggets","NBA:MIA":"Heat","NBA:PHX":"Suns","NBA:LAC":"Clippers",
+  "NBA:PHI":"76ers","NBA:BKN":"Nets","NBA:CHI":"Bulls","NBA:NYK":"Knicks",
+  "NBA:DAL":"Mavericks","NBA:MEM":"Grizzlies","NBA:NOP":"Pelicans","NBA:ATL":"Hawks",
+  "NBA:TOR":"Raptors","NBA:POR":"Blazers","NBA:UTA":"Jazz","NBA:SAS":"Spurs",
+  "NBA:MIN":"Timberwolves","NBA:OKC":"Thunder","NBA:SAC":"Kings","NBA:IND":"Pacers",
+  "NBA:CHA":"Hornets","NBA:WAS":"Wizards","NBA:DET":"Pistons","NBA:ORL":"Magic","NBA:CLE":"Cavaliers",
+  "MLB:NYY":"Yankees","MLB:LAD":"Dodgers","MLB:BOS":"Red Sox","MLB:CHC":"Cubs",
+  "MLB:SF":"Giants","MLB:STL":"Cardinals","MLB:ATL":"Braves","MLB:HOU":"Astros",
+  "MLB:NYM":"Mets","MLB:PHI":"Phillies","MLB:TOR":"Blue Jays","MLB:MIL":"Brewers",
+  "MLB:SD":"Padres","MLB:SEA":"Mariners","MLB:TEX":"Rangers","MLB:DET":"Tigers",
+  "MLB:MIN":"Twins","MLB:CWS":"White Sox","MLB:KC":"Royals","MLB:BAL":"Orioles",
+  "MLB:TB":"Rays","MLB:CLE":"Guardians","MLB:LAA":"Angels","MLB:OAK":"Athletics",
+  "MLB:PIT":"Pirates","MLB:COL":"Rockies","MLB:ARI":"Diamondbacks","MLB:CIN":"Reds",
+  "MLB:MIA":"Marlins","MLB:WSH":"Nationals",
+  "MLS:LA":"LA Galaxy","MLS:LAFC":"LAFC","MLS:ATL":"Atlanta United",
+  "MLS:SEA":"Seattle Sounders","MLS:POR":"Portland Timbers","MLS:NYC":"NYC FC",
+  "MLS:MIA":"Inter Miami","MLS:RBNY":"Red Bulls","MLS:CHI":"Chicago Fire","MLS:CLB":"Columbus Crew",
 };
-function resolveTeamName(displayName, abbr) {
+function resolveTeamName(displayName, abbr, sport) {
   if(ESPN_NAME_MAP[displayName]) return ESPN_NAME_MAP[displayName];
+  if(sport&&abbr&&ESPN_ABBR_MAP[sport+":"+abbr]) return ESPN_ABBR_MAP[sport+":"+abbr];
   var words=displayName.split(" ");
   var last=words[words.length-1];
   var known=Object.values(ESPN_NAME_MAP);
   if(known.indexOf(last)>=0) return last;
-  if(words.length>=2){
-    var twoWord=words.slice(-2).join(" ");
-    if(known.indexOf(twoWord)>=0) return twoWord;
-  }
-  if(abbr&&ESPN_ABBR_MAP[abbr]) return ESPN_ABBR_MAP[abbr];
+  if(words.length>=2){var twoWord=words.slice(-2).join(" ");if(known.indexOf(twoWord)>=0) return twoWord;}
   return last||displayName;
 }
 // active is computed from the real current month so the app self-corrects
@@ -1869,8 +1890,8 @@ function parseESPNEvent(event, sport) {
   var home=competitors.find(function(c){return c.homeAway==="home";})||competitors[0]||{};
   var away=competitors.find(function(c){return c.homeAway==="away";})||competitors[1]||{};
   if(!home.team||!away.team) return null;
-  var homeName=resolveTeamName(home.team.displayName||"",home.team.abbreviation||"");
-  var awayName=resolveTeamName(away.team.displayName||"",away.team.abbreviation||"");
+  var homeName=resolveTeamName(home.team.displayName||"",home.team.abbreviation||"",sport);
+  var awayName=resolveTeamName(away.team.displayName||"",away.team.abbreviation||"",sport);
   var st=event.status||{};
   var stType=st.type||{};
   var state=stType.state||"pre";
