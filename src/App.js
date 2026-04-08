@@ -822,6 +822,83 @@ function BoosterPack(props) {
   );
 }
 
+function HowToPlayModal(props) {
+  var onClose=props.onClose;
+  var steps=[
+    {
+      icon:"📦",
+      color:"#f5c518",
+      title:"Open Packs, Build Your Collection",
+      body:"Spend coins in the Shop to open booster packs. Each pack contains sports cards across NFL, NBA, MLB, MLS, and College. Rarer cards — Elite, Legacy, Legendary, Dynasty — earn significantly more coins per day.",
+    },
+    {
+      icon:"🪙",
+      color:"#34d399",
+      title:"Every Card Earns Daily Coins",
+      body:"Your collection generates passive income automatically. Check back each day and hit Game Day to collect your earnings. The more cards you own, and the rarer they are, the more coins you earn.",
+    },
+    {
+      icon:"🔴",
+      color:"#f87171",
+      title:"Live Scores Boost Your Cards",
+      body:"When a real game is happening, cards for that team glow and earn 1.5× their normal yield. Open the Live tab to see real-time scores for NBA, MLB, and MLS games happening right now.",
+    },
+    {
+      icon:"📈",
+      color:"#a78bfa",
+      title:"Trade on the Exchange",
+      body:"List cards you don't need on the Exchange and earn coins when they sell. Buy rare cards from other collectors to strengthen your dynasty. The goal: build the highest-yielding collection on the leaderboard.",
+    },
+  ];
+  var stepState=useState(0); var step=stepState[0]; var setStep=stepState[1];
+  var isLast=step===steps.length-1;
+  var s=steps[step];
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(16px)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div className="popup-anim" style={{background:"linear-gradient(160deg,rgba(8,6,20,0.98),rgba(4,3,14,0.99))",border:"1px solid rgba(245,197,24,0.2)",borderRadius:24,padding:"32px 28px",maxWidth:440,width:"100%",boxShadow:"0 0 80px rgba(245,197,24,0.08)"}}>
+        {/* Header */}
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"rgba(245,197,24,0.6)",letterSpacing:"0.3em",textTransform:"uppercase",marginBottom:6}}>Welcome to</div>
+          <div className="gold-logo" style={{fontSize:28,fontWeight:900,letterSpacing:3}}>CARD DYNASTY</div>
+        </div>
+        {/* Step dots */}
+        <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:28}}>
+          {steps.map(function(_,i){
+            return <div key={i} style={{width:i===step?24:8,height:8,borderRadius:999,background:i===step?"#f5c518":i<step?"rgba(245,197,24,0.4)":"rgba(255,255,255,0.15)",transition:"all 0.3s"}}/>;
+          })}
+        </div>
+        {/* Step content */}
+        <div key={step} className="popup-anim" style={{textAlign:"center",marginBottom:28,minHeight:140}}>
+          <div style={{fontSize:48,marginBottom:14,filter:"drop-shadow(0 0 16px "+s.color+"88)"}}>{s.icon}</div>
+          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:18,fontWeight:900,color:s.color,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>{s.title}</div>
+          <div style={{fontSize:14,color:"#b8c8e0",lineHeight:1.65,maxWidth:360,margin:"0 auto"}}>{s.body}</div>
+        </div>
+        {/* Navigation */}
+        <div style={{display:"flex",gap:10}}>
+          {step>0&&(
+            <button onClick={function(){setStep(function(s){return s-1;});}}
+              style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"12px",color:"#8899bb",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
+              ← Back
+            </button>
+          )}
+          <button onClick={isLast?onClose:function(){setStep(function(s){return s+1;});}}
+            style={{flex:2,background:isLast?"linear-gradient(135deg,#7a5500,#f5c518,#b8860b)":"linear-gradient(135deg,#1a1a3a,#2a2a5a)",border:isLast?"none":"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"13px",color:isLast?"#000":"#ccd6f6",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.08em"}}>
+            {isLast?"Let's Go! 🏆":"Next →"}
+          </button>
+        </div>
+        {/* Skip */}
+        {!isLast&&(
+          <div style={{textAlign:"center",marginTop:12}}>
+            <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:12,color:"rgba(255,255,255,0.3)",fontFamily:"'Inter',sans-serif",padding:0}}>
+              Skip intro
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DailyLoginModal(props) {
   var onClaim=props.onClaim; var onClose=props.onClose; var streakData=props.streakData;
   var currentStreak=streakData.currentStreak||1;
@@ -2812,6 +2889,7 @@ export default function App() {
   var notifsState=useState([]); var notifs=notifsState[0]; var setNotifs=notifsState[1];
   var socialVaultState=useState(null); var socialVault=socialVaultState[0]; var setSocialVault=socialVaultState[1];
   var loginModalState=useState(false); var showLoginModal=loginModalState[0]; var setShowLoginModal=loginModalState[1];
+  var howToPlayState=useState(false); var showHowToPlay=howToPlayState[0]; var setShowHowToPlay=howToPlayState[1];
   var streakDataState=useState(function(){var s=loadStreak();return {currentStreak:s.currentStreak||1,lastLoginDate:s.lastLoginDate||null,claimedDays:s.claimedDays||[]};});
   var streakData=streakDataState[0]; var setStreakData=streakDataState[1];
   var shakeTeamsState=useState({}); var shakeTeams=shakeTeamsState[0]; var setShakeTeams=shakeTeamsState[1];
@@ -2866,7 +2944,11 @@ export default function App() {
   useEffect(function(){
     var s=loadStreak();
     var today=new Date().toDateString();
-    if(s.lastLoginDate!==today){setTimeout(function(){setShowLoginModal(true);},800);}
+    // Only show daily login modal for returning users who have played before
+    // New users (lastLoginDate===null) just completed onboarding — skip it
+    if(s.lastLoginDate&&s.lastLoginDate!==today){
+      setTimeout(function(){setShowLoginModal(true);},800);
+    }
   },[]);
   function pushNotif(title,msg,type){
     var t=type||"info";
@@ -2880,6 +2962,8 @@ export default function App() {
     setOnboarded(true);
     setIsNewUser(false);
     setTab("shop");
+    // Show the How To Play guide for new users instead of the daily streak modal
+    setTimeout(function(){setShowHowToPlay(true);},600);
     // Build full profile data — merge any prefs set during profile setup step
     var prefs=pendingPrefsRef.current||loadProfile();
     var profileData={
@@ -3118,6 +3202,7 @@ export default function App() {
     <div style={{background:"#07070f",minHeight:"100vh",color:"#fff",fontFamily:"'Inter',system-ui,sans-serif"}}>
       <style>{CSS}</style>
       <Notifications notifs={notifs}/>
+      {showHowToPlay&&<HowToPlayModal onClose={function(){setShowHowToPlay(false);}}/>}
       {showLoginModal&&<DailyLoginModal streakData={streakData} onClaim={handleClaim} onClose={function(){setShowLoginModal(false);}}/>}
       {listModal&&<ListModal card={listModal} onConfirm={function(p){listCard(listModal,p);}} onClose={function(){setListModal(null);}}/>}
       {/* ── ORACLE BAR — persistent live score ticker ── */}
