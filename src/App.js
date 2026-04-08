@@ -336,9 +336,7 @@ var CSS=`
   .slide-up{animation:slideUp 0.4s ease-out forwards}
   .fade-in{animation:fadeIn 0.8s ease-out forwards}
   .notif{animation:notifSlide 4s ease-in-out forwards}
-  .live-dot{width:7px;height:7px;border-radius:50%;background:#34d399;animation:pulse 1.5s ease-in-out infinite}
-  .tab-btn{padding:10px 14px;font-size:11px;font-weight:700;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;color:#444;white-space:nowrap;transition:color .2s}
-  .tab-btn.on{color:#f5c518;border-bottom-color:#f5c518}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse 1.5s ease-in-out infinite}
   .inv-wrap{position:relative}
   .inv-wrap:hover .list-ov{opacity:1}
   .list-ov{position:absolute;inset:0;border-radius:14px;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;z-index:20}
@@ -3258,7 +3256,7 @@ export default function App() {
           </div>
         </div>
       )}
-      <div style={{display:"flex",borderBottom:"1px solid #0e0e1e",background:"rgba(4,4,10,0.96)",overflowX:"auto"}}>
+      <div style={{display:"flex",borderBottom:"1px solid #1e1e3a",background:"rgba(4,4,10,0.98)",overflowX:"auto"}}>
         {coreTabs.map(function(t){
           return <button key={t.id} className={"tab-btn"+(tab===t.id?" on":"")} onClick={function(){setTab(t.id);}}>{t.label}</button>;
         })}
