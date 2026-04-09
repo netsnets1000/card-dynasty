@@ -1293,10 +1293,53 @@ function DailyLoginModal(props) {
   var claimedState=useState(false); var claimed=claimedState[0]; var setClaimed=claimedState[1];
   var partState=useState(false); var particles=partState[0]; var setParticles=partState[1];
   var goldPts=Array.from({length:40},function(_,i){return {id:i,tx:rand(-200,200),ty:rand(-300,-50),size:rand(6,14),color:["#f5c518","#fbbf24","#fde68a","#ffe066"][rand(0,3)],delay:rand(0,400),dur:rand(700,1300)};});
+  // Detect if today's reward has already been claimed
+  var today=new Date().toDateString();
+  var alreadyClaimedToday=(streakData.claimedDays||[]).includes(today);
+  // Compute midnight countdown
+  var now=new Date();
+  var midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  var msLeft=midnight-now;
+  var hLeft=Math.floor(msLeft/3600000);
+  var mLeft=Math.floor((msLeft%3600000)/60000);
+  var timeUntilReset=hLeft+"h "+mLeft+"m";
   function claim(){
     setClaimed(true); setParticles(true);
     setTimeout(function(){setParticles(false);},2000);
     setTimeout(function(){onClaim(reward);},600);
+  }
+
+  // ── ALREADY CLAIMED STATE ─────────────────────────────────────────────────
+  if(alreadyClaimedToday){
+    var nextDayIdx=Math.min(currentStreak,6); // next reward
+    var nextReward=STREAK_REWARDS[nextDayIdx];
+    return (
+      <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)"}}>
+        <div className="popup-anim" style={{background:"linear-gradient(160deg,rgba(4,10,4,0.97),rgba(8,18,8,0.98))",border:"1px solid rgba(52,211,153,0.3)",borderRadius:24,padding:"28px 24px",maxWidth:380,width:"94%",boxShadow:"0 0 80px rgba(52,211,153,0.08)",textAlign:"center"}}>
+          <div style={{fontSize:48,marginBottom:12}}>✅</div>
+          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"rgba(52,211,153,0.7)",letterSpacing:"0.3em",textTransform:"uppercase",marginBottom:6}}>Already Claimed</div>
+          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:900,color:"#fff",marginBottom:6}}>Come Back Tomorrow</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:20}}>
+            <span style={{fontSize:16}}>🔥</span>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{currentStreak} Day Streak</span>
+          </div>
+          <div style={{background:"rgba(52,211,153,0.06)",border:"1px solid rgba(52,211,153,0.2)",borderRadius:14,padding:"14px 18px",marginBottom:20}}>
+            <div style={{fontSize:13,color:"#8899bb",marginBottom:8}}>Next reward unlocks in</div>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:22,fontWeight:700,color:"#34d399",marginBottom:10}}>{timeUntilReset}</div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+              <div style={{fontSize:24}}>{nextReward.icon}</div>
+              <div style={{textAlign:"left"}}>
+                <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:"#f5c518",textTransform:"uppercase"}}>Day {nextDayIdx+1} — {nextReward.label}</div>
+                <div style={{fontSize:12,color:"#8899bb"}}>Keep your streak alive!</div>
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{width:"100%",background:"linear-gradient(135deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em"}}>
+            Back to Vault
+          </button>
+        </div>
+      </div>
+    );
   }
   return (
     <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)"}}>
@@ -3012,6 +3055,7 @@ function ProfileView(props) {
   var inventory=props.inventory; var balance=props.balance; var streakData=props.streakData;
   var profile=props.profile; var packsOpened=props.packsOpened||0;
   var onSaveProfile=props.onSaveProfile; var onBack=props.onBack;
+  var liveTeams=props.liveTeams||new Set();
   var editState=useState(false); var showEdit=editState[0]; var setShowEdit=editState[1];
   var editNameState=useState(profile.username); var editName=editNameState[0]; var setEditName=editNameState[1];
   var editBioState=useState(profile.bio); var editBio=editBioState[0]; var setEditBio=editBioState[1];
@@ -3824,7 +3868,7 @@ export default function App() {
         {tab==="grading"&&<GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>}
         {tab==="social"&&<Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>}
         {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
-        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
+        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
         {tab==="inventory"&&(
           <div style={{padding:16,maxWidth:720,margin:"0 auto"}}>
             <div style={{display:"flex",gap:8,marginBottom:16}}>
