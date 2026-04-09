@@ -305,7 +305,7 @@ function makeCard(sport,team,rarity){
 var SOCIAL_PLAYERS=[];
 var NOISE='url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.08\'/%3E%3C/svg%3E")';
 var CSS=`
-  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Barlow:wght@400;500;600;700&family=Oswald:wght@600;700&family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&family=Roboto+Mono:wght@500;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:#07070f;color:#e8eaf0;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5}
   input,textarea,button{font-family:inherit}
@@ -461,6 +461,49 @@ var CSS=`
   .slab-gem{animation:gemPulse 1.5s ease-in-out infinite}
   .slab-reveal{animation:slabReveal 0.7s cubic-bezier(0.2,1.1,0.4,1) forwards}
   .screen-shake{animation:shakeScreen 0.4s ease-out}
+  /* ── TOPPS DESIGN SYSTEM ───────────────────────────────────────────────── */
+  .topps-screen{min-height:100vh;background:#f0ede8;color:#111;font-family:'Barlow',sans-serif}
+  .topps-ticker{background:#e8161e;overflow:hidden;white-space:nowrap;height:32px;display:flex;align-items:center}
+  .topps-ticker-inner{display:inline-flex;gap:0;animation:oracleTicker 28s linear infinite}
+  .topps-ticker-item{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;padding:0 24px;display:inline-flex;align-items:center;gap:8px}
+  .topps-ticker-item::after{content:'◆';font-size:7px;opacity:0.5;margin-left:8px}
+  .topps-header{background:#fff;border-bottom:3px solid #e8161e;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100}
+  .topps-logo-main{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:#111;line-height:1}
+  .topps-logo-main em{color:#e8161e;font-style:normal}
+  .topps-logo-sub{font-size:9px;letter-spacing:0.3em;color:#888;text-transform:uppercase;font-weight:600;font-family:'Barlow',sans-serif}
+  .topps-nav-link{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#444;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent;transition:all 0.15s;background:none;border-left:none;border-right:none;border-top:none}
+  .topps-nav-link:hover{color:#e8161e;border-bottom-color:#e8161e}
+  .topps-nav-link.on{color:#e8161e;border-bottom-color:#e8161e}
+  .topps-hero{background:#111;position:relative;overflow:hidden;padding:48px 20px 44px}
+  .topps-hero-stripes{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);pointer-events:none}
+  .topps-section{background:#f0ede8;padding:28px 20px}
+  .topps-section-dark{background:#111;padding:28px 20px}
+  .topps-section-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#111;display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .topps-section-title::after{content:'';display:block;width:36px;height:3px;background:#e8161e}
+  .topps-btn-primary{background:#e8161e;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;padding:13px 36px;border:none;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:background 0.15s}
+  .topps-btn-primary:hover{background:#c01018}
+  .topps-btn-primary:disabled{background:#ccc;cursor:not-allowed;clip-path:none}
+  .topps-btn-secondary{background:transparent;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:11px 28px;border:1.5px solid rgba(255,255,255,0.3);cursor:pointer;transition:border-color 0.15s}
+  .topps-btn-secondary:hover{border-color:#fff}
+  .topps-btn-outline{background:transparent;color:#e8161e;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:11px 28px;border:1.5px solid #e8161e;cursor:pointer;transition:all 0.15s;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
+  .topps-btn-outline:hover{background:#e8161e;color:#fff}
+  .topps-input{width:100%;background:#fff;border:1.5px solid #ccc;padding:11px 14px;color:#111;font-size:14px;font-family:'Barlow',sans-serif;font-weight:500;outline:none;transition:border-color 0.2s;border-radius:0}
+  .topps-input:focus{border-color:#e8161e}
+  .topps-input::placeholder{color:#aaa}
+  .topps-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:5px;display:block}
+  .topps-card{background:#fff;border:1px solid #ddd;overflow:hidden;cursor:pointer;transition:transform 0.12s,box-shadow 0.12s;position:relative}
+  .topps-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+  .topps-product-card{background:#fff;border:1px solid #e0ddd8;overflow:hidden;cursor:pointer;transition:transform 0.12s,box-shadow 0.12s;position:relative}
+  .topps-product-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+  .topps-rarity-pill{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:4px 12px;border:1.5px solid;cursor:pointer;transition:all 0.12s}
+  .topps-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.4em;color:#e8161e;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .topps-eyebrow::before{content:'';width:24px;height:2px;background:#e8161e;flex-shrink:0}
+  .topps-feature-box{background:rgba(255,255,255,0.04);border-left:3px solid #e8161e;padding:14px 16px}
+  .topps-divider{height:1px;background:#e8e8e8;margin:16px 0}
+  .topps-tag{background:#e8161e;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;clip-path:polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+  .topps-serial{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.5);padding:2px 6px;letter-spacing:0.05em}
+  @keyframes toppsReveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .topps-reveal{animation:toppsReveal 0.4s ease-out both}
   .envelope-flap{transform-origin:top center;animation:envelopeFlap 0.55s cubic-bezier(0.4,0,0.2,1) forwards}
   .card-slide-out{animation:cardSlideOut 0.65s cubic-bezier(0.2,1.2,0.4,1) 0.3s forwards;opacity:0}
   .light-leak{animation:lightLeak 0.5s ease-out forwards}
@@ -1484,89 +1527,86 @@ function ProfileSetupStep(props) {
   }
 
   return (
-    <div className="popup-anim" style={{background:"rgba(6,4,16,0.98)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:24,padding:"32px 28px",maxWidth:460,width:"94%",zIndex:1,backdropFilter:"blur(20px)"}}>
-      {/* Progress indicator */}
-      <div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:24}}>
-        {["Account","Your Dynasty","Get Cards"].map(function(step,i){
-          var done=i<1; var active=i===1;
-          return (
-            <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
-              <div style={{width:24,height:24,borderRadius:"50%",background:done?"#34d399":active?"#f5c518":"rgba(255,255,255,0.08)",border:"1.5px solid "+(done?"#34d399":active?"#f5c518":"rgba(255,255,255,0.75)"),display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <span style={{fontSize:12,fontWeight:900,color:done?"#000":active?"#000":"#8899bb",fontFamily:"'Oswald',sans-serif"}}>{done?"✓":i+1}</span>
-              </div>
-              <span style={{fontSize:12,color:active?"#f5c518":done?"#34d399":"#8899bb",fontFamily:"'Oswald',sans-serif",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>{step}</span>
-              {i<2&&<div style={{width:20,height:1,background:"rgba(255,255,255,0.2)"}}/>}
-            </div>
-          );
-        })}
-      </div>
-
-      <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{fontSize:28,marginBottom:8}}>⚡</div>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:20,fontWeight:900,color:"#fff",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Build Your Dynasty</div>
-        <div style={{fontSize:14,color:"rgba(255,255,255,0.72)",lineHeight:1.6,maxWidth:340,margin:"0 auto"}}>Choose a name that strikes fear into rival collectors. Pick your sport and team to get matched cards in your Genesis pack.</div>
-      </div>
-
-      {/* Username */}
-      <div style={{marginBottom:16}}>
-        <div style={{fontSize:13,color:"rgba(255,255,255,0.72)",letterSpacing:"0.15em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:6}}>Your Dynasty Name</div>
-        <div style={{position:"relative"}}>
-          <input
-            value={username}
-            onChange={function(e){setUsername(e.target.value);setErr("");}}
-            placeholder="e.g. GrailHunter99, DynastyKing..."
-            maxLength={20}
-            style={{width:"100%",background:"rgba(255,255,255,0.05)",border:"1px solid "+(username.length>=3?"rgba(245,197,24,0.4)":"rgba(255,255,255,0.75)"),borderRadius:12,padding:"12px 44px 12px 14px",color:"#fff",fontSize:14,fontWeight:700,outline:"none",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.05em",transition:"border-color 0.2s"}}
-          />
-          <span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",fontSize:13,color:"rgba(255,255,255,0.55)",fontFamily:"'JetBrains Mono',monospace"}}>{username.length}/20</span>
+    <div style={{display:"flex",gap:40,maxWidth:860,width:"100%",alignItems:"flex-start",flexWrap:"wrap"}}>
+      {/* Left info panel */}
+      <div style={{flex:"1 1 260px",minWidth:240}} className="topps-reveal">
+        <div className="topps-eyebrow" style={{marginBottom:12}}>Step 2 of 3</div>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(26px,5vw,38px)",fontWeight:900,letterSpacing:"0.02em",textTransform:"uppercase",color:"#111",lineHeight:0.95,marginBottom:16}}>
+          Set Up Your<br/><em style={{color:"#e8161e",fontStyle:"normal"}}>Dynasty</em>
         </div>
-      </div>
-
-      {/* Favourite sport pills */}
-      <div style={{marginBottom:16}}>
-        <div style={{fontSize:13,color:"rgba(255,255,255,0.72)",letterSpacing:"0.15em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:8}}>Favourite Sport <span style={{color:"rgba(255,255,255,0.55)",fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:12}}>(optional)</span></div>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          {Object.keys(ALL_TEAMS).map(function(s){
-            var active=favSport===s;
-            var sc=SPORT_COLORS[s]||"#b8c8e0";
-            return (
-              <button key={s} onClick={function(){setFavSport(active?"":s);setFavTeam("");}}
-                style={{padding:"7px 16px",borderRadius:999,border:"1.5px solid "+(active?sc:sc+"44"),background:active?sc+"22":"transparent",color:active?sc:"rgba(255,255,255,0.72)",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.08em",transition:"all 0.15s"}}>
-                {s}
-              </button>
-            );
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#666",lineHeight:1.6,marginBottom:20}}>
+          Your name becomes your identity on the leaderboard. Your favourite team gets guaranteed cards in your genesis pack.
+        </div>
+        {/* Step tracker */}
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {[{n:1,label:"Create Account",done:true},{n:2,label:"Build Your Dynasty",done:false,active:true},{n:3,label:"Open Genesis Pack",done:false}].map(function(s){
+            return <div key={s.n} style={{display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:24,height:24,background:s.done?"#111":s.active?"#e8161e":"#ddd",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,color:s.done||s.active?"#fff":"#888"}}>{s.done?"✓":s.n}</span>
+              </div>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:s.active?"#e8161e":s.done?"#111":"#aaa"}}>{s.label}</span>
+            </div>;
           })}
         </div>
       </div>
 
-      {/* Favourite team — only shown after sport is picked */}
-      {favSport&&teamsForSport.length>0&&(
-        <div style={{marginBottom:16}}>
-          <div style={{fontSize:13,color:"rgba(255,255,255,0.72)",letterSpacing:"0.15em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:8}}>Favourite Team</div>
-          <div style={{display:"flex",gap:7,flexWrap:"wrap",maxHeight:140,overflowY:"auto",paddingRight:4}}>
-            {teamsForSport.map(function(team){
-              var active=favTeam===team;
-              var col=getColors(team)[0];
-              return (
-                <button key={team} onClick={function(){setFavTeam(active?"":team);}}
-                  style={{padding:"6px 12px",borderRadius:8,border:"1.5px solid "+(active?col:col+"33"),background:active?col+"22":"rgba(0,0,0,0.3)",color:active?"#fff":"rgba(255,255,255,0.75)",fontSize:13,fontWeight:active?700:400,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em",transition:"all 0.15s",display:"flex",alignItems:"center",gap:5}}>
-                  {active&&<span style={{fontSize:11}}>✓</span>}
-                  {team}
-                </button>
-              );
+      {/* Right form */}
+      <div style={{flex:"1 1 340px",minWidth:300,background:"#fff",border:"1px solid #e0ddd8",padding:"32px 28px"}} className="topps-reveal">
+        <div style={{borderBottom:"3px solid #e8161e",paddingBottom:14,marginBottom:22}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>Your Collector Profile</div>
+        </div>
+
+        {/* Username */}
+        <div style={{marginBottom:20}}>
+          <label className="topps-label">Dynasty Name *</label>
+          <div style={{position:"relative"}}>
+            <input className="topps-input" value={username} onChange={function(e){setUsername(e.target.value);setErr("");}}
+              placeholder="e.g. GrailHunter99" maxLength={20}
+              style={{paddingRight:52,borderColor:username.length>=3?"#e8161e":"#ccc"}}/>
+            <span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,color:"#aaa"}}>{username.length}/20</span>
+          </div>
+        </div>
+
+        {/* Sport pills */}
+        <div style={{marginBottom:20}}>
+          <label className="topps-label">Favourite Sport <span style={{fontWeight:400,letterSpacing:0,textTransform:"none",fontSize:11,color:"#aaa"}}>(optional)</span></label>
+          <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
+            {Object.keys(ALL_TEAMS).map(function(s){
+              var active=favSport===s;
+              var sc={NFL:"#1144cc",NBA:"#cc1133",MLB:"#1155bb",MLS:"#116611",College:"#cc5500"}[s]||"#888";
+              return <button key={s} onClick={function(){setFavSport(active?"":s);setFavTeam("");}}
+                style={{padding:"6px 14px",border:"1.5px solid "+(active?sc:sc+"55"),background:active?sc:"transparent",color:active?"#fff":sc,fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",cursor:"pointer",transition:"all 0.12s"}}>
+                {s}
+              </button>;
             })}
           </div>
         </div>
-      )}
 
-      {err&&<div style={{fontSize:14,color:"#f87171",marginBottom:10,textAlign:"center"}}>{err}</div>}
+        {/* Team pills */}
+        {favSport&&teamsForSport.length>0&&(
+          <div style={{marginBottom:20}}>
+            <label className="topps-label">Favourite Team</label>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",maxHeight:150,overflowY:"auto",paddingRight:4,paddingBottom:2}}>
+              {teamsForSport.map(function(team){
+                var active=favTeam===team;
+                var col=getColors(team)[0];
+                return <button key={team} onClick={function(){setFavTeam(active?"":team);}}
+                  style={{padding:"5px 12px",border:"1.5px solid "+(active?col:col+"44"),background:active?col+"18":"transparent",color:active?"#111":"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:active?700:600,letterSpacing:"0.06em",textTransform:"uppercase",cursor:"pointer",transition:"all 0.12s",display:"flex",alignItems:"center",gap:4}}>
+                  {active&&<span style={{fontSize:10,color:col}}>✓</span>}{team}
+                </button>;
+              })}
+            </div>
+          </div>
+        )}
 
-      <button onClick={handleContinue}
-        style={{width:"100%",background:"linear-gradient(135deg,#7a5500,#f5c518,#b8860b)",color:"#000",fontWeight:900,fontSize:14,padding:"14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:10}}>
-        Open My Genesis Pack →
-      </button>
-      <div style={{textAlign:"center"}}>
-        <button onClick={function(){onComplete(null);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:"rgba(255,255,255,0.6)",fontFamily:"'Inter',sans-serif",padding:0}}>Skip — use defaults</button>
+        {err&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#e8161e",marginBottom:12,fontWeight:600}}>{err}</div>}
+
+        <button onClick={handleContinue} className="topps-btn-primary" style={{width:"100%",fontSize:15,padding:"14px",clipPath:"none",borderRadius:0,marginBottom:10}}>
+          Open My Genesis Pack →
+        </button>
+        <button onClick={function(){onComplete(null);}} style={{width:"100%",background:"none",border:"none",cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",padding:"8px 0",textDecoration:"underline"}}>
+          Skip — use defaults
+        </button>
       </div>
     </div>
   );
@@ -1663,8 +1703,9 @@ function AuthForm(props) {
 
   return (
     <div>
+      {/* Google SSO */}
       <button onClick={handleGoogle} disabled={loading}
-        style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:10,background:"#fff",color:"#1a1a1a",fontWeight:700,fontSize:13,padding:"12px 16px",borderRadius:12,border:"none",cursor:loading?"not-allowed":"pointer",marginBottom:14,opacity:loading?0.7:1,fontFamily:"'Inter',sans-serif"}}>
+        style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:10,background:"#fff",color:"#1a1a1a",fontWeight:700,fontSize:14,padding:"12px 16px",border:"1.5px solid #ddd",cursor:loading?"not-allowed":"pointer",marginBottom:14,opacity:loading?0.7:1,fontFamily:"'Barlow',sans-serif",transition:"border-color 0.15s"}}>
         <svg width={18} height={18} viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -1673,22 +1714,33 @@ function AuthForm(props) {
         </svg>
         {loading?"Connecting...":"Continue with Google"}
       </button>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-        <div style={{flex:1,height:1,background:"rgba(255,255,255,0.2)"}}/>
-        <span style={{fontSize:13,color:"rgba(255,255,255,0.6)",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em"}}>OR</span>
-        <div style={{flex:1,height:1,background:"rgba(255,255,255,0.2)"}}/>
+      {/* Divider */}
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+        <div style={{flex:1,height:1,background:"#e8e8e8"}}/>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#aaa",letterSpacing:"0.2em",textTransform:"uppercase"}}>OR</span>
+        <div style={{flex:1,height:1,background:"#e8e8e8"}}/>
       </div>
-      {isSignup&&<div style={{marginBottom:10}}><input value={name} onChange={function(e){setName(e.target.value);setErr("");}} placeholder="Your name" style={{width:"100%",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 14px",color:"#fff",fontSize:14,outline:"none",fontFamily:"'Inter',sans-serif"}}/></div>}
-      <div style={{marginBottom:10}}><input type="email" value={email} onChange={function(e){setEmail(e.target.value);setErr("");}} placeholder="Email address" style={{width:"100%",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 14px",color:"#fff",fontSize:14,outline:"none",fontFamily:"'Inter',sans-serif"}}/></div>
-      <div style={{marginBottom:err?8:14}}><input type="password" value={pass} onChange={function(e){setPass(e.target.value);setErr("");}} placeholder="Password" style={{width:"100%",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:10,padding:"12px 14px",color:"#fff",fontSize:14,outline:"none",fontFamily:"'Inter',sans-serif"}}/></div>
-      {err&&<div style={{fontSize:14,color:"#f87171",marginBottom:10,textAlign:"center"}}>{err}</div>}
-      <button onClick={handleSubmit} disabled={loading}
-        style={{width:"100%",background:loading?"rgba(255,255,255,0.06)":"linear-gradient(135deg,#7a5500,#f5c518,#b8860b)",color:loading?"#99aacc":"#000",fontWeight:900,fontSize:13,padding:"13px",borderRadius:999,border:"none",cursor:loading?"not-allowed":"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:12}}>
-        {loading?"Please wait...":(isSignup?"Create Account & Enter Vault":"Sign In")}
+      {/* Inputs */}
+      {isSignup&&<div style={{marginBottom:10}}>
+        <label className="topps-label">Full Name</label>
+        <input className="topps-input" value={name} onChange={function(e){setName(e.target.value);setErr("");}} placeholder="Your name"/>
+      </div>}
+      <div style={{marginBottom:10}}>
+        <label className="topps-label">Email Address</label>
+        <input className="topps-input" type="email" value={email} onChange={function(e){setEmail(e.target.value);setErr("");}} placeholder="you@example.com"/>
+      </div>
+      <div style={{marginBottom:err?10:16}}>
+        <label className="topps-label">Password</label>
+        <input className="topps-input" type="password" value={pass} onChange={function(e){setPass(e.target.value);setErr("");}} placeholder="Min. 6 characters"/>
+      </div>
+      {err&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#e8161e",fontWeight:600,marginBottom:12,padding:"8px 12px",background:"#fff0f0",border:"1px solid #f5c0c0"}}>{err}</div>}
+      <button onClick={handleSubmit} disabled={loading} className="topps-btn-primary"
+        style={{width:"100%",fontSize:15,padding:"14px",clipPath:"none",borderRadius:0,opacity:loading?0.7:1,marginBottom:12}}>
+        {loading?"Please wait...":(isSignup?"Create Account":"Sign In")}
       </button>
-      <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"center"}}>
-        {isSignup&&<button onClick={function(){onComplete(cards,500);}} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:"rgba(255,255,255,0.65)",fontFamily:"'Inter',sans-serif",padding:0}}>Skip for now — continue as guest</button>}
-        {onBack&&<button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:"rgba(255,255,255,0.65)",fontFamily:"'Inter',sans-serif",padding:0}}>← Back</button>}
+      <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center"}}>
+        {isSignup&&<button onClick={function(){onComplete(cards,500);}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",textDecoration:"underline",padding:0}}>Skip for now — continue as guest</button>}
+        {onBack&&<button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",textDecoration:"underline",padding:0}}>← Back</button>}
       </div>
     </div>
   );
@@ -1699,17 +1751,13 @@ function Onboarding(props) {
   var onSavePrefs=props.onSavePrefs||function(){};
   var isNewUser=props.isNewUser||false;
   var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
-
-  // When auth completes and isNewUser becomes true, jump to profile_setup
-  // (useState initial value only runs once, so we need useEffect to react to prop changes)
-  useEffect(function(){
-    if(isNewUser) setPhase("profile_setup");
-  },[isNewUser]);
-  var glowingState=useState(false); var glowing=glowingState[0]; var setGlowing=glowingState[1];
+  useEffect(function(){if(isNewUser) setPhase("profile_setup");},[isNewUser]);
+  var glowingState=useState(false); var setGlowing=glowingState[1];
   var cardsState=useState([]); var cards=cardsState[0]; var setCards=cardsState[1];
   var flippedState=useState([]); var flippedIds=flippedState[0]; var setFlippedIds=flippedState[1];
   var celebState=useState(false); var celebrate=celebState[0]; var setCelebrate=celebState[1];
   var partState=useState(false); var particles=partState[0]; var setParticles=partState[1];
+
   function claim(){
     var starterRates={Base:60,Rare:25,Elite:10,Legacy:3,Legendary:1.5,Dynasty:0.5};
     var starterSports=["NFL","NBA","MLB","MLS","College"];
@@ -1725,122 +1773,339 @@ function Onboarding(props) {
   function handleFlip(c){setFlippedIds(function(p){return p.concat([c.id]);});}
   var allFlipped=flippedIds.length===5&&cards.length===5;
   useEffect(function(){if(allFlipped)setTimeout(function(){setCelebrate(true);},600);},[allFlipped]);
-  return (
-    <div style={{minHeight:"100vh",background:"#04040a",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,position:"relative",overflow:"hidden"}}>
-      <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:0,animation:"goldVein 4s ease-in-out infinite"}} viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <filter id="vb"><feGaussianBlur stdDeviation="3"/></filter>
-          <linearGradient id="vg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#f5c518" stopOpacity="0"/><stop offset="50%" stopColor="#f5c518" stopOpacity="0.5"/><stop offset="100%" stopColor="#b8860b" stopOpacity="0"/></linearGradient>
-        </defs>
-        <path d="M-50,300 Q150,80 300,200 T600,150 T900,300" stroke="url(#vg1)" strokeWidth="1.5" fill="none" filter="url(#vb)"/>
-        <path d="M-50,400 Q200,500 400,350 T750,420 T950,300" stroke="url(#vg1)" strokeWidth="1" fill="none" filter="url(#vb)" opacity="0.6"/>
-      </svg>
-      {phase==="landing"&&(
-        <div className="fade-in" style={{display:"flex",flexDirection:"column",alignItems:"center",gap:26,zIndex:1,maxWidth:560,width:"100%",textAlign:"center"}}>
-          <div>
-            <div className="gold-logo" style={{fontSize:"clamp(38px,9vw,66px)",fontWeight:900,lineHeight:1,letterSpacing:4}}>CARD DYNASTY</div>
-            <div style={{width:130,height:1,background:"linear-gradient(90deg,transparent,#f5c518,transparent)",margin:"8px auto"}}/>
-            <div style={{fontSize:12,color:"rgba(245,197,24,0.38)",letterSpacing:8,fontWeight:600,textTransform:"uppercase"}}>Collect - Trade - Dominate</div>
-          </div>
-          <div style={{animation:"textReveal 0.8s 0.3s ease-out both"}}>
-            <div style={{fontSize:"clamp(18px,4.5vw,28px)",fontWeight:900,color:"#fff",lineHeight:1.25,marginBottom:10,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>A New Era of Collecting Begins.</div>
-            <div style={{fontSize:"clamp(12px,2.5vw,14px)",color:"rgba(255,255,255,0.72)",lineHeight:1.75,maxWidth:420,margin:"0 auto"}}>The vault is open. Build your empire, command your collection, and dominate the game.</div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:14}}>
-            <div style={{animation:"genesisPulse 2.5s ease-in-out infinite",borderRadius:4,display:"inline-block"}}>
-              <BoosterPack packId="genesis" size={130} floating={false}/>
+
+  // Ticker items
+  var tickerItems=["2025 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now","2025 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now"];
+
+  var toppsHeader=(
+    <div style={{display:"flex",flexDirection:"column"}}>
+      {/* Ticker */}
+      <div className="topps-ticker">
+        <div className="topps-ticker-inner">
+          {tickerItems.map(function(t,i){return <span key={i} className="topps-ticker-item">{t}</span>;})}
+        </div>
+      </div>
+      {/* Header */}
+      <div className="topps-header">
+        <div>
+          <div className="topps-logo-main">CARD <em>DYNASTY</em></div>
+          <div className="topps-logo-sub">Official Collector Platform · 2025</div>
+        </div>
+        <div style={{display:"flex",gap:20}}>
+          {["Shop","Exchange","Collection","Live","Rankings"].map(function(n){
+            return <button key={n} className="topps-nav-link">{n}</button>;
+          })}
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"center"}}>
+          <button onClick={function(){setPhase("login");}} className="topps-btn-outline" style={{padding:"7px 18px",fontSize:13}}>Sign In</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── LANDING ────────────────────────────────────────────────────────────────
+  if(phase==="landing") return (
+    <div className="topps-screen">
+      {toppsHeader}
+      {/* Hero */}
+      <div className="topps-hero">
+        <div className="topps-hero-stripes"/>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:32,flexWrap:"wrap",position:"relative",zIndex:2}}>
+          <div style={{flex:1,minWidth:260}} className="topps-reveal">
+            <div className="topps-eyebrow" style={{marginBottom:12}}>2025 Season · Free to Play</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,8vw,72px)",fontWeight:900,letterSpacing:"0.02em",lineHeight:0.92,textTransform:"uppercase",color:"#fff",marginBottom:16}}>
+              Build Your<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Dynasty.</em>
             </div>
-            <button onClick={function(){setPhase("signup");}} style={{background:"linear-gradient(135deg,#7a5500,#f5c518,#a07000)",color:"#000",fontWeight:900,fontSize:13,padding:"14px 38px",borderRadius:999,border:"none",cursor:"pointer",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",animation:"claimPulse 2s ease-in-out infinite"}}>
-              Claim Your Starter Pack (Free)
-            </button>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginTop:2}}>
-              <span style={{fontSize:14,color:"rgba(255,255,255,0.65)"}}>Already have an account?</span>
-              <button onClick={function(){setPhase("login");}} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,fontWeight:700,color:"#f5c518",fontFamily:"'Oswald',sans-serif",textDecoration:"underline",textUnderlineOffset:3,letterSpacing:"0.05em",textTransform:"uppercase",padding:0}}>Log In</button>
+            <div style={{fontSize:16,color:"rgba(255,255,255,0.65)",lineHeight:1.65,marginBottom:28,maxWidth:380,fontFamily:"'Barlow',sans-serif"}}>
+              Collect official cards across NFL, NBA, MLB, MLS &amp; College. Every card earns real daily coins. Live scores boost your collection in real time.
+            </div>
+            <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:28}}>
+              <button onClick={function(){setPhase("signup");}} className="topps-btn-primary" style={{fontSize:16,padding:"14px 40px"}}>
+                Claim Free Starter Pack
+              </button>
+              <button onClick={function(){setPhase("login");}} className="topps-btn-secondary">
+                Sign In
+              </button>
+            </div>
+            <div style={{display:"flex",gap:32}}>
+              {[["150+","Teams"],["6","Rarities"],["Live","Scores"],["Free","To Play"]].map(function(s){
+                return <div key={s[0]}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:"0.02em"}}>{s[0]}</div>
+                  <div style={{fontSize:10,letterSpacing:"0.2em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",fontWeight:600,marginTop:2}}>{s[1]}</div>
+                </div>;
+              })}
             </div>
           </div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"center"}}>
-            {["NFL","NBA","MLB","MLS","College"].map(function(s){
-              return <span key={s} style={{fontSize:12,fontWeight:700,padding:"4px 14px",borderRadius:999,border:"1px solid "+(SPORT_COLORS[s]||"#b8c8e0")+"55",color:SPORT_COLORS[s]||"#b8c8e0",background:(SPORT_COLORS[s]||"#b8c8e0")+"11"}}>{s}</span>;
+
+          {/* Hero cards — authentic Topps anatomy */}
+          <div style={{display:"flex",gap:14,alignItems:"flex-end",flexShrink:0}}>
+            {[
+              {team:"Celtics",sport:"NBA",rarity:"RARE",color:"#004488",accent:"#3388ff",code:"BOS",serial:null,rotate:-5,shift:14},
+              {team:"Lakers",sport:"NBA",rarity:"DYNASTY",color:"#7a4f00",accent:"#f5c518",code:"LAL",serial:"2 / 10",rotate:0,shift:0,featured:true},
+              {team:"Chiefs",sport:"NFL",rarity:"ELITE",color:"#8a0000",accent:"#ff6040",code:"KC",serial:null,rotate:5,shift:14},
+            ].map(function(c){
+              var W=c.featured?124:104; var H=c.featured?176:148;
+              return (
+                <div key={c.team} style={{width:W,height:H,background:"#fff",position:"relative",borderRadius:4,overflow:"hidden",boxShadow:c.featured?"0 12px 48px rgba(0,0,0,0.7),0 0 0 1px rgba(245,197,24,0.3)":"0 8px 32px rgba(0,0,0,0.6)",transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",flexShrink:0,cursor:"pointer",transition:"transform 0.15s"}}>
+                  {/* Left team stripe — authentic 2025 Topps design */}
+                  <div style={{position:"absolute",left:0,top:0,bottom:0,width:16,background:c.color,zIndex:4,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:900,letterSpacing:"0.15em",textTransform:"uppercase",writingMode:"vertical-rl",transform:"rotate(180deg)",color:"rgba(255,255,255,0.95)",whiteSpace:"nowrap"}}>{c.team.toUpperCase()}</span>
+                  </div>
+                  {/* Photo area */}
+                  <div style={{position:"absolute",left:16,top:0,right:0,bottom:34,background:"linear-gradient(145deg,"+c.color+"dd,"+c.color+"88)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:c.featured?32:26,fontWeight:900,letterSpacing:"0.05em",color:c.accent,opacity:0.85}}>{c.code}</span>
+                    {/* Chrome refractor sheen */}
+                    <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.1) 35%,rgba(255,255,255,0) 55%,rgba("+c.accent.replace("#","").match(/../g).map(function(h){return parseInt(h,16);}).join(",")+",.06) 75%,rgba(255,255,255,0) 100%)"}}/>
+                  </div>
+                  {/* Serial */}
+                  {c.serial&&<div className="topps-serial" style={{position:"absolute",top:6,right:6,zIndex:5}}>{c.serial}</div>}
+                  {/* Rarity tag */}
+                  <div style={{position:"absolute",top:0,right:0,zIndex:5,background:c.featured?"#f5c518":"#e8161e",color:c.featured?"#000":"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,letterSpacing:"0.06em",padding:"2px 7px"}}>{c.rarity}</div>
+                  {/* CD watermark */}
+                  <div style={{position:"absolute",bottom:36,right:6,zIndex:3,fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:700,color:"rgba(255,255,255,0.25)",letterSpacing:"0.1em"}}>CD 2025</div>
+                  {/* Name plate */}
+                  <div style={{position:"absolute",bottom:0,left:0,right:0,height:34,background:"#fff",borderTop:"2px solid "+(c.featured?"#c8a800":"#222"),padding:"0 8px 0 20px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:c.featured?12:10,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",lineHeight:1}}>{c.team.toUpperCase()}</div>
+                    <div style={{display:"flex",justifyContent:"space-between",marginTop:2}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:600,color:"#888",letterSpacing:"0.08em",textTransform:"uppercase"}}>{c.sport} · {c.rarity}</span>
+                    </div>
+                  </div>
+                </div>
+              );
             })}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* ── STEP 1: SIGN UP — shown before pack is opened ── */}
-      {phase==="signup"&&(
-        <div className="popup-anim" style={{background:"rgba(6,4,16,0.98)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:24,padding:"32px 28px",maxWidth:480,width:"94%",zIndex:1,backdropFilter:"blur(20px)"}}>
-          {/* Game explainer */}
-          <div style={{textAlign:"center",marginBottom:22}}>
-            <div className="gold-logo" style={{fontSize:20,fontWeight:900,letterSpacing:3,marginBottom:10}}>CARD DYNASTY</div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16,textAlign:"left"}}>
+      {/* Features strip */}
+      <div style={{background:"#fff",borderBottom:"1px solid #e8e8e8"}}>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",flexWrap:"wrap"}}>
+          {[
+            {icon:"📦",title:"Open Packs",desc:"NFL, NBA, MLB, MLS & College cards from foil packs"},
+            {icon:"🪙",title:"Earn Daily Coins",desc:"Every card generates passive income every day"},
+            {icon:"🔴",title:"Live Score Boosts",desc:"Cards earn 1.5× when your team plays in real time"},
+            {icon:"📈",title:"Trade & Rank",desc:"List on the Exchange, complete sets, climb the board"},
+          ].map(function(f,i){
+            return (
+              <div key={i} style={{flex:"1 1 200px",padding:"20px 24px",borderRight:i<3?"1px solid #eee":"none",display:"flex",gap:14,alignItems:"flex-start"}}>
+                <span style={{fontSize:20,flexShrink:0}}>{f.icon}</span>
+                <div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:3}}>{f.title}</div>
+                  <div style={{fontSize:13,color:"#777",lineHeight:1.5,fontFamily:"'Barlow',sans-serif"}}>{f.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Rarity ladder */}
+      <div style={{background:"#f0ede8",padding:"20px",borderBottom:"1px solid #e0ddd8"}}>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginRight:8}}>Rarity Scale:</span>
+          {[{r:"Base",c:"#aaa"},{r:"Rare",c:"#4488ff"},{r:"Elite",c:"#22bb66"},{r:"Legacy",c:"#c8a800"},{r:"Legendary",c:"#e8161e"},{r:"Dynasty",c:"#8822cc"}].map(function(item){
+            return <span key={item.r} className="topps-rarity-pill" style={{borderColor:item.c,color:item.c,background:item.c+"11"}}>{item.r}</span>;
+          })}
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#aaa",marginLeft:"auto",letterSpacing:"0.1em",textTransform:"uppercase"}}>Dynasty cards numbered /10</span>
+        </div>
+      </div>
+
+      {/* CTA footer band */}
+      <div style={{background:"#e8161e",padding:"28px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(22px,4vw,30px)",fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#fff",marginBottom:14}}>
+          Your free starter pack is waiting.
+        </div>
+        <button onClick={function(){setPhase("signup");}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
+          Get Started — It's Free
+        </button>
+      </div>
+    </div>
+  );
+
+  // ── SIGNUP ─────────────────────────────────────────────────────────────────
+  if(phase==="signup") return (
+    <div className="topps-screen">
+      {toppsHeader}
+      <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
+        <div style={{display:"flex",gap:40,maxWidth:920,width:"100%",alignItems:"flex-start",flexWrap:"wrap"}}>
+          {/* Left — what you get */}
+          <div style={{flex:"1 1 300px",minWidth:280}} className="topps-reveal">
+            <div className="topps-eyebrow" style={{marginBottom:16,color:"#e8161e"}}>What you get</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(28px,5vw,42px)",fontWeight:900,letterSpacing:"0.02em",textTransform:"uppercase",color:"#111",lineHeight:0.95,marginBottom:20}}>Your Free<br/><em style={{color:"#e8161e",fontStyle:"normal"}}>Genesis Pack</em></div>
+            <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:24}}>
               {[
-                {icon:"📦",title:"Collect Cards",desc:"Pull NFL, NBA, MLB, MLS & College cards from foil packs"},
-                {icon:"🪙",title:"Earn Daily Coins",desc:"Every card generates passive income — the rarer the card, the more it earns"},
-                {icon:"🔴",title:"Live Game Boosts",desc:"Cards glow and earn 1.5× when your team is playing in real time"},
-                {icon:"📈",title:"Trade & Dominate",desc:"List cards on the Exchange, complete sets, and climb the leaderboard"},
+                {icon:"🃏",text:"5 cards across all 5 sports"},
+                {icon:"🪙",text:"500 bonus coins to start"},
+                {icon:"📊",text:"Instant daily yield from day one"},
+                {icon:"🔴",text:"Live score boosts on real games"},
               ].map(function(f,i){
-                return (
-                  <div key={i} style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12,padding:"12px 10px"}}>
-                    <div style={{fontSize:20,marginBottom:6}}>{f.icon}</div>
-                    <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#f5c518",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>{f.title}</div>
-                    <div style={{fontSize:13,color:"rgba(255,255,255,0.72)",lineHeight:1.5}}>{f.desc}</div>
-                  </div>
-                );
+                return <div key={i} className="topps-feature-box" style={{display:"flex",gap:12,alignItems:"center"}}>
+                  <span style={{fontSize:18,flexShrink:0}}>{f.icon}</span>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:600,color:"#333"}}>{f.text}</span>
+                </div>;
               })}
             </div>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Create Your Account</div>
-            <div style={{fontSize:14,color:"rgba(255,255,255,0.7)"}}>Save your collection and progress across devices</div>
+            {/* Mini card preview */}
+            <div style={{background:"#111",padding:20,display:"flex",gap:8,justifyContent:"center",flexWrap:"wrap"}}>
+              {["NFL","NBA","MLB","MLS","CFB"].map(function(s){
+                var colors={NFL:"#1144cc",NBA:"#cc1133",MLB:"#1155bb",MLS:"#116611",CFB:"#cc5500"};
+                return <div key={s} style={{width:56,height:80,background:colors[s],position:"relative",borderRadius:2,overflow:"hidden",boxShadow:"0 4px 12px rgba(0,0,0,0.5)"}}>
+                  <div style={{position:"absolute",left:0,top:0,bottom:0,width:8,background:"rgba(0,0,0,0.4)"}}/>
+                  <div style={{position:"absolute",bottom:0,left:0,right:0,height:20,background:"#fff",borderTop:"1.5px solid #333",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#111",letterSpacing:"0.06em"}}>{s}</span>
+                  </div>
+                  <div style={{position:"absolute",top:2,right:2,background:"#e8161e",padding:"1px 4px"}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:5,fontWeight:900,color:"#fff",letterSpacing:"0.04em"}}>FREE</span>
+                  </div>
+                </div>;
+              })}
+            </div>
           </div>
-          <AuthForm mode="signup" onComplete={function(){setPhase("profile_setup");}} cards={[]} onBack={function(){setPhase("landing");}}/>
-        </div>
-      )}
 
-      {/* ── STEP 2: PROFILE SETUP — username + fav sport & team ── */}
-      {phase==="profile_setup"&&(
+          {/* Right — auth form */}
+          <div style={{flex:"1 1 340px",minWidth:300,background:"#fff",border:"1px solid #e0ddd8",padding:"32px 28px"}} className="topps-reveal">
+            <div style={{borderBottom:"3px solid #e8161e",paddingBottom:16,marginBottom:24}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",marginBottom:4}}>Create Account</div>
+              <div style={{fontSize:13,color:"#888",fontFamily:"'Barlow',sans-serif"}}>Save your collection and progress across devices</div>
+            </div>
+            <AuthForm mode="signup" onComplete={function(){setPhase("profile_setup");}} cards={[]} onBack={function(){setPhase("landing");}}/>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── LOGIN ──────────────────────────────────────────────────────────────────
+  if(phase==="login") return (
+    <div className="topps-screen">
+      {toppsHeader}
+      <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px"}}>
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"36px 32px",maxWidth:400,width:"100%"}} className="topps-reveal">
+          <div style={{borderBottom:"3px solid #e8161e",paddingBottom:16,marginBottom:24}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",marginBottom:4}}>Welcome Back</div>
+            <div style={{fontSize:13,color:"#888",fontFamily:"'Barlow',sans-serif"}}>Sign in to your Card Dynasty account</div>
+          </div>
+          <AuthForm mode="login" onComplete={onComplete} cards={cards} onBack={function(){setPhase("landing");}}/>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── SHAKING ────────────────────────────────────────────────────────────────
+  if(phase==="shaking") return (
+    <div className="topps-screen" style={{minHeight:"100vh",background:"#111",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:24}}>
+      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.35em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Opening your genesis pack...</div>
+      <div style={{position:"relative"}}>
+        <ParticleBurst active={particles}/>
+        <BoosterPack packId="genesis" size={140} shaking={true} floating={false}/>
+      </div>
+      <div style={{width:200,height:3,background:"#222",overflow:"hidden"}}>
+        <div style={{height:"100%",background:"#e8161e",animation:"shimmerSweep 1.5s ease-in-out infinite",backgroundSize:"200% 100%",backgroundImage:"linear-gradient(90deg,#e8161e 0%,#ff6060 50%,#e8161e 100%)"}}/>
+      </div>
+    </div>
+  );
+
+  // ── REVEAL ─────────────────────────────────────────────────────────────────
+  if(phase==="reveal"&&!celebrate) return (
+    <div className="topps-screen" style={{minHeight:"100vh",background:"#111",display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 16px 80px"}}>
+      {/* Header */}
+      <div style={{width:"100%",maxWidth:800,marginBottom:32,display:"flex",alignItems:"center",gap:16}}>
+        <div style={{flex:1}}>
+          <div className="topps-eyebrow" style={{marginBottom:8}}>Genesis Pack</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(24px,5vw,38px)",fontWeight:900,letterSpacing:"0.02em",textTransform:"uppercase",color:"#fff",lineHeight:1}}>
+            {allFlipped?"Your Dynasty Begins!":"Reveal Your Cards"}
+          </div>
+        </div>
+        <div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",padding:"10px 20px",textAlign:"center",flexShrink:0}}>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:22,fontWeight:700,color:"#fff",lineHeight:1}}>{flippedIds.length}<span style={{color:"#888"}}>/5</span></div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#666",marginTop:3}}>Revealed</div>
+        </div>
+      </div>
+      {/* Progress bar */}
+      <div style={{width:"100%",maxWidth:800,height:4,background:"#222",marginBottom:32,overflow:"hidden"}}>
+        <div style={{height:"100%",background:"#e8161e",width:(flippedIds.length/5*100)+"%",transition:"width 0.3s"}}/>
+      </div>
+      {/* Cards */}
+      <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:16,width:"100%",maxWidth:900}}>
+        {cards.map(function(c){
+          return <div key={c.id} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+            <FlipCard card={c} onFlip={handleFlip}/>
+            {flippedIds.includes(c.id)&&(
+              <div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",padding:"4px 12px",display:"flex",gap:8,alignItems:"center"}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:RCOLORS[c.rarity]||"#aaa"}}>{c.rarity}</span>
+                <span style={{color:"rgba(255,255,255,0.3)",fontSize:10}}>·</span>
+                <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,color:"#f5c518"}}>{fmt(c.daily)}/d</span>
+              </div>
+            )}
+            {!flippedIds.includes(c.id)&&(
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)"}}>Click to reveal</div>
+            )}
+          </div>;
+        })}
+      </div>
+    </div>
+  );
+
+  // ── CELEBRATE ──────────────────────────────────────────────────────────────
+  if(celebrate) return (
+    <div className="topps-screen" style={{minHeight:"100vh",background:"#111",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{background:"#fff",maxWidth:420,width:"100%",textAlign:"center"}} className="topps-reveal">
+        {/* Red top bar */}
+        <div style={{background:"#e8161e",padding:"20px 28px"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.4em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",marginBottom:6}}>Collection Started</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:34,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff",lineHeight:1}}>Your Dynasty<br/>Has Begun!</div>
+        </div>
+        <div style={{padding:"28px 32px"}}>
+          {/* Stats */}
+          <div style={{display:"flex",gap:0,border:"1px solid #e8e8e8",marginBottom:24}}>
+            <div style={{flex:1,padding:"16px 12px",borderRight:"1px solid #e8e8e8",textAlign:"center"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#111",letterSpacing:"0.02em",lineHeight:1}}>5</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginTop:4}}>Cards</div>
+            </div>
+            <div style={{flex:1,padding:"16px 12px",borderRight:"1px solid #e8e8e8",textAlign:"center"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#e8161e",letterSpacing:"0.02em",lineHeight:1}}>{fmt(cards.reduce(function(s,c){return s+c.daily;},0))}</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginTop:4}}>Coins/Day</div>
+            </div>
+            <div style={{flex:1,padding:"16px 12px",textAlign:"center"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#c8a800",letterSpacing:"0.02em",lineHeight:1}}>500</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginTop:4}}>Bonus Coins</div>
+            </div>
+          </div>
+          {/* Top pull */}
+          {cards.length>0&&(function(){
+            var best=cards.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);})[0];
+            return <div style={{background:"#f8f5f0",border:"1px solid #e0ddd8",padding:"12px 16px",marginBottom:20,display:"flex",gap:12,alignItems:"center",textAlign:"left"}}>
+              <div style={{flexShrink:0}}><MiniCard card={best}/></div>
+              <div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:3}}>Top Pull</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>{best.team}</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",color:RCOLORS[best.rarity]||"#888"}}>{best.rarity} · {best.sport}</div>
+              </div>
+            </div>;
+          })()}
+          <button onClick={function(){onComplete(cards,500);}} className="topps-btn-primary" style={{width:"100%",fontSize:16,padding:"15px",clipPath:"none",borderRadius:0}}>
+            Enter Your Vault →
+          </button>
+          <div style={{marginTop:12,fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa"}}>500 coins added to your account</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── PROFILE SETUP ─────────────────────────────────────────────────────────
+  if(phase==="profile_setup") return (
+    <div className="topps-screen">
+      {toppsHeader}
+      <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
         <ProfileSetupStep onComplete={function(prefs){
           if(prefs) onSavePrefs(prefs);
           claim();
         }}/>
-      )}
-
-      {/* ── LOG IN (side branch from landing) ── */}
-      {phase==="login"&&(
-        <div className="popup-anim" style={{background:"rgba(8,6,18,0.98)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:24,padding:"36px 32px",maxWidth:400,width:"92%",zIndex:1,backdropFilter:"blur(20px)"}}>
-          <div style={{textAlign:"center",marginBottom:24}}>
-            <div className="gold-logo" style={{fontSize:22,fontWeight:900,letterSpacing:3,marginBottom:6}}>CARD DYNASTY</div>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:20,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:"0.1em"}}>Welcome Back</div>
-            <div style={{fontSize:14,color:"rgba(255,255,255,0.7)",marginTop:4}}>Sign in to your vault</div>
-          </div>
-          <AuthForm mode="login" onComplete={onComplete} cards={cards} onBack={function(){setPhase("landing");}}/>
-        </div>
-      )}
-
-      {phase==="shaking"&&(
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20,zIndex:1,position:"relative"}}>
-          <div style={{position:"relative"}}>
-            <ParticleBurst active={particles}/>
-            <BoosterPack packId="genesis" size={130} shaking={true} floating={false}/>
-          </div>
-        </div>
-      )}
-      {phase==="reveal"&&!celebrate&&(
-        <div className="slide-up" style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16,zIndex:1,width:"100%"}}>
-          <div style={{fontSize:14,color:"#f5c518",letterSpacing:"0.15em",fontWeight:700,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{allFlipped?"Your Dynasty Begins!":"Click Each Card — "+flippedIds.length+"/5"}</div>
-          <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12}}>{cards.map(function(c){return <FlipCard key={c.id} card={c} onFlip={handleFlip}/>;})}</div>
-        </div>
-      )}
-      {celebrate&&(
-        <div className="popup-anim" style={{background:"rgba(8,6,2,0.97)",borderRadius:24,padding:"32px 36px",maxWidth:400,width:"92%",textAlign:"center",boxShadow:"0 0 0 1.5px #f5c518aa,0 0 60px rgba(245,197,24,0.35)",zIndex:1}}>
-          <div style={{fontSize:38,marginBottom:8}}>👑</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:900,color:"#fff",marginBottom:6,textTransform:"uppercase"}}>Your Dynasty Has Started!</div>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:28,fontWeight:700,color:"#f5c518",marginBottom:18}}>🪙 +500 Coins</div>
-          <button onClick={function(){onComplete(cards,500);}} style={{width:"100%",background:"linear-gradient(135deg,#7a5500,#f5c518,#a07000)",color:"#000",fontWeight:900,fontSize:14,padding:"14px",borderRadius:999,border:"none",cursor:"pointer",letterSpacing:"0.15em",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
-            Enter The Vault
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
+
+  return null;
 }
 function Shop(props) {
   var balance=props.balance; var onBuy=props.onBuy; var pityCount=props.pityCount;
