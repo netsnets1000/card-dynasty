@@ -3034,13 +3034,29 @@ function ProfileView(props) {
   var isTop100=myRank<=3;
   var pinnedCards=profile.pinnedIds.map(function(id){return inventory.find(function(c){return c.id===id;});}).filter(Boolean);
   while(pinnedCards.length<3) pinnedCards.push(null);
+  var gradedCount=inventory.filter(function(c){return c.graded;}).length;
+  var gemCount=inventory.filter(function(c){return c.grade===10;}).length;
   var BADGES=[
-    {id:"pack_addict",icon:"\u{1F4E6}",label:"Pack Addict",desc:"Open 100 packs",unlocked:packsOpened>=100,progress:Math.min(100,packsOpened)},
-    {id:"whale",icon:"\u{1F40B}",label:"Whale",desc:"Hold 1M coins",unlocked:balance>=1000000,progress:Math.min(100,Math.round(balance/10000))},
-    {id:"division_master",icon:"\u{1F3C6}",label:"Division Master",desc:"Complete a full set",unlocked:completedSets>=1,progress:completedSets>0?100:0},
-    {id:"the_closer",icon:"\u{1F451}",label:"The Closer",desc:"Own 10 Legendary+ cards",unlocked:legendaryCount>=10,progress:Math.min(100,Math.round(legendaryCount*10))},
-    {id:"dynasty_puller",icon:"\u2728",label:"Dynasty Puller",desc:"Pull a Dynasty card",unlocked:inventory.some(function(c){return c.rarity==="Dynasty";}),progress:inventory.some(function(c){return c.rarity==="Dynasty";})?100:0},
-    {id:"first_blood",icon:"\u{1F9F8}",label:"First Blood",desc:"Open your first pack",unlocked:packsOpened>=1,progress:packsOpened>=1?100:0},
+    // ── COLLECTION ─────────────────────────────────────────────────────────
+    {id:"first_blood",    icon:"🃏", label:"First Card",     desc:"Open your first pack",              reward:100,  unlocked:packsOpened>=1,                                                               progress:packsOpened>=1?100:0},
+    {id:"pack_addict",   icon:"📦", label:"Pack Addict",    desc:"Open 25 packs",                     reward:500,  unlocked:packsOpened>=25,                                                              progress:Math.min(100,Math.round(packsOpened/25*100))},
+    {id:"pack_hoarder",  icon:"🗃️", label:"Pack Hoarder",   desc:"Open 100 packs",                    reward:2000, unlocked:packsOpened>=100,                                                             progress:Math.min(100,Math.round(packsOpened/100*100))},
+    {id:"division_master",icon:"🏆",label:"Division Master","desc":"Complete any full division set",  reward:1000, unlocked:completedSets>=1,                                                             progress:completedSets>0?100:0},
+    {id:"whale",         icon:"🐋", label:"Whale",          desc:"Hold 1,000,000 coins",              reward:5000, unlocked:balance>=1000000,                                                             progress:Math.min(100,Math.round(balance/10000))},
+    // ── RARITY PULLS ───────────────────────────────────────────────────────
+    {id:"first_rare",    icon:"🔵", label:"Blue Chip",      desc:"Pull your first Rare card",         reward:150,  unlocked:inventory.some(function(c){return c.rarity==="Rare";}),                      progress:inventory.some(function(c){return c.rarity==="Rare";})?100:0},
+    {id:"first_elite",   icon:"💚", label:"Elite Status",   desc:"Pull your first Elite card",        reward:300,  unlocked:inventory.some(function(c){return c.rarity==="Elite";}),                     progress:inventory.some(function(c){return c.rarity==="Elite";})?100:0},
+    {id:"first_legacy",  icon:"🟡", label:"Legacy Pull",    desc:"Pull your first Legacy card",       reward:750,  unlocked:inventory.some(function(c){return c.rarity==="Legacy";}),                    progress:inventory.some(function(c){return c.rarity==="Legacy";})?100:0},
+    {id:"first_legendary",icon:"👑",label:"Legendary Pull", desc:"Pull your first Legendary card",    reward:1500, unlocked:inventory.some(function(c){return c.rarity==="Legendary";}),                 progress:inventory.some(function(c){return c.rarity==="Legendary";})?100:0},
+    {id:"dynasty_puller",icon:"✨", label:"Dynasty Puller", desc:"Pull a Dynasty card",               reward:5000, unlocked:inventory.some(function(c){return c.rarity==="Dynasty";}),                   progress:inventory.some(function(c){return c.rarity==="Dynasty";})?100:0},
+    {id:"the_closer",    icon:"🔟", label:"The Closer",     desc:"Own 10 Legendary+ cards",           reward:3000, unlocked:legendaryCount>=10,                                                           progress:Math.min(100,Math.round(legendaryCount*10))},
+    // ── GRADING LAB ────────────────────────────────────────────────────────
+    {id:"first_slab",    icon:"🔬", label:"First Slab",     desc:"Grade your first card",             reward:200,  unlocked:gradedCount>=1,                                                               progress:gradedCount>=1?100:0},
+    {id:"gem_hunter",    icon:"💎", label:"Gem Hunter",     desc:"Grade a card to Gem Mint (10)",     reward:2500, unlocked:gemCount>=1,                                                                  progress:gemCount>=1?100:0},
+    {id:"slab_master",   icon:"🏅", label:"Slab Master",    desc:"Have 10 graded cards",              reward:1000, unlocked:gradedCount>=10,                                                              progress:Math.min(100,Math.round(gradedCount*10))},
+    // ── LIVE ORACLE ────────────────────────────────────────────────────────
+    {id:"live_buzz",     icon:"⚡", label:"Live Wire",      desc:"Own a card during a live game",     reward:250,  unlocked:inventory.some(function(c){return liveTeams&&liveTeams.has&&liveTeams.has(c.team);}), progress:inventory.some(function(c){return liveTeams&&liveTeams.has&&liveTeams.has(c.team);})?100:0},
+    {id:"yield_king",    icon:"💰", label:"Yield King",     desc:"Earn 1,000 coins/day passively",    reward:1000, unlocked:dailyYield>=1000,                                                             progress:Math.min(100,Math.round(dailyYield/10))},
   ];
   function handleSave() {
     var updated=Object.assign({},profile,{username:editName,bio:editBio,avatarColor:editColor,avatarInitials:editInitials.toUpperCase().slice(0,2)});
@@ -3129,7 +3145,11 @@ function ProfileView(props) {
                 {card?(
                   <div style={{position:"relative",animation:"showcaseFloat 4s ease-in-out infinite",animationDelay:(i*0.6)+"s"}}>
                     <div style={{position:"absolute",left:"50%",top:"50%",transform:"translate(-50%,-50%)",width:200,height:200,background:"radial-gradient(ellipse,"+getColors(card.team)[0]+"55 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
-                    <div style={{transform:"scale(1.2)",transformOrigin:"top center",zIndex:1,position:"relative"}}><FlipCard card={card} autoFlip={true}/></div>
+                    <div style={{transform:"scale(1.1)",transformOrigin:"top center",zIndex:1,position:"relative"}}>
+                      {card.graded&&card.grade
+                        ?<AcrylicSlab card={card} gradeTier={GRADE_TIERS.find(function(t){return t.grade===card.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={false}/>
+                        :<FlipCard card={card} autoFlip={true}/>}
+                    </div>
                     <button onClick={function(){unpin(i);}} style={{position:"absolute",top:-8,right:-8,width:22,height:22,borderRadius:"50%",background:"rgba(0,0,0,0.85)",border:"1px solid rgba(255,255,255,0.15)",color:"#99aacc",fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:30}}>x</button>
                   </div>
                 ):(
@@ -3151,9 +3171,13 @@ function ProfileView(props) {
               return <div key={badge.id} style={{background:badge.unlocked?"rgba(12,10,2,0.95)":"rgba(8,8,16,0.7)",border:"1px solid "+(badge.unlocked?"rgba(245,197,24,0.35)":"rgba(255,255,255,0.05)"),borderRadius:14,padding:"14px 12px",opacity:badge.unlocked?1:0.45,position:"relative",overflow:"hidden"}}>
                 <div style={{fontSize:24,marginBottom:8,filter:badge.unlocked?"drop-shadow(0 0 8px rgba(245,197,24,0.6))":"grayscale(1) opacity(0.4)"}}>{badge.icon}</div>
                 <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:badge.unlocked?"#f5c518":"#8899bb",textTransform:"uppercase",marginBottom:2}}>{badge.label}</div>
-                <div style={{fontSize:12,color:badge.unlocked?"#b8c8e0":"#2a2a2a",marginBottom:8}}>{badge.desc}</div>
+                <div style={{fontSize:12,color:badge.unlocked?"#b8c8e0":"#555",marginBottom:6}}>{badge.desc}</div>
+                <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:8}}>
+                  <span style={{fontSize:11,color:badge.unlocked?"#34d399":"#555",fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>🪙 +{fmt(badge.reward)}</span>
+                  {badge.unlocked&&<span style={{fontSize:10,color:"#34d399",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.08em"}}>claimed</span>}
+                </div>
                 <div style={{background:"rgba(255,255,255,0.05)",borderRadius:999,height:3,overflow:"hidden"}}><div style={{height:"100%",borderRadius:999,background:badge.unlocked?"linear-gradient(90deg,#f5c518,#ffe066)":"rgba(255,255,255,0.75)",width:badge.progress+"%",transition:"width 1s ease-out"}}/></div>
-                {badge.unlocked&&<div style={{position:"absolute",top:8,right:10,fontSize:12,fontWeight:900,color:"#34d399",fontFamily:"'Oswald',sans-serif"}}>done</div>}
+                {badge.unlocked&&<div style={{position:"absolute",top:8,right:10,fontSize:11,fontWeight:900,color:"#34d399",fontFamily:"'Oswald',sans-serif"}}>✓</div>}
               </div>;
             })}
           </div>
@@ -3313,6 +3337,8 @@ export default function App() {
   var streakData=streakDataState[0]; var setStreakData=streakDataState[1];
   var shakeTeamsState=useState({}); var shakeTeams=shakeTeamsState[0]; var setShakeTeams=shakeTeamsState[1];
   var inventoryRef=useRef(inventory);
+  var claimedBadgesState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_badges")||"[]");}catch(e){return [];}});
+  var claimedBadges=claimedBadgesState[0]; var setClaimedBadges=claimedBadgesState[1];
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
   var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
@@ -3375,6 +3401,45 @@ export default function App() {
     setNotifs(function(p){return p.slice(-2).concat([{id:id,title:title,msg:msg,type:t}]);});
     setTimeout(function(){setNotifs(function(p){return p.filter(function(n){return n.id!==id;});});},4200);
   }
+  // Achievement unlock detection — fires whenever inventory, balance, or packs change
+  useEffect(function(){
+    if(!onboarded) return;
+    var gradedCount=inventory.filter(function(c){return c.graded;}).length;
+    var gemCount=inventory.filter(function(c){return c.grade===10;}).length;
+    var legendaryCount=inventory.filter(function(c){return c.rarity==="Legendary"||c.rarity==="Dynasty";}).length;
+    var dailyYield=inventory.reduce(function(s,c){return s+c.daily;},0);
+    var completedSets=Object.keys(DIVISIONS).filter(function(div){var info=DIVISIONS[div];var owned=new Set(inventory.filter(function(c){return c.sport===info.sport;}).map(function(c){return c.team;}));return info.teams.every(function(t){return owned.has(t);});}).length;
+    var checks=[
+      {id:"first_blood",    reward:100,  met:packsOpened>=1},
+      {id:"pack_addict",   reward:500,  met:packsOpened>=25},
+      {id:"pack_hoarder",  reward:2000, met:packsOpened>=100},
+      {id:"division_master",reward:1000,met:completedSets>=1},
+      {id:"whale",         reward:5000, met:balance>=1000000},
+      {id:"first_rare",    reward:150,  met:inventory.some(function(c){return c.rarity==="Rare";})},
+      {id:"first_elite",   reward:300,  met:inventory.some(function(c){return c.rarity==="Elite";})},
+      {id:"first_legacy",  reward:750,  met:inventory.some(function(c){return c.rarity==="Legacy";})},
+      {id:"first_legendary",reward:1500,met:inventory.some(function(c){return c.rarity==="Legendary";})},
+      {id:"dynasty_puller",reward:5000, met:inventory.some(function(c){return c.rarity==="Dynasty";})},
+      {id:"the_closer",    reward:3000, met:legendaryCount>=10},
+      {id:"first_slab",    reward:200,  met:gradedCount>=1},
+      {id:"gem_hunter",    reward:2500, met:gemCount>=1},
+      {id:"slab_master",   reward:1000, met:gradedCount>=10},
+      {id:"live_buzz",     reward:250,  met:inventory.some(function(c){return liveTeams&&liveTeams.has&&liveTeams.has(c.team);})},
+      {id:"yield_king",    reward:1000, met:dailyYield>=1000},
+    ];
+    var newlyUnlocked=checks.filter(function(c){return c.met&&!claimedBadges.includes(c.id);});
+    if(!newlyUnlocked.length) return;
+    var totalReward=newlyUnlocked.reduce(function(s,c){return s+c.reward;},0);
+    var newClaimed=claimedBadges.concat(newlyUnlocked.map(function(c){return c.id;}));
+    setClaimedBadges(newClaimed);
+    try{localStorage.setItem("cd_badges",JSON.stringify(newClaimed));}catch(e){}
+    setBalance(function(b){return b+totalReward;});
+    if(userId) dbSaveProfile(userId,{coins:balance+totalReward});
+    newlyUnlocked.forEach(function(badge){
+      pushNotif("Achievement Unlocked!",badge.id.replace(/_/g," ").replace(/\b\w/g,function(l){return l.toUpperCase();})+" · +"+fmt(badge.reward)+" coins","sale");
+    });
+  },[inventory.length,balance,packsOpened,onboarded]);
+
   function handleGradeCard(card,gradeTier){
     // Deduct cost and update card with grade data
     var newBal=balance-500;
@@ -3609,7 +3674,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Lab"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -3653,8 +3718,23 @@ export default function App() {
         <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
           {pity>=7&&<span style={{fontSize:12,color:"#fb923c",fontWeight:700,background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:999,padding:"3px 8px"}}>Pity {pity}/10</span>}
           {liveTeams.size>0&&<span onClick={function(){setTab("live");}} style={{display:"flex",alignItems:"center",gap:4,background:"rgba(0,255,80,0.08)",border:"1px solid rgba(0,255,80,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer"}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:13,fontWeight:700,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>{liveTeams.size} LIVE</span></span>}
-          <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:4,background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",borderRadius:999,padding:"5px 10px",cursor:"pointer"}}>
-            <span>🔥</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
+          <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:6,background:"rgba(10,8,20,0.9)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"6px 12px",cursor:"pointer",gap:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:4,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+              <span style={{fontSize:14}}>🔥</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:3,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>Rank</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>#{sorted.length>0?Math.max(1,Math.ceil((1-(inventory.reduce(function(s,c){return s+c.daily;},0)/5000))*100)):"-"}</span>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:3,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>🪙</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#34d399"}}>{fmt(inventory.reduce(function(s,c){return s+c.daily;},0))}/d</span>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:3}}>
+              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>⚡</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#a78bfa"}}>{inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50}</span>
+            </div>
           </button>
           <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()} style={{background:(!inventory.length||lastGameDay===new Date().toDateString())?"rgba(255,255,255,0.04)":"linear-gradient(90deg,#003d1a,#00884a)",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#8899bb":"#fff",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",whiteSpace:"nowrap"}}>{lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}</button>
           <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:999,padding:"6px 14px",fontWeight:900,fontSize:14}}>
