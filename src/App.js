@@ -2811,6 +2811,8 @@ export default function App() {
   var winnersState=useState(null); var winners=winnersState[0]; var setWinners=winnersState[1];
   var gdResultState=useState(null); var gdResult=gdResultState[0]; var setGdResult=gdResultState[1];
   var showGDState=useState(false); var showGD=showGDState[0]; var setShowGD=showGDState[1];
+  var lastGameDayState=useState(function(){try{return localStorage.getItem("cd_lastgameday")||null;}catch(e){return null;}});
+  var lastGameDay=lastGameDayState[0]; var setLastGameDay=lastGameDayState[1];
   var pityState=useState(0); var pity=pityState[0]; var setPity=pityState[1];
   var profileState=useState(function(){return loadProfile();}); var profile=profileState[0]; var setProfile=profileState[1];
   var packsState=useState(function(){var p=loadProfile();return p.packsOpened||0;}); var packsOpened=packsState[0]; var setPacksOpened=packsState[1];
@@ -3199,17 +3201,10 @@ export default function App() {
     }
   }
 
-  function simulateNextDay(){
-    var yesterday=new Date().toDateString();
-    var newStreak=streakData.currentStreak>=7?1:streakData.currentStreak+1;
-    var next=Object.assign({},streakData,{lastLoginDate:yesterday,currentStreak:newStreak});
-    setStreakData(next);saveStreak(next);
-    setShowLoginModal(true);
-    pushNotif("Day Simulated","Streak advanced to Day "+newStreak,"info");
-  }
-
   function simGameDay(){
-    if(inventory.length===0)return;
+    if(inventory.length===0) return;
+    var today=new Date().toDateString();
+    if(lastGameDay===today) return; // already collected today
     var all=Object.values(ALL_TEAMS).reduce(function(a,b){return a.concat(b);},[]);
     var shuffled=all.slice().sort(function(){return Math.random()-0.5;});
     var w=new Set(shuffled.slice(0,Math.floor(shuffled.length*0.5)));
@@ -3272,10 +3267,7 @@ export default function App() {
           <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:4,background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.25)",borderRadius:999,padding:"5px 10px",cursor:"pointer"}}>
             <span>🔥</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
           </button>
-          <button onClick={simulateNextDay} style={{background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:999,padding:"5px 10px",color:"#fb923c",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>
-            Next Day
-          </button>
-          <button onClick={simGameDay} style={{background:inventory.length?"linear-gradient(90deg,#003d1a,#00884a)":"rgba(255,255,255,0.04)",color:inventory.length?"#fff":"#8899bb",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:inventory.length?"pointer":"not-allowed"}}>Game Day</button>
+          <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()} style={{background:(!inventory.length||lastGameDay===new Date().toDateString())?"rgba(255,255,255,0.04)":"linear-gradient(90deg,#003d1a,#00884a)",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#8899bb":"#fff",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",whiteSpace:"nowrap"}}>{lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}</button>
           {winners&&<button onClick={function(){setWinners(null);setGdResult(null);}} style={{background:"rgba(255,255,255,0.04)",color:"#8899bb",fontSize:13,fontWeight:700,padding:"6px 10px",borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Clear</button>}
           <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:999,padding:"6px 14px",fontWeight:900,fontSize:14}}>
             <span className="bal-shimmer">{fmt(balance)}</span><span style={{color:"#8899bb",fontSize:13,marginLeft:4}}>coins</span>
@@ -3307,7 +3299,15 @@ export default function App() {
               {gdResult.hasLiveBonus&&<div style={{fontSize:12,color:"#00ff50",textAlign:"right",fontWeight:700}}>⚡ Includes 1.5x live multiplier</div>}
             </div>
             <div style={{display:"flex",gap:8}}>
-              <button onClick={function(){var newBal=balance+gdResult.grandTotal;setBalance(function(b){return b+gdResult.grandTotal;});setShowGD(false);if(userId)dbSaveProfile(userId,{coins:newBal});}} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
+              <button onClick={function(){
+                var newBal=balance+gdResult.grandTotal;
+                setBalance(function(b){return b+gdResult.grandTotal;});
+                var today=new Date().toDateString();
+                setLastGameDay(today);
+                try{localStorage.setItem("cd_lastgameday",today);}catch(e){}
+                setShowGD(false);
+                if(userId)dbSaveProfile(userId,{coins:newBal});
+              }} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
               <button onClick={function(){setShowGD(false);}} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#8899bb",fontWeight:700,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer",fontSize:14}}>Close</button>
             </div>
           </div>
@@ -3395,20 +3395,6 @@ export default function App() {
                 </div>
             )}
             {invSubTab==="sets"&&<SetTracker inventory={inventory}/>}
-            <div style={{marginTop:32,paddingTop:16,borderTop:"1px solid #0e0e1e",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-              <div style={{fontSize:12,color:"#8899bb",textTransform:"uppercase",letterSpacing:"0.1em"}}>Dev Tools</div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                <button onClick={simulateNextDay} style={{background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:999,padding:"6px 16px",color:"#fb923c",fontSize:13,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.08em"}}>
-         Simulate Next Day
-                </button>
-                <button onClick={oracle.devModeActivate} style={{background:"rgba(0,255,80,0.06)",border:"1px solid rgba(0,255,80,0.2)",borderRadius:999,padding:"6px 16px",color:"#00ff50",fontSize:13,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.08em"}}>
-         ⚡ Dev: Live 3 Teams
-                </button>
-                <button onClick={oracle.resetGames} style={{background:"rgba(255,255,255,0.03)",border:"1px solid #1e1e2e",borderRadius:999,padding:"6px 16px",color:"#8899bb",fontSize:13,fontWeight:700,cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.08em"}}>
-         Reset Oracle
-                </button>
-              </div>
-            </div>
           </div>
         )}
       </div>
