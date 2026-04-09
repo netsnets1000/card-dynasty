@@ -3268,7 +3268,6 @@ export default function App() {
             <span>🔥</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
           </button>
           <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()} style={{background:(!inventory.length||lastGameDay===new Date().toDateString())?"rgba(255,255,255,0.04)":"linear-gradient(90deg,#003d1a,#00884a)",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#8899bb":"#fff",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",whiteSpace:"nowrap"}}>{lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}</button>
-          {winners&&<button onClick={function(){setWinners(null);setGdResult(null);}} style={{background:"rgba(255,255,255,0.04)",color:"#8899bb",fontSize:13,fontWeight:700,padding:"6px 10px",borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Clear</button>}
           <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:999,padding:"6px 14px",fontWeight:900,fontSize:14}}>
             <span className="bal-shimmer">{fmt(balance)}</span><span style={{color:"#8899bb",fontSize:13,marginLeft:4}}>coins</span>
           </div>
@@ -3306,6 +3305,8 @@ export default function App() {
                 setLastGameDay(today);
                 try{localStorage.setItem("cd_lastgameday",today);}catch(e){}
                 setShowGD(false);
+                setWinners(null);
+                setGdResult(null);
                 if(userId)dbSaveProfile(userId,{coins:newBal});
               }} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
               <button onClick={function(){setShowGD(false);}} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#8899bb",fontWeight:700,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer",fontSize:14}}>Close</button>
