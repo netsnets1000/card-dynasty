@@ -445,6 +445,27 @@ var CSS=`
   .haptic{animation:hapticShake 0.35s ease-in-out}
   .redZone{animation:redZoneShake 0.15s ease-in-out infinite}
   .screen-jolt{animation:screenJolt 0.5s ease-out}
+  /* ── GRADING LAB ──────────────────────────────────────────────────────────── */
+  @keyframes envelopeFlap{0%{transform:rotateX(0deg)}100%{transform:rotateX(-160deg)}}
+  @keyframes cardSlideOut{0%{transform:translateY(40px) scale(0.9);opacity:0}60%{opacity:1}100%{transform:translateY(-20px) scale(1);opacity:1}}
+  @keyframes lightLeak{0%{opacity:0;transform:scaleX(0)}30%{opacity:1}70%{opacity:1}100%{opacity:0;transform:scaleX(1.2)}}
+  @keyframes sealPulse{0%,100%{box-shadow:0 0 12px #cc0000,0 0 28px #880000}50%{box-shadow:0 0 24px #ff2200,0 0 50px #cc0000}}
+  @keyframes sealCrack{0%{transform:scale(1) rotate(0deg)}30%{transform:scale(1.15) rotate(-3deg)}60%{transform:scale(0.85) rotate(5deg)}100%{transform:scale(0) rotate(15deg);opacity:0}}
+  @keyframes slabReveal{0%{transform:translateY(60px) scale(0.85);opacity:0;filter:blur(8px)}100%{transform:translateY(0) scale(1);opacity:1;filter:blur(0)}}
+  @keyframes lightSweep{0%{left:-60%}100%{left:120%}}
+  @keyframes gemPulse{0%,100%{text-shadow:0 0 20px #ffd700,0 0 40px #ffd700;letter-spacing:0.3em}50%{text-shadow:0 0 40px #ffffff,0 0 80px #ffd700;letter-spacing:0.35em}}
+  @keyframes shakeScreen{0%,100%{transform:translate(0,0)}10%{transform:translate(-8px,4px)}20%{transform:translate(8px,-4px)}30%{transform:translate(-6px,6px)}40%{transform:translate(6px,-2px)}50%{transform:translate(-4px,4px)}60%{transform:translate(4px,-4px)}70%{transform:translate(-2px,2px)}80%{transform:translate(2px,-2px)}90%{transform:translate(0,0)}}
+  @keyframes gradeCountUp{from{opacity:0;transform:scale(2)}to{opacity:1;transform:scale(1)}}
+  .acrylic-slab{position:relative;border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,0.13),rgba(255,255,255,0.04));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -1px 0 rgba(0,0,0,0.3),0 24px 60px rgba(0,0,0,0.8),0 0 0 3px rgba(255,255,255,0.06);overflow:hidden}
+  .acrylic-slab::before{content:'';position:absolute;top:-10%;left:-60%;width:40%;height:120%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);transform:skewX(-15deg);animation:lightSweep 5s ease-in-out infinite;pointer-events:none;z-index:30}
+  .slab-gem{animation:gemPulse 1.5s ease-in-out infinite}
+  .slab-reveal{animation:slabReveal 0.7s cubic-bezier(0.2,1.1,0.4,1) forwards}
+  .screen-shake{animation:shakeScreen 0.4s ease-out}
+  .envelope-flap{transform-origin:top center;animation:envelopeFlap 0.55s cubic-bezier(0.4,0,0.2,1) forwards}
+  .card-slide-out{animation:cardSlideOut 0.65s cubic-bezier(0.2,1.2,0.4,1) 0.3s forwards;opacity:0}
+  .light-leak{animation:lightLeak 0.5s ease-out forwards}
+  .seal-crack{animation:sealCrack 0.4s cubic-bezier(0.4,0,1,1) forwards}
+  .grade-pop{animation:gradeCountUp 0.5s cubic-bezier(0.3,1.4,0.5,1) forwards}
 `;
 function TeamEmblem(props) {
   var team=props.team; var size=props.size||80;
@@ -691,6 +712,11 @@ function PremiumCard(props) {
 
         {/* ── CD MONOGRAM BADGE ── */}
         <CDBadge rarity={card.rarity}/>
+        {card.graded&&card.grade&&(
+          <div style={{position:"absolute",top:8,left:8,zIndex:20,background:"linear-gradient(135deg,rgba(0,0,0,0.9),rgba(10,8,20,0.95))",borderRadius:6,padding:"2px 7px",border:"1px solid rgba(255,215,0,0.4)",boxShadow:"0 0 8px rgba(255,215,0,0.3)"}}>
+            <span style={{fontFamily:"'Oswald',sans-serif",fontSize:9,fontWeight:900,color:"#FFD700",letterSpacing:"0.1em"}}>PSA {card.grade}</span>
+          </div>
+        )}
 
         {/* ── VERTICAL WATERMARK TEXT ── */}
         <div style={{position:"absolute",left:5,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",whiteSpace:"nowrap",zIndex:9,pointerEvents:"none"}}>
@@ -914,6 +940,270 @@ function BoosterPack(props) {
           <rect x="0.5" y="0.5" width={W-1} height={H-1} rx="3" fill="none" stroke={c.acc} strokeWidth="1" opacity="0.4"/>
         </g>
       </svg>
+    </div>
+  );
+}
+
+// ── GRADING LAB ────────────────────────────────────────────────────────────────
+var GRADE_TIERS=[
+  {grade:10,label:"GEM MINT",chance:0.05,multiplier:3,color:"#FFD700",glow:"rgba(255,215,0,0.9)",tier:"gem"},
+  {grade:9, label:"MINT",    chance:0.15,multiplier:2,color:"#e8f4ff",glow:"rgba(200,230,255,0.8)",tier:"mint"},
+  {grade:8, label:"NEAR MINT",chance:0.30,multiplier:1.5,color:"#34d399",glow:"rgba(52,211,153,0.7)",tier:"good"},
+  {grade:7, label:"EX-MT",   chance:0.18,multiplier:1,color:"#93c5fd",glow:null,tier:"base"},
+  {grade:6, label:"EX",      chance:0.13,multiplier:1,color:"#a78bfa",glow:null,tier:"base"},
+  {grade:5, label:"VG-EX",   chance:0.08,multiplier:1,color:"#aabbdd",glow:null,tier:"base"},
+  {grade:4, label:"VG",      chance:0.05,multiplier:1,color:"#8899bb",glow:null,tier:"base"},
+  {grade:3, label:"GOOD",    chance:0.03,multiplier:1,color:"#8899bb",glow:null,tier:"base"},
+  {grade:2, label:"FAIR",    chance:0.02,multiplier:1,color:"#8899bb",glow:null,tier:"base"},
+  {grade:1, label:"POOR",    chance:0.01,multiplier:1,color:"#666",glow:null,tier:"base"},
+];
+function rollGrade(){
+  var r=Math.random();
+  var cum=0;
+  for(var i=0;i<GRADE_TIERS.length;i++){
+    cum+=GRADE_TIERS[i].chance;
+    if(r<cum) return GRADE_TIERS[i];
+  }
+  return GRADE_TIERS[GRADE_TIERS.length-1];
+}
+// Vanilla confetti — no external library needed
+function burstConfetti(colors){
+  var canvas=document.createElement("canvas");
+  canvas.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+  document.body.appendChild(canvas);
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  var ctx=canvas.getContext("2d");
+  var pieces=Array.from({length:120},function(){
+    return {x:Math.random()*canvas.width,y:-20,vx:(Math.random()-0.5)*8,vy:Math.random()*6+3,
+      rot:Math.random()*360,vr:(Math.random()-0.5)*12,w:rand(6,14),h:rand(4,8),
+      color:colors[Math.floor(Math.random()*colors.length)],opacity:1};
+  });
+  var frame=0;
+  function tick(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.15; p.rot+=p.vr; p.opacity-=0.008;
+      if(p.opacity<=0) return;
+      ctx.save(); ctx.globalAlpha=p.opacity;
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frame++;
+    if(frame<160&&pieces.some(function(p){return p.opacity>0;})){
+      requestAnimationFrame(tick);
+    } else {
+      document.body.removeChild(canvas);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function AcrylicSlab(props){
+  var card=props.card; var gradeTier=props.gradeTier; var compact=props.compact||false;
+  var col=getColors(card.team)[0];
+  var isGem=gradeTier.tier==="gem"; var isMint=gradeTier.tier==="mint"; var isGood=gradeTier.tier==="good";
+  var labelBg=isGem?"linear-gradient(90deg,#7a5500,#ffd700,#b8860b)":isMint?"linear-gradient(90deg,#1a3a6a,#4488cc,#1a3a6a)":isGood?"linear-gradient(90deg,#0a3020,#22aa66,#0a3020)":"linear-gradient(90deg,#1a1a2e,#2a2a4a,#1a1a2e)";
+  var labelColor=isGem?"#000":"#fff";
+  var outerGlow=isGem?"0 0 40px rgba(255,215,0,0.5),0 0 80px rgba(255,215,0,0.2)":isMint?"0 0 30px rgba(200,230,255,0.3)":isGood?"0 0 20px rgba(52,211,153,0.25)":"none";
+  var W=compact?140:178; var H=compact?198:250;
+  return (
+    <div className={"acrylic-slab"+(compact?"":" slab-reveal")} style={{width:W,padding:"0 0 10px",boxShadow:outerGlow+",inset 0 1px 0 rgba(255,255,255,0.25),0 24px 60px rgba(0,0,0,0.8)"}}>
+      {/* Label bar */}
+      <div style={{background:labelBg,padding:"6px 10px 5px",borderRadius:"17px 17px 0 0",display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:2}}>
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <span style={{fontFamily:"'Oswald',sans-serif",fontSize:compact?9:11,fontWeight:900,color:labelColor,letterSpacing:"0.15em",textTransform:"uppercase"}}>CD Authentic</span>
+          {(isGem||isMint)&&<span style={{fontSize:compact?7:9,color:isGem?"#7a5500":"rgba(255,255,255,0.6)",fontWeight:700}}>★</span>}
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:4}}>
+          <span className={isGem?"slab-gem":""} style={{fontFamily:"'Oswald',sans-serif",fontSize:compact?10:13,fontWeight:900,color:gradeTier.color,letterSpacing:"0.1em",textTransform:"uppercase"}}>{gradeTier.label}</span>
+          <div className={"grade-pop"} style={{background:isGem?"#000":labelColor==="#000"?"#000":"rgba(0,0,0,0.6)",borderRadius:999,minWidth:compact?20:26,height:compact?20:26,display:"flex",alignItems:"center",justifyContent:"center",border:"1.5px solid "+gradeTier.color}}>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:900,fontSize:compact?10:13,color:gradeTier.color}}>{gradeTier.grade}</span>
+          </div>
+        </div>
+      </div>
+      {/* Card inside slab */}
+      <div style={{padding:"6px 8px 4px",position:"relative"}}>
+        <div style={{borderRadius:10,overflow:"hidden",boxShadow:"0 4px 20px rgba(0,0,0,0.6)"}}>
+          <PremiumCard card={card} isWinner={false}/>
+        </div>
+        {/* Multiplier badge */}
+        {gradeTier.multiplier>1&&(
+          <div style={{position:"absolute",bottom:12,left:"50%",transform:"translateX(-50%)",background:isGem?"linear-gradient(90deg,#7a5500,#ffd700)":isMint?"linear-gradient(90deg,#1a3a6a,#4488cc)":"linear-gradient(90deg,#0a3020,#22aa66)",borderRadius:999,padding:"3px 12px",whiteSpace:"nowrap",zIndex:5,boxShadow:"0 2px 12px rgba(0,0,0,0.7)"}}>
+            <span style={{fontFamily:"'Oswald',sans-serif",fontSize:compact?9:11,fontWeight:900,color:isGem?"#000":"#fff",letterSpacing:"0.1em"}}>⚡ {gradeTier.multiplier}× YIELD</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GradingLab(props){
+  var inventory=props.inventory; var balance=props.balance; var userId=props.userId;
+  var onGrade=props.onGrade; // (card, gradeTier) => void
+  var onBack=props.onBack;
+  var phaseState=useState("selection"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var selectedState=useState(null); var selected=selectedState[0]; var setSelected=selectedState[1];
+  var resultState=useState(null); var result=resultState[0]; var setResult=resultState[1];
+  var sealBrokenState=useState(false); var sealBroken=sealBrokenState[0]; var setSealBroken=sealBrokenState[1];
+  var lightLeakState=useState(false); var lightLeak=lightLeakState[0]; var setLightLeak=lightLeakState[1];
+  var shakeState=useState(false); var shakeActive=shakeState[0]; var setShakeActive=shakeState[1];
+  var errState=useState(""); var err=errState[0]; var setErr=errState[1];
+  var COST=500;
+  var eligible=inventory.filter(function(c){return !c.graded;});
+
+  function submitCard(){
+    if(!selected||balance<COST){setErr(balance<COST?"Not enough coins (need 500)":"Select a card first");return;}
+    setErr("");
+    setPhase("sealing");
+    setTimeout(function(){setPhase("ready");},900);
+  }
+
+  function breakSeal(){
+    if(sealBroken) return;
+    setSealBroken(true);
+    setPhase("revealing");
+    setLightLeak(true);
+    setTimeout(function(){setLightLeak(false);},600);
+    var tier=rollGrade();
+    setTimeout(function(){
+      setResult(tier);
+      setPhase("result");
+      onGrade(selected,tier);
+      if(tier.tier==="gem"||tier.tier==="mint"){
+        setTimeout(function(){burstConfetti(["#FFD700","#FFFFFF","#FFF8C0","#FFE066"]);},200);
+        if(tier.tier==="gem"){
+          setShakeActive(true);
+          setTimeout(function(){setShakeActive(false);},450);
+        }
+      }
+    },850);
+  }
+
+  function reset(){
+    setPhase("selection");setSelected(null);setResult(null);setSealBroken(false);setLightLeak(false);setShakeActive(false);setErr("");
+  }
+
+  // ── SELECTION PHASE ──────────────────────────────────────────────────────
+  if(phase==="selection"){
+    return (
+      <div style={{maxWidth:720,margin:"0 auto",padding:"24px 16px 80px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:28}}>
+          <button onClick={onBack} style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"7px 16px",color:"#8899bb",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>← Back</button>
+          <div>
+            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.15em",textTransform:"uppercase",color:"#fff"}}>Grading Lab</div>
+            <div style={{fontSize:13,color:"#8899bb",marginTop:2}}>Submit a card for professional grading · 500 coins</div>
+          </div>
+        </div>
+        {/* Cost / info banner */}
+        <div style={{background:"rgba(255,215,0,0.05)",border:"1px solid rgba(255,215,0,0.15)",borderRadius:14,padding:"14px 18px",marginBottom:24,display:"flex",gap:20,flexWrap:"wrap",alignItems:"center"}}>
+          {GRADE_TIERS.slice(0,3).map(function(t){
+            return <div key={t.grade} style={{display:"flex",alignItems:"center",gap:7}}>
+              <div style={{width:10,height:10,borderRadius:"50%",background:t.color,boxShadow:"0 0 8px "+t.color}}/>
+              <span style={{fontFamily:"'Oswald',sans-serif",fontSize:13,color:t.color,fontWeight:700}}>Grade {t.grade}</span>
+              <span style={{fontSize:12,color:"#8899bb"}}>{t.label} · <span style={{color:"#34d399"}}>+{((t.multiplier-1)*100).toFixed(0)}% yield</span> · {(t.chance*100).toFixed(0)}% chance</span>
+            </div>;
+          })}
+        </div>
+        {eligible.length===0
+          ?<div style={{textAlign:"center",padding:60,color:"#8899bb"}}><div style={{fontSize:32,marginBottom:12}}>🔬</div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,textTransform:"uppercase"}}>No eligible cards</div><div style={{fontSize:13,marginTop:6}}>All cards already graded</div></div>
+          :<div>
+            <div style={{fontSize:13,color:"#8899bb",marginBottom:12,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em"}}>Choose a card to submit</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(178px,1fr))",gap:16,marginBottom:24}}>
+              {eligible.map(function(c){
+                var sel=selected&&selected.id===c.id;
+                return <div key={c.id} onClick={function(){setSelected(c);setErr("");}} style={{position:"relative",cursor:"pointer",borderRadius:16,border:"2px solid "+(sel?"#FFD700":"transparent"),boxShadow:sel?"0 0 24px rgba(255,215,0,0.4)":"none",transition:"all 0.18s",transform:sel?"scale(1.03)":"scale(1)"}}>
+                  {sel&&<div style={{position:"absolute",top:-8,left:"50%",transform:"translateX(-50%)",zIndex:10,background:"#FFD700",color:"#000",fontSize:11,fontWeight:900,padding:"2px 10px",borderRadius:999,fontFamily:"'Oswald',sans-serif",whiteSpace:"nowrap"}}>Selected ✓</div>}
+                  <PremiumCard card={c}/>
+                </div>;
+              })}
+            </div>
+            {err&&<div style={{textAlign:"center",color:"#f87171",fontSize:13,marginBottom:10,fontWeight:700}}>{err}</div>}
+            <button onClick={submitCard} disabled={!selected||balance<COST} style={{width:"100%",padding:"14px",borderRadius:999,border:"none",fontSize:15,fontWeight:900,cursor:selected&&balance>=COST?"pointer":"not-allowed",background:selected&&balance>=COST?"linear-gradient(135deg,#4a0010,#cc0022,#880011)":"rgba(255,255,255,0.05)",color:selected&&balance>=COST?"#fff":"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em",opacity:selected&&balance>=COST?1:0.5}}>
+              Submit for Grading · 500 Coins
+            </button>
+          </div>}
+      </div>
+    );
+  }
+
+  // ── SEALING / READY / REVEALING / RESULT PHASES ─────────────────────────
+  return (
+    <div className={shakeActive?"screen-shake":""} style={{minHeight:"70vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"32px 20px",position:"relative"}}>
+      {/* Light leak overlay */}
+      {lightLeak&&<div className="light-leak" style={{position:"fixed",inset:0,zIndex:200,background:"linear-gradient(90deg,transparent 0%,rgba(255,240,180,0.85) 40%,rgba(255,255,255,0.95) 50%,rgba(255,240,180,0.85) 60%,transparent 100%)",pointerEvents:"none"}}/>}
+
+      {/* GEM MINT hype text */}
+      {phase==="result"&&result&&result.tier==="gem"&&(
+        <div style={{position:"fixed",top:"15%",left:0,right:0,textAlign:"center",zIndex:150,pointerEvents:"none"}}>
+          <div className="slab-gem" style={{fontFamily:"'Oswald',sans-serif",fontSize:28,fontWeight:900,color:"#FFD700",letterSpacing:"0.3em",textTransform:"uppercase"}}>GEM MINT 💎</div>
+        </div>
+      )}
+
+      {/* Phase label */}
+      <div style={{textAlign:"center",marginBottom:28}}>
+        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:"#8899bb",letterSpacing:"0.3em",textTransform:"uppercase",marginBottom:6}}>
+          {phase==="sealing"?"Sealing Your Card":phase==="ready"?"Break the Seal to Reveal":phase==="revealing"?"Processing...":"Graded Result"}
+        </div>
+        {phase==="ready"&&<div style={{fontSize:13,color:"rgba(255,255,255,0.5)"}}>Click the wax seal to open the envelope</div>}
+      </div>
+
+      {/* ENVELOPE — shown during sealing / ready / revealing */}
+      {(phase==="sealing"||phase==="ready"||phase==="revealing")&&(
+        <div style={{position:"relative",width:220,height:280,marginBottom:32}}>
+          {/* Envelope body */}
+          <div style={{position:"absolute",inset:0,background:"linear-gradient(160deg,#0a0a12,#111118,#0a0a12)",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",boxShadow:"0 20px 60px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.04)",overflow:"hidden"}}>
+            {/* Glossy sheen */}
+            <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,255,255,0.06) 0%,transparent 50%,rgba(255,255,255,0.02) 100%)"}}/>
+            {/* V-fold lines */}
+            <svg width="220" height="280" style={{position:"absolute",inset:0,pointerEvents:"none"}} viewBox="0 0 220 280">
+              <line x1="0" y1="0" x2="110" y2="110" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+              <line x1="220" y1="0" x2="110" y2="110" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+              <line x1="0" y1="280" x2="110" y2="170" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+              <line x1="220" y1="280" x2="110" y2="170" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+            </svg>
+            {/* Embossed CD watermark */}
+            <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",fontFamily:"'Oswald',sans-serif",fontSize:48,fontWeight:900,color:"rgba(255,255,255,0.03)",letterSpacing:4,userSelect:"none",pointerEvents:"none"}}>CD</div>
+          </div>
+          {/* Flap — animates open on reveal */}
+          <div className={sealBroken?"envelope-flap":""} style={{position:"absolute",top:0,left:0,right:0,height:"45%",background:"linear-gradient(160deg,#0c0c16,#13131f)",borderRadius:"12px 12px 0 0",transformOrigin:"top center",zIndex:5,borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+            <div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"110px solid transparent",borderRight:"110px solid transparent",borderTop:"60px solid #0a0a12"}}/>
+          </div>
+          {/* Wax seal — the interaction point */}
+          {!sealBroken&&phase==="ready"&&(
+            <div onClick={breakSeal} className="sealPulse" style={{position:"absolute",top:"38%",left:"50%",transform:"translate(-50%,-50%)",zIndex:20,cursor:"pointer",width:58,height:58,borderRadius:"50%",background:"radial-gradient(circle at 35% 30%,#ff3300,#880000)",boxShadow:"0 0 16px #cc0000,0 0 32px #660000,inset 0 2px 4px rgba(255,100,50,0.4)",animation:"sealPulse 1.5s ease-in-out infinite",display:"flex",alignItems:"center",justifyContent:"center",border:"2px solid rgba(255,80,40,0.6)"}}>
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <path d="M14,2 L17,10 L26,10 L19,16 L22,24 L14,18 L6,24 L9,16 L2,10 L11,10 Z" fill="rgba(255,200,150,0.8)" stroke="rgba(255,150,80,0.5)" strokeWidth="0.5"/>
+              </svg>
+            </div>
+          )}
+          {/* Broken seal shards */}
+          {sealBroken&&(
+            <div style={{position:"absolute",top:"38%",left:"50%",transform:"translate(-50%,-50%)",zIndex:20,pointerEvents:"none"}}>
+              {[0,60,120,180,240,300].map(function(deg){
+                return <div key={deg} style={{position:"absolute",width:8,height:8,background:"#cc0000",borderRadius:2,animation:"particle 0.5s ease-out "+deg+"ms forwards","--tx":(Math.cos(deg*Math.PI/180)*40)+"px","--ty":(Math.sin(deg*Math.PI/180)*40)+"px",opacity:0}}/>;
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* RESULT — acrylic slab reveal */}
+      {phase==="result"&&selected&&result&&(
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+          <AcrylicSlab card={selected} gradeTier={result}/>
+          <div style={{textAlign:"center"}}>
+            {result.multiplier>1
+              ?<div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,color:"#34d399",fontWeight:700,marginBottom:4}}>Your {selected.team} card now earns <span style={{color:result.color}}>{result.multiplier}× daily yield</span></div>
+              :<div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,color:"#8899bb",marginBottom:4}}>Standard grade — no yield change</div>}
+            <div style={{fontSize:13,color:"#555",marginBottom:16}}>500 coins deducted</div>
+            <div style={{display:"flex",gap:10,justifyContent:"center"}}>
+              <button onClick={reset} style={{padding:"11px 24px",borderRadius:999,border:"1px solid rgba(255,255,255,0.12)",background:"rgba(255,255,255,0.04)",color:"#8899bb",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Grade Another</button>
+              <button onClick={onBack} style={{padding:"11px 24px",borderRadius:999,border:"none",background:"linear-gradient(135deg,#7a5500,#f5c518)",color:"#000",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Back to Vault</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2910,7 +3200,7 @@ export default function App() {
         if(delRes.error){console.error("dbSaveCards delete error:",delRes.error);return;}
         if(!cards||!cards.length) return;
         var rows=cards.map(function(c){
-          return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId()};
+          return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId(),is_slabbed:c.graded||false,grade:c.grade||null,yield_multiplier:c.gradeMultiplier||null};
         });
         supabase.from("user_cards").insert(rows)
           .then(function(insRes){
@@ -2937,7 +3227,7 @@ export default function App() {
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
           // Returning user — restore cards and go straight to vault
-          var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp};});
+          var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp,graded:r.is_slabbed||false,grade:r.grade||null,gradeMultiplier:r.yield_multiplier||null,gradeTier:r.grade>=10?"gem":r.grade>=9?"mint":r.grade>=8?"good":"base"};});
           setInventory(cards);
           setOnboarded(true);
           setIsNewUser(false);
@@ -3084,6 +3374,33 @@ export default function App() {
     var id=genId();
     setNotifs(function(p){return p.slice(-2).concat([{id:id,title:title,msg:msg,type:t}]);});
     setTimeout(function(){setNotifs(function(p){return p.filter(function(n){return n.id!==id;});});},4200);
+  }
+  function handleGradeCard(card,gradeTier){
+    // Deduct cost and update card with grade data
+    var newBal=balance-500;
+    setBalance(function(b){return b-500;});
+    // Update the card in inventory — mark as graded, apply multiplier
+    var newInv=inventory.map(function(c){
+      if(c.id!==card.id) return c;
+      return Object.assign({},c,{
+        graded:true,
+        grade:gradeTier.grade,
+        gradeLabel:gradeTier.label,
+        gradeTier:gradeTier.tier,
+        gradeMultiplier:gradeTier.multiplier,
+        daily:Math.round(c.daily*gradeTier.multiplier),
+        win:Math.round(c.win*gradeTier.multiplier),
+        mp:Math.round(c.mp*gradeTier.multiplier),
+      });
+    });
+    setInventory(function(){return newInv;});
+    var uid=userId;
+    if(supabase&&uid){
+      dbSaveProfile(uid,{coins:newBal});
+      dbSaveCards(uid,newInv);
+    }
+    var msg=gradeTier.multiplier>1?"Grade "+gradeTier.grade+" — "+gradeTier.multiplier+"× yield boost applied!":"Grade "+gradeTier.grade+" — "+gradeTier.label;
+    pushNotif("Card Graded!",msg,gradeTier.tier==="gem"?"sale":"info");
   }
   function completeOnboarding(cards,coins){
     setInventory(cards);
@@ -3292,7 +3609,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Lab"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -3398,6 +3715,7 @@ export default function App() {
         {/* CHANGE 7: Pass shakeTeams to Marketplace */}
         {tab==="market"&&<Marketplace balance={balance} onBuy={buyFromMarket} listings={listings} myListings={myListings} grailFeed={grailFeed} onRefresh={rotateMkt} lastRefresh={lastRefresh} shakeTeams={shakeTeams}/>}
         {/* CHANGE 8: Pass shakeTeams to Social (threads to PublicVault) */}
+        {tab==="grading"&&<GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>}
         {tab==="social"&&<Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>}
         {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
         {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
@@ -3457,9 +3775,13 @@ export default function App() {
              {isLiveCard&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:isRedZone?"#ff3030":"#00ff50",color:"#000",fontSize:11,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",filter:isRedZone?"drop-shadow(0 0 6px #ff3030)":"drop-shadow(0 0 6px #00ff50)"}}>{isRedZone?(c.sport==="MLB"?"🔴 CLUTCH":c.sport==="MLS"?"🔴 FINAL MINS":"🔴 RED ZONE"):"LIVE · 1.5x"}</div>}
              {offseasonBadge}
              {preTeams[c.team]&&!isLiveCard&&!isOffseason&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:"#f5c518",color:"#000",fontSize:11,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap"}}>IN {preTeams[c.team]}m</div>}
-             <FlipCard card={c} autoFlip={true} winners={winners}/>
-             <div className="list-ov" onClick={function(){setListModal(c);}}>
-              <button style={{background:"linear-gradient(90deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"8px 16px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>List For Sale</button>
+             {c.graded&&c.grade
+               ?<AcrylicSlab card={c} gradeTier={GRADE_TIERS.find(function(t){return t.grade===c.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={true}/>
+               :<FlipCard card={c} autoFlip={true} winners={winners}/>}
+             <div className="list-ov" onClick={function(){c.graded?setTab("grading"):setListModal(c);}}>
+              {c.graded
+                ?<button style={{background:"linear-gradient(90deg,#4a0010,#cc0022)",color:"#fff",fontWeight:900,fontSize:13,padding:"8px 14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Graded ✓</button>
+                :<button style={{background:"linear-gradient(90deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"8px 16px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>List For Sale</button>}
              </div>
             </div>
            );
