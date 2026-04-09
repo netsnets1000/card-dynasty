@@ -3339,6 +3339,23 @@ export default function App() {
   var inventoryRef=useRef(inventory);
   var claimedBadgesState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_badges")||"[]");}catch(e){return [];}});
   var claimedBadges=claimedBadgesState[0]; var setClaimedBadges=claimedBadgesState[1];
+  var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
+  // Load real global rank from Supabase
+  useEffect(function(){
+    if(!supabase||!userId) return;
+    var myYield=inventory.reduce(function(s,c){return s+c.daily;},0);
+    supabase.from("user_cards").select("user_id,daily")
+      .then(function(res){
+        if(res.error||!res.data) return;
+        // Sum daily yield per user
+        var userYields={};
+        res.data.forEach(function(r){userYields[r.user_id]=(userYields[r.user_id]||0)+(r.daily||0);});
+        var yields=Object.values(userYields).sort(function(a,b){return b-a;});
+        // Find my position
+        var rank=yields.findIndex(function(y){return y<=myYield;})+1;
+        setGlobalRank(rank||yields.length+1);
+      });
+  },[userId,inventory.length]);
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
   var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
@@ -3433,12 +3450,15 @@ export default function App() {
     var newClaimed=claimedBadges.concat(newlyUnlocked.map(function(c){return c.id;}));
     setClaimedBadges(newClaimed);
     try{localStorage.setItem("cd_badges",JSON.stringify(newClaimed));}catch(e){}
-    setBalance(function(b){return b+totalReward;});
-    if(userId) dbSaveProfile(userId,{coins:balance+totalReward});
+    setBalance(function(prev){
+      var newBal=prev+totalReward;
+      if(userId) dbSaveProfile(userId,{coins:newBal});
+      return newBal;
+    });
     newlyUnlocked.forEach(function(badge){
       pushNotif("Achievement Unlocked!",badge.id.replace(/_/g," ").replace(/\b\w/g,function(l){return l.toUpperCase();})+" · +"+fmt(badge.reward)+" coins","sale");
     });
-  },[inventory.length,balance,packsOpened,onboarded]);
+  },[inventory.length,packsOpened,onboarded]);
 
   function handleGradeCard(card,gradeTier){
     // Deduct cost and update card with grade data
@@ -3506,11 +3526,13 @@ export default function App() {
 
   function handleClaim(reward){
     var today=new Date().toDateString();
+    // Guard: if already claimed today, don't reset streak
+    if(streakData.claimedDays&&streakData.claimedDays.includes(today)) return;
     var yesterday=new Date(Date.now()-86400000).toDateString();
     var wasYesterday=streakData.lastLoginDate===yesterday;
     var newStreak=wasYesterday||!streakData.lastLoginDate?streakData.currentStreak+1:1;
     var capped=Math.min(newStreak,7);
-    var next={currentStreak:newStreak>7?1:capped,lastLoginDate:today,claimedDays:streakData.claimedDays.concat([today])};
+    var next={currentStreak:newStreak>7?1:capped,lastLoginDate:today,claimedDays:(streakData.claimedDays||[]).concat([today])};
     setStreakData(next);
     saveStreak(next);
     var newBalance=balance;
@@ -3718,24 +3740,28 @@ export default function App() {
         <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
           {pity>=7&&<span style={{fontSize:12,color:"#fb923c",fontWeight:700,background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:999,padding:"3px 8px"}}>Pity {pity}/10</span>}
           {liveTeams.size>0&&<span onClick={function(){setTab("live");}} style={{display:"flex",alignItems:"center",gap:4,background:"rgba(0,255,80,0.08)",border:"1px solid rgba(0,255,80,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer"}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:13,fontWeight:700,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>{liveTeams.size} LIVE</span></span>}
-          <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:6,background:"rgba(10,8,20,0.9)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"6px 12px",cursor:"pointer",gap:10}}>
-            <div style={{display:"flex",alignItems:"center",gap:4,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+          <div style={{display:"flex",alignItems:"center",gap:0,background:"rgba(10,8,20,0.9)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,overflow:"hidden"}}>
+            {/* Streak — only this section opens the modal */}
+            <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",background:"none",border:"none",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
               <span style={{fontSize:14}}>🔥</span>
               <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
-            </div>
-            <div style={{display:"flex",alignItems:"center",gap:3,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+            </button>
+            {/* Rank — taps to rankings tab */}
+            <div onClick={function(){setTab("rankings");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
               <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>Rank</span>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>#{sorted.length>0?Math.max(1,Math.ceil((1-(inventory.reduce(function(s,c){return s+c.daily;},0)/5000))*100)):"-"}</span>
+              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{"#"+(globalRank||"—")}</span>
             </div>
-            <div style={{display:"flex",alignItems:"center",gap:3,borderRight:"1px solid rgba(255,255,255,0.08)",paddingRight:10}}>
+            {/* Daily yield — taps to inventory */}
+            <div onClick={function(){setTab("inventory");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
               <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>🪙</span>
               <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#34d399"}}>{fmt(inventory.reduce(function(s,c){return s+c.daily;},0))}/d</span>
             </div>
-            <div style={{display:"flex",alignItems:"center",gap:3}}>
+            {/* Collection power */}
+            <div onClick={function(){setTab("profile");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",cursor:"pointer"}}>
               <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>⚡</span>
               <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#a78bfa"}}>{inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50}</span>
             </div>
-          </button>
+          </div>
           <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()} style={{background:(!inventory.length||lastGameDay===new Date().toDateString())?"rgba(255,255,255,0.04)":"linear-gradient(90deg,#003d1a,#00884a)",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#8899bb":"#fff",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",whiteSpace:"nowrap"}}>{lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}</button>
           <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:999,padding:"6px 14px",fontWeight:900,fontSize:14}}>
             <span className="bal-shimmer">{fmt(balance)}</span><span style={{color:"#8899bb",fontSize:13,marginLeft:4}}>coins</span>
