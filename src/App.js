@@ -21,6 +21,7 @@ function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function genId(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
 function mkPrice(r){ var m=RMAP[r]; return Math.floor(rand(m.pMin,m.pMax)*(1+(Math.random()-0.5)*0.3)); }
 var TC={
+  // NFL — all 32 teams
   Chiefs:["#E31837","#FFB81C"],Cowboys:["#003594","#869397"],Eagles:["#004C54","#A5ACAF"],
   "49ers":["#AA0000","#B3995D"],Ravens:["#241773","#9E7C0C"],Bills:["#00338D","#C60C30"],
   Dolphins:["#008E97","#FC4C02"],Bengals:["#FB4F14","#000"],Lions:["#0076B6","#B0B7BC"],
@@ -28,6 +29,11 @@ var TC={
   Giants:["#0B2265","#A71930"],Jets:["#125740","#000"],Patriots:["#002244","#C60C30"],
   Steelers:["#FFB612","#101820"],Broncos:["#FB4F14","#002244"],Raiders:["#000","#A5ACAF"],
   Chargers:["#0080C6","#FFC20E"],Seahawks:["#002244","#69BE28"],
+  Titans:["#0C2340","#4B92DB"],Colts:["#002C5F","#A2AAAD"],Jaguars:["#006778","#D7A22A"],
+  Texans:["#03202F","#A71930"],Browns:["#311D00","#FF3C00"],Panthers:["#0085CA","#101820"],
+  Saints:["#D3BC8D","#101820"],Buccaneers:["#D50A0A","#FF7900"],Falcons:["#A71930","#000"],
+  Rams:["#003594","#FFA300"],Cardinals:["#97233F","#FFB612"],Washington:["#773141","#FFB612"],
+  // NBA — all 30 teams
   Lakers:["#552583","#FDB927"],Celtics:["#007A33","#BA9653"],Warriors:["#1D428A","#FFC72C"],
   Bucks:["#00471B","#EEE1C6"],Nuggets:["#0E2240","#FEC524"],Heat:["#98002E","#F9A01B"],
   Suns:["#1D1160","#E56020"],Clippers:["#C8102E","#1D428A"],"76ers":["#006BB6","#ED174C"],
@@ -35,17 +41,37 @@ var TC={
   Mavericks:["#00538C","#002F6C"],Grizzlies:["#5D76A9","#12173F"],Pelicans:["#0C2340","#C8102E"],
   Hawks:["#E03A3E","#C1D32F"],Raptors:["#CE1141","#000"],Blazers:["#E03A3E","#000"],
   Jazz:["#002B5C","#00471B"],Spurs:["#C4CED4","#000"],
+  Timberwolves:["#0C2340","#236192"],Thunder:["#007AC1","#EF3B24"],Kings:["#5A2D81","#63727A"],
+  Pacers:["#002D62","#FDBB30"],Hornets:["#1D1160","#00788C"],Wizards:["#002B5C","#E31837"],
+  Pistons:["#C8102E","#1D428A"],Magic:["#0077C0","#000"],Cavaliers:["#860038","#FDBB30"],
+  // MLB — all 30 teams
   Yankees:["#003087","#FFF"],Dodgers:["#005A9C","#EF3E42"],"Red Sox":["#BD3039","#0C2340"],
-  Cubs:["#0E3386","#CC3433"],Giants:["#FD5A1E","#27251F"],Cardinals:["#C41E3A","#0C2340"],
+  Cubs:["#0E3386","#CC3433"],Cardinals:["#C41E3A","#0C2340"],
   Braves:["#CE1141","#13274F"],Astros:["#002D62","#EB6E1F"],Mets:["#002D72","#FF5910"],
   Phillies:["#E81828","#002D72"],"Blue Jays":["#134A8E","#1D2D5C"],Brewers:["#FFC52F","#12284B"],
   Padres:["#2F241D","#FFC425"],Mariners:["#0C2C56","#005C5C"],Rangers:["#003278","#C0111F"],
   Tigers:["#0C2340","#FA4616"],Twins:["#002B5C","#D31145"],"White Sox":["#27251F","#C4CED4"],
-  Royals:["#004687","#BD9B60"],Orioles:["#DF4601","#000"],
+  Royals:["#004687","#BD9B60"],Orioles:["#DF4601","#000"],Rays:["#092C5C","#8FBCE6"],
+  Guardians:["#00385D","#E31937"],Angels:["#BA0021","#003263"],Athletics:["#003831","#EFB21E"],
+  Pirates:["#27251F","#FDB827"],Rockies:["#33006F","#C4CED4"],Diamondbacks:["#A71930","#E3D4AD"],
+  Reds:["#C6011F","#000"],Marlins:["#00A3E0","#FF6600"],Nationals:["#AB0003","#14225A"],
+  "SF Giants":["#FD5A1E","#27251F"],
+  // MLS — all 29 active teams
   "LA Galaxy":["#00245D","#FFD700"],LAFC:["#C39E6D","#000"],"Atlanta United":["#80000A","#221F1F"],
   "Seattle Sounders":["#5D9741","#004C97"],"Portland Timbers":["#004812","#EBBA00"],
   "NYC FC":["#6CACE4","#003DA5"],"Inter Miami":["#F7B5CD","#231F20"],"Red Bulls":["#ED1F24","#23286B"],
   "Chicago Fire":["#9D2235","#6CADDF"],"Columbus Crew":["#FEDA00","#000"],
+  "Toronto FC":["#B81137","#313F6A"],Montreal:["#003DA5","#CF0A2C"],
+  Revolution:["#CE0E2D","#0A2240"],"DC United":["#000","#EF3E42"],
+  "Orlando City":["#612B9B","#FDE192"],"FC Dallas":["#BF0D3E","#000"],
+  "Houston Dynamo":["#F6871F","#002B5C"],"Colorado Rapids":["#960A2C","#9DC2EA"],
+  "Real Salt Lake":["#B30838","#013A81"],"Minnesota United":["#8CD2F4","#231F20"],
+  "Sporting KC":["#93B2D4","#002F65"],Vancouver:["#009BC8","#96D3E6"],
+  "San Jose":["#0D4C86","#C8E7F5"],"Philadelphia Union":["#071B2C","#B19B69"],
+  Nashville:["#EDF05B","#002F65"],"FC Cincinnati":["#F05323","#263B80"],
+  "Austin FC":["#00B140","#000"],"Charlotte FC":["#1A85C8","#0D1117"],
+  "St. Louis City":["#C8102E","#003087"],
+  // College — top 30 programs
   Alabama:["#9E1B32","#828A8F"],"Ohio State":["#BB0000","#aabbdd"],Georgia:["#BA0C2F","#000"],
   Michigan:["#00274C","#FFCB05"],LSU:["#461D7C","#FDD023"],Clemson:["#F56600","#522D80"],
   Oklahoma:["#841617","#FDF9D8"],"Notre Dame":["#0C2340","#AE9142"],USC:["#9D2235","#FFCC00"],
@@ -53,6 +79,11 @@ var TC={
   Tennessee:["#FF8200","#58595B"],Oregon:["#154733","#FEE123"],Auburn:["#0C2340","#E87722"],
   Miami:["#F47321","#005030"],Nebraska:["#E41C38","#000"],Iowa:["#FFCD00","#000"],
   Wisconsin:["#C5050C","#0479A8"],Arkansas:["#9D2235","#000"],
+  "Texas A&M":["#500000","#867141"],"Ole Miss":["#CE1126","#14213D"],
+  "North Carolina":["#7BAFD4","#13294B"],Duke:["#003087","#aabbdd"],
+  "Florida State":["#782F40","#CEB888"],Kentucky:["#0033A0","#FFF"],
+  "South Carolina":["#73000A","#000"],"Mississippi State":["#660000","#aabbdd"],
+  "Oklahoma State":["#FF7300","#000"],"Baylor":["#003015","#FFB81C"],
 };
 function getColors(t){ return TC[t]||["#8899bb","#556"]; }
 function teamCode(t){
@@ -101,20 +132,46 @@ function teamCode(t){
   return (w.length===1?t.slice(0,3):w.map(function(x){return x[0];}).join("").slice(0,4)).toUpperCase();
 }
 var ALL_TEAMS={
-  NFL:["Chiefs","Eagles","Cowboys","49ers","Ravens","Bills","Dolphins","Bengals","Lions","Packers","Bears","Vikings","Giants","Jets","Patriots","Steelers","Broncos","Raiders","Chargers","Seahawks"],
-  NBA:["Lakers","Celtics","Warriors","Bucks","Nuggets","Heat","Suns","Clippers","76ers","Nets","Bulls","Knicks","Mavericks","Grizzlies","Pelicans","Hawks","Raptors","Blazers","Jazz","Spurs"],
-  MLB:["Yankees","Dodgers","Red Sox","Cubs","Giants","Cardinals","Braves","Astros","Mets","Phillies","Blue Jays","Brewers","Padres","Mariners","Rangers","Tigers","Twins","White Sox","Royals","Orioles"],
-  MLS:["LA Galaxy","LAFC","Atlanta United","Seattle Sounders","Portland Timbers","NYC FC","Inter Miami","Red Bulls","Chicago Fire","Columbus Crew"],
-  College:["Alabama","Ohio State","Georgia","Michigan","LSU","Clemson","Oklahoma","Notre Dame","USC","Texas","Penn State","Florida","Tennessee","Oregon","Auburn","Miami","Nebraska","Iowa","Wisconsin","Arkansas"],
+  NFL:["Chiefs","Eagles","Cowboys","49ers","Ravens","Bills","Dolphins","Bengals","Lions","Packers","Bears","Vikings","Giants","Jets","Patriots","Steelers","Broncos","Raiders","Chargers","Seahawks","Titans","Colts","Jaguars","Texans","Browns","Panthers","Saints","Buccaneers","Falcons","Rams","Cardinals","Washington"],
+  NBA:["Lakers","Celtics","Warriors","Bucks","Nuggets","Heat","Suns","Clippers","76ers","Nets","Bulls","Knicks","Mavericks","Grizzlies","Pelicans","Hawks","Raptors","Blazers","Jazz","Spurs","Timberwolves","Thunder","Kings","Pacers","Hornets","Wizards","Pistons","Magic","Cavaliers"],
+  MLB:["Yankees","Dodgers","Red Sox","Cubs","Cardinals","Braves","Astros","Mets","Phillies","Blue Jays","Brewers","Padres","Mariners","Rangers","Tigers","Twins","White Sox","Royals","Orioles","Rays","Guardians","Angels","Athletics","Pirates","Rockies","Diamondbacks","Reds","Marlins","Nationals","SF Giants"],
+  MLS:["LA Galaxy","LAFC","Atlanta United","Seattle Sounders","Portland Timbers","NYC FC","Inter Miami","Red Bulls","Chicago Fire","Columbus Crew","Toronto FC","Montreal","Revolution","DC United","Orlando City","FC Dallas","Houston Dynamo","Colorado Rapids","Real Salt Lake","Minnesota United","Sporting KC","Vancouver","San Jose","Philadelphia Union","Nashville","FC Cincinnati","Austin FC","Charlotte FC","St. Louis City"],
+  College:["Alabama","Ohio State","Georgia","Michigan","LSU","Clemson","Oklahoma","Notre Dame","USC","Texas","Penn State","Florida","Tennessee","Oregon","Auburn","Miami","Nebraska","Iowa","Wisconsin","Arkansas","Texas A&M","Ole Miss","North Carolina","Duke","Florida State","Kentucky","South Carolina","Mississippi State","Oklahoma State","Baylor"],
 };
 var DIVISIONS={
+  // NFL
   "NFC East":{sport:"NFL",teams:["Cowboys","Giants","Eagles","Washington"]},
+  "NFC North":{sport:"NFL",teams:["Bears","Lions","Packers","Vikings"]},
+  "NFC South":{sport:"NFL",teams:["Falcons","Panthers","Saints","Buccaneers"]},
+  "NFC West":{sport:"NFL",teams:["Cardinals","Rams","49ers","Seahawks"]},
+  "AFC East":{sport:"NFL",teams:["Bills","Dolphins","Patriots","Jets"]},
   "AFC North":{sport:"NFL",teams:["Ravens","Browns","Steelers","Bengals"]},
+  "AFC South":{sport:"NFL",teams:["Texans","Colts","Jaguars","Titans"]},
+  "AFC West":{sport:"NFL",teams:["Chiefs","Raiders","Chargers","Broncos"]},
+  // NBA
   "NBA Atlantic":{sport:"NBA",teams:["Celtics","Nets","Knicks","76ers","Raptors"]},
+  "NBA Central":{sport:"NBA",teams:["Bulls","Cavaliers","Pistons","Pacers","Bucks"]},
+  "NBA Southeast":{sport:"NBA",teams:["Hawks","Hornets","Heat","Magic","Wizards"]},
+  "NBA Northwest":{sport:"NBA",teams:["Nuggets","Timberwolves","Thunder","Blazers","Jazz"]},
   "NBA Pacific":{sport:"NBA",teams:["Warriors","Clippers","Lakers","Suns","Kings"]},
+  "NBA Southwest":{sport:"NBA",teams:["Mavericks","Rockets","Grizzlies","Pelicans","Spurs"]},
+  // MLB
   "AL East":{sport:"MLB",teams:["Orioles","Red Sox","Yankees","Rays","Blue Jays"]},
-  "NL West":{sport:"MLB",teams:["Diamondbacks","Rockies","Dodgers","Padres","Giants"]},
-  "College SEC":{sport:"College",teams:["Alabama","Auburn","Georgia","LSU","Tennessee","Florida","Arkansas"]},
+  "AL Central":{sport:"MLB",teams:["White Sox","Guardians","Tigers","Royals","Twins"]},
+  "AL West":{sport:"MLB",teams:["Astros","Angels","Athletics","Mariners","Rangers"]},
+  "NL East":{sport:"MLB",teams:["Braves","Marlins","Mets","Phillies","Nationals"]},
+  "NL Central":{sport:"MLB",teams:["Cubs","Reds","Brewers","Pirates","Cardinals"]},
+  "NL West":{sport:"MLB",teams:["Diamondbacks","Rockies","Dodgers","Padres","SF Giants"]},
+  // MLS
+  "MLS Eastern":{sport:"MLS",teams:["Atlanta United","Charlotte FC","Chicago Fire","FC Cincinnati","Columbus Crew","DC United","Inter Miami","CF Montréal","Nashville","NYC FC","Revolution","Orlando City","Philadelphia Union","Red Bulls","Toronto FC"]},
+  "MLS Western":{sport:"MLS",teams:["Austin FC","Colorado Rapids","FC Dallas","Houston Dynamo","LA Galaxy","LAFC","Minnesota United","Portland Timbers","Real Salt Lake","San Jose","Seattle Sounders","Sporting KC","St. Louis City","Vancouver"]},
+  // College
+  "College SEC":{sport:"College",teams:["Alabama","Auburn","Georgia","LSU","Tennessee","Florida","Arkansas","Mississippi State","Ole Miss","South Carolina","Texas A&M","Kentucky"]},
+  "College Big Ten":{sport:"College",teams:["Michigan","Ohio State","Penn State","Iowa","Wisconsin","Nebraska"]},
+  "College Big 12":{sport:"College",teams:["Texas","Oklahoma","Baylor","Oklahoma State","Texas A&M"]},
+  "College ACC":{sport:"College",teams:["Clemson","Miami","Florida State","North Carolina","Duke"]},
+  "College Pac":{sport:"College",teams:["USC","Oregon","Washington"]},
+  "College Ind":{sport:"College",teams:["Notre Dame","Army","BYU"]},
 };
 var PACK_TYPES=[
   {id:"standard",name:"Standard Pro Case",subtitle:"The classic experience",cost:500,cards:5,rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1},guarantee:null,badge:null},
@@ -1531,7 +1588,7 @@ function SetTracker(props) {
         </div>
       </div>
       <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
-        {sports.map(function(s){return <button key={s} onClick={function(){setFilter(s);}} style={{fontSize:13,fontWeight:700,padding:"4px 12px",borderRadius:999,border:"1px solid",background:filter===s?(SPORT_COLORS[s]||"#f5c518"):"rgba(0,0,0,0.5)",color:filter===s?"#000":"#8899bb",borderColor:filter===s?(SPORT_COLORS[s]||"#f5c518"):"#1e1e2e",cursor:"pointer"}}>{s}</button>;})}
+        {sports.map(function(s){return <button key={s} onClick={function(){setFilter(s);}} style={{fontSize:13,fontWeight:700,padding:"4px 12px",borderRadius:999,border:"1px solid",background:filter===s?(SPORT_COLORS[s]||"#f5c518"):"rgba(0,0,0,0.5)",color:filter===s?"#000":"#8899bb",borderColor:filter===s?(SPORT_COLORS[s]||"#f5c518"):"#2a2a4a",cursor:"pointer"}}>{s}</button>;})}
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:8}}>
         {divs.map(function(name){
@@ -1557,7 +1614,7 @@ function SetTracker(props) {
               <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
                 {d.teams.map(function(team){
          var has=d.owned.has(team);
-         return <span key={team} style={{fontSize:11,padding:"2px 8px",borderRadius:5,fontWeight:has?700:400,background:has?sc+"22":"rgba(0,0,0,0.3)",color:has?sc:"#2a2a3a",border:"1px solid "+(has?sc+"55":"#1a1a2e")}}>{has?"+ ":""}{team}</span>;
+         return <span key={team} style={{fontSize:11,padding:"2px 8px",borderRadius:5,fontWeight:has?700:500,background:has?sc+"22":"rgba(255,255,255,0.04)",color:has?sc:"#7788aa",border:"1px solid "+(has?sc+"55":"rgba(255,255,255,0.12)")}}>{has?"+ ":""}{team}</span>;
                 })}
               </div>
             </div>
@@ -1598,7 +1655,7 @@ function Marketplace(props) {
         <div style={{flex:1}}>
           <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
             {["All","Rare","Elite","Legacy","Legendary","Dynasty"].map(function(f){
-              return <button key={f} onClick={function(){setFilter(f);}} style={{fontSize:13,fontWeight:700,padding:"4px 10px",borderRadius:999,border:"1px solid",background:filter===f?"rgba(30,30,60,0.9)":"transparent",color:filter===f?(RCOLORS[f]||"#fff"):"#8899bb",borderColor:filter===f?(RCOLORS[f]||"#5555aa"):"#1e1e2e",cursor:"pointer",textTransform:"uppercase"}}>{f}</button>;
+              return <button key={f} onClick={function(){setFilter(f);}} style={{fontSize:13,fontWeight:700,padding:"4px 10px",borderRadius:999,border:"1px solid",background:filter===f?"rgba(30,30,60,0.9)":"transparent",color:filter===f?(RCOLORS[f]||"#fff"):"#8899bb",borderColor:filter===f?(RCOLORS[f]||"#5555aa"):"#2a2a4a",cursor:"pointer",textTransform:"uppercase"}}>{f}</button>;
             })}
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -1730,14 +1787,14 @@ function PublicVault(props) {
            {d.complete&&<span style={{fontSize:10,fontWeight:900,background:"#34d399",color:"#000",padding:"1px 6px",borderRadius:999}}>DONE</span>}
           </div>
          </div>
-         <div style={{background:"#0a0e1a",borderRadius:999,height:4,overflow:"hidden",marginBottom:5}}>
+         <div style={{background:"#141830",borderRadius:999,height:4,overflow:"hidden",marginBottom:5}}>
           <div style={{height:"100%",width:pct+"%",background:d.complete?"linear-gradient(90deg,#34d399,#059669)":"linear-gradient(90deg,"+sc+"88,"+sc+")",borderRadius:999,transition:"width 0.8s"}}/>
          </div>
          <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
           {d.teams.map(function(team){
            var has=d.owned.has(team);
            var iMine=myInventory.some(function(c){return c.team===team;});
-           return <span key={team} style={{fontSize:10,padding:"1px 6px",borderRadius:4,background:has?sc+"22":"rgba(0,0,0,0.3)",color:has?sc:iMine?"#f5c51866":"#1e2a3a",border:"1px solid "+(has?sc+"44":iMine?"rgba(245,197,24,0.2)":"#0e1830"),fontWeight:has?700:400}}>{has?"+ ":iMine?"🪙 ":""}{team}</span>;
+           return <span key={team} style={{fontSize:11,padding:"2px 7px",borderRadius:4,background:has?sc+"22":"rgba(255,255,255,0.04)",color:has?sc:iMine?"#f5c518":"#7788aa",border:"1px solid "+(has?sc+"55":iMine?"rgba(245,197,24,0.3)":"rgba(255,255,255,0.12)"),fontWeight:has?700:500}}>{has?"+ ":iMine?"🪙 ":""}{team}</span>;
           })}
          </div>
                 </div>
@@ -1840,7 +1897,7 @@ function Social(props) {
         <div style={{fontSize:14,color:"#8899bb"}}>Discover collectors · Follow rivals · Raid vaults</div>
       </div>
       <div style={{position:"relative",marginBottom:20}}>
-        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search players..." style={{width:"100%",background:"rgba(8,8,18,0.9)",border:"1px solid #1e1e2e",borderRadius:12,padding:"11px 14px 11px 36px",color:"#fff",fontSize:13,outline:"none"}}/>
+        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search players..." style={{width:"100%",background:"rgba(14,14,28,0.95)",border:"1px solid #1e1e2e",borderRadius:12,padding:"11px 14px 11px 36px",color:"#fff",fontSize:13,outline:"none"}}/>
         <div style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#8899bb",pointerEvents:"none"}}>🔍</div>
       </div>
       {loading&&<div style={{textAlign:"center",padding:40,color:"#8899bb",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>Loading Players...</div>}
@@ -1920,7 +1977,7 @@ function Leaderboard(props) {
           var rank=i+4; var isUser=player.isUser; var isHov=hovered===rank;
           var hc=getColors(player.favTeam||"")[0]||"#b8c8e0";
           var val=mode==="yield"?fmt(player.yield)+"/day":fmt(player.power)+" pts";
-          return <div key={player.id||player.name} onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:10,background:isHov?hc+"18":isUser?"rgba(245,197,24,0.06)":i%2===0?"rgba(12,12,22,0.9)":"rgba(8,8,18,0.9)",border:isUser?"1px solid rgba(245,197,24,0.3)":isHov?"1px solid "+hc+"44":"1px solid transparent",transition:"all 0.15s"}}>
+          return <div key={player.id||player.name} onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:10,background:isHov?hc+"18":isUser?"rgba(245,197,24,0.06)":i%2===0?"rgba(20,20,36,0.95)":"rgba(14,14,28,0.95)",border:isUser?"1px solid rgba(245,197,24,0.3)":isHov?"1px solid "+hc+"44":"1px solid transparent",transition:"all 0.15s"}}>
             <div style={{width:28,textAlign:"center",fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#f5c518":"#8899bb",flexShrink:0}}>#{rank}</div>
             <div style={{width:34,height:34,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{player.avatar}</span></div>
             <div style={{flex:1,minWidth:0}}>
@@ -1982,7 +2039,7 @@ function OracleBar(props) {
         <span style={{fontFamily:"'Oswald',sans-serif",fontSize:11,color:"#00ff50",fontWeight:700}}>
           {g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q")}{g.quarter} {g.timeLeft}
         </span>
-        <span style={{color:"#1a1a2e",fontSize:14,marginLeft:8}}>·</span>
+        <span style={{color:"#252540",fontSize:14,marginLeft:8}}>·</span>
       </span>
     );
   }
@@ -2250,9 +2307,9 @@ function parseESPNEvent(event, sport) {
 }
 function genSlate(){
   var activeSpecs={
-    NBA:["Lakers","Celtics","Warriors","Bucks","Nuggets","Heat","Suns","Clippers","76ers","Nets","Bulls","Knicks","Mavericks","Grizzlies","Pelicans","Hawks","Raptors","Blazers","Jazz","Spurs"],
-    MLB:["Yankees","Dodgers","Red Sox","Cubs","Giants","Cardinals","Braves","Astros","Mets","Phillies","Blue Jays","Brewers","Padres","Mariners","Rangers","Tigers","Twins","White Sox","Royals","Orioles"],
-    MLS:["LA Galaxy","LAFC","Atlanta United","Seattle Sounders","Portland Timbers","NYC FC","Inter Miami","Red Bulls","Chicago Fire","Columbus Crew"],
+    NBA:ALL_TEAMS.NBA,
+    MLB:ALL_TEAMS.MLB,
+    MLS:ALL_TEAMS.MLS,
   };
   var games=[];
   Object.keys(activeSpecs).forEach(function(sport){
@@ -2480,7 +2537,7 @@ function LiveGamesTab(props){
     var hWin=isFinal&&g.homeScore>g.awayScore; var aWin=isFinal&&g.awayScore>g.homeScore;
     var hCol=getColors(g.home)[0]; var aCol=getColors(g.away)[0];
     return (
-      <div style={{background:isLive?"rgba(0,20,0,0.9)":"rgba(8,8,18,0.9)",border:"1px solid "+(isLive?"rgba(0,255,80,0.3)":isFinal?"rgba(80,80,80,0.3)":"rgba(255,255,255,0.08)"),borderRadius:14,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
+      <div style={{background:isLive?"rgba(0,20,0,0.9)":"rgba(14,14,28,0.95)",border:"1px solid "+(isLive?"rgba(0,255,80,0.3)":isFinal?"rgba(80,80,80,0.3)":"rgba(255,255,255,0.08)"),borderRadius:14,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
         {isLive&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ff50,transparent)",animation:"shimmerSweep 2s ease-in-out infinite"}}/>}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
           <span style={{fontSize:12,fontWeight:700,color:sc2[g.sport]||"#aaa",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>{si[g.sport]} {g.sport}</span>
@@ -3168,7 +3225,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Inv ("+inventory.length+")"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -3275,7 +3332,7 @@ export default function App() {
           <div style={{padding:16,maxWidth:720,margin:"0 auto"}}>
             <div style={{display:"flex",gap:8,marginBottom:16}}>
               {["cards","sets"].map(function(s){
-                return <button key={s} onClick={function(){setInvSubTab(s);}} style={{padding:"7px 18px",borderRadius:999,border:"1px solid",fontSize:14,fontWeight:700,cursor:"pointer",background:invSubTab===s?"#f5c518":"rgba(0,0,0,0.5)",color:invSubTab===s?"#000":"#8899bb",borderColor:invSubTab===s?"#f5c518":"#1e1e2e",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{s==="cards"?"My Cards":"Set Progress"}</button>;
+                return <button key={s} onClick={function(){setInvSubTab(s);}} style={{padding:"7px 18px",borderRadius:999,border:"1px solid",fontSize:14,fontWeight:700,cursor:"pointer",background:invSubTab===s?"#f5c518":"rgba(0,0,0,0.5)",color:invSubTab===s?"#000":"#8899bb",borderColor:invSubTab===s?"#f5c518":"#2a2a4a",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{s==="cards"?"My Cards":"Set Progress"}</button>;
               })}
             </div>
             {invSubTab==="cards"&&(
