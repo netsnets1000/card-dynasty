@@ -174,9 +174,19 @@ var DIVISIONS={
   "College Ind":{sport:"College",teams:["Notre Dame","Army","BYU"]},
 };
 var PACK_TYPES=[
-  {id:"standard",name:"Standard Pro Case",subtitle:"The classic experience",cost:500,cards:5,rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1},guarantee:null,badge:null},
-  {id:"jumbo",name:"Division Jumbo",subtitle:"10 cards more shots",cost:1500,cards:10,rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},guarantee:null,badge:"BEST VALUE"},
-  {id:"obsidian",name:"Obsidian Black Box",subtitle:"3 cards Legacy guaranteed",cost:5000,cards:3,rates:{Base:0,Rare:20,Elite:35,Legacy:25,Legendary:15,Dynasty:5},guarantee:"Legacy",badge:"PREMIUM"},
+  // ── SINGLE-SPORT PACKS (4 cards, budget entry) ─────────────────────────────
+  {id:"nfl",    name:"NFL Field Pass",     subtitle:"4 NFL cards only",          cost:200,  cards:4,  sport:"NFL",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"nba",    name:"NBA Court Pass",     subtitle:"4 NBA cards only",          cost:200,  cards:4,  sport:"NBA",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"mlb",    name:"MLB Diamond Pass",   subtitle:"4 MLB cards only",          cost:200,  cards:4,  sport:"MLB",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"mls",    name:"MLS Pitch Pass",     subtitle:"4 MLS cards only",          cost:175,  cards:4,  sport:"MLS",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"college",name:"College Fanatics",   subtitle:"4 College cards only",      cost:175,  cards:4,  sport:"College", rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  // ── MULTI-SPORT PACKS ──────────────────────────────────────────────────────
+  {id:"standard",name:"Standard Pro Case", subtitle:"5 cards across all sports", cost:500,  cards:5,  sport:null,      rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"jumbo",   name:"Division Jumbo",    subtitle:"10 cards, better odds",     cost:1500, cards:10, sport:null,      rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:null,     badge:"BEST VALUE", bundle:null},
+  // ── BUNDLE BOXES ───────────────────────────────────────────────────────────
+  {id:"blaster", name:"Blaster Box",       subtitle:"3 single-sport packs · 12 cards", cost:525,  cards:12, sport:null, rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"BUNDLE",     bundle:{type:"blaster",count:3,base:"single"}},
+  {id:"megabox", name:"Mega Box",          subtitle:"6 Standard Pro Cases · 30 cards", cost:2600, cards:30, sport:null, rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"MEGA",       bundle:{type:"mega",count:6,base:"standard"}},
+  {id:"hobbybox",name:"Hobby Box",         subtitle:"6 Division Jumbos · 60 cards",    cost:7500, cards:60, sport:null, rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:"Legacy", badge:"HOBBY BOX", bundle:{type:"hobby",count:6,base:"jumbo"}},
 ];
 var RMAP={
   Base:     {daily:25, win:100, pMin:150,  pMax:500},
@@ -210,11 +220,42 @@ function genCard(rates,forceMin,forceSport){
   return {id:genId(),sport:sport,team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52};
 }
 function buildPack(pt,pity){
+  // Bundle boxes: combine multiple sub-packs
+  if(pt.bundle){
+    var cards=[];
+    if(pt.bundle.type==="blaster"){
+      // 3 random single-sport packs
+      var sports=["NFL","NBA","MLB","MLS","College"];
+      for(var b=0;b<3;b++){
+        var sp=sports[rand(0,sports.length-1)];
+        for(var i=0;i<4;i++) cards.push(genCard(pt.rates,null,sp));
+      }
+    } else if(pt.bundle.type==="mega"){
+      // 6 standard packs worth of cards
+      var stdPt=PACK_TYPES.find(function(p){return p.id==="standard";});
+      for(var b2=0;b2<6;b2++){
+        var subCards=buildPack(stdPt,false);
+        subCards.forEach(function(c){cards.push(c);});
+      }
+    } else if(pt.bundle.type==="hobby"){
+      // 6 jumbo packs worth of cards — guarantee at least one Legacy+
+      var jmbPt=PACK_TYPES.find(function(p){return p.id==="jumbo";});
+      for(var b3=0;b3<6;b3++){
+        var subCards2=buildPack(jmbPt,false);
+        subCards2.forEach(function(c){cards.push(c);});
+      }
+      // Guarantee: if no Legacy+ in entire box, replace last card
+      var hasLeg=cards.some(function(c){return ORDER.indexOf(c.rarity)<=ORDER.indexOf("Legacy");});
+      if(!hasLeg) cards[cards.length-1]=genCard(pt.rates,"Legacy",null);
+    }
+    return cards;
+  }
+  // Regular packs — single sport or multi-sport
   var rates=pity&&pt.id==="standard"?Object.assign({},pt.rates,{Elite:pt.rates.Elite+50}):pt.rates;
   var cards=[];
   for(var i=0;i<pt.cards;i++){
     var force=(pt.guarantee&&i===pt.cards-1&&!cards.some(function(c){return ORDER.indexOf(c.rarity)<=ORDER.indexOf(pt.guarantee);}))?pt.guarantee:null;
-    cards.push(genCard(rates,force,null));
+    cards.push(genCard(rates,force,pt.sport||null));
   }
   return cards;
 }
@@ -1470,35 +1511,66 @@ function Onboarding(props) {
 }
 function Shop(props) {
   var balance=props.balance; var onBuy=props.onBuy; var pityCount=props.pityCount;
-  return (
-    <div style={{padding:"28px 20px",maxWidth:860,margin:"0 auto"}}>
-      <div style={{textAlign:"center",marginBottom:28}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:26,fontWeight:700,letterSpacing:"0.15em",marginBottom:6,textTransform:"uppercase"}}>Wax Wall</div>
-        {pityCount>0&&<div style={{fontSize:14,color:"#fb923c",marginTop:8}}>Pity: {pityCount}/10 Standard packs without Elite+</div>}
+  var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
+  var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle;});
+  var bundles=PACK_TYPES.filter(function(p){return p.bundle;});
+  var sportColors={NFL:"linear-gradient(135deg,#0a2060,#2255cc)",NBA:"linear-gradient(135deg,#6b0012,#cc1133)",MLB:"linear-gradient(135deg,#002a5c,#1155bb)",MLS:"linear-gradient(135deg,#0a200a,#116611)",College:"linear-gradient(135deg,#4a2200,#cc6600)"};
+  var bundleColors={blaster:"linear-gradient(135deg,#1a0a30,#6633cc)",mega:"linear-gradient(135deg,#003050,#0088cc)",hobbybox:"linear-gradient(135deg,#300a00,#cc3300)"};
+  function PackCard(p){
+    var pt=p.pt;
+    var canAfford=balance>=pt.cost;
+    var isBundle=!!pt.bundle;
+    var isSingle=!!pt.sport;
+    var btnBg=!canAfford?"rgba(255,255,255,0.05)":isBundle?bundleColors[pt.id]||"linear-gradient(90deg,#2a0060,#9d4edd)":isSingle?sportColors[pt.sport]||"linear-gradient(90deg,#0a2a60,#3a80ff)":"linear-gradient(90deg,#0a2a60,#3a80ff)";
+    var badgeBg=pt.id==="megabox"?"#0088cc":pt.id==="hobbybox"?"#cc3300":pt.id==="blaster"?"#6633cc":"#f5c518";
+    var badgeColor=pt.id==="standard"||pt.id==="jumbo"?"#000":"#fff";
+    return (
+      <div style={{flex:"1 1 200px",minWidth:195,maxWidth:250,background:"rgba(8,8,18,0.9)",backdropFilter:"blur(12px)",borderRadius:20,padding:20,border:"1px solid "+(isBundle?"rgba(255,255,255,0.12)":isSingle?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.1)"),position:"relative",overflow:"hidden",display:"flex",flexDirection:"column",gap:10}}>
+        {pt.badge&&<div style={{position:"absolute",top:12,right:12,fontSize:10,fontWeight:900,padding:"3px 8px",borderRadius:999,background:badgeBg,color:badgeColor,letterSpacing:1,fontFamily:"'Oswald',sans-serif"}}>{pt.badge}</div>}
+        {isSingle&&<div style={{position:"absolute",top:0,left:0,right:0,height:3,background:sportColors[pt.sport]||"#888"}}/>}
+        <div style={{display:"flex",justifyContent:"center"}}><BoosterPack packId={pt.id} size={88} floating={true}/></div>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#fff",textTransform:"uppercase",marginBottom:3}}>{pt.name}</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.6)"}}>{pt.subtitle}</div>
+        </div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>
+          {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0;}).map(function(r){
+            return <span key={r} style={{fontSize:10,fontWeight:700,padding:"2px 5px",borderRadius:999,background:"rgba(0,0,0,0.5)",color:RCOLORS[r]||"#aaa",border:"1px solid "+(RCOLORS[r]||"#aaa")+"33",textTransform:"uppercase"}}>{r} {pt.rates[r]}%</span>;
+          })}
+        </div>
+        {pt.guarantee&&<div style={{textAlign:"center",fontSize:11,color:"#34d399",fontWeight:700,textTransform:"uppercase"}}>✓ {pt.guarantee} guaranteed</div>}
+        <button onClick={function(){onBuy(pt);}} disabled={!canAfford} style={{width:"100%",padding:"10px",borderRadius:999,border:"none",fontSize:13,fontWeight:900,cursor:canAfford?"pointer":"not-allowed",background:btnBg,color:canAfford?"#fff":"#8899bb",opacity:canAfford?1:0.5,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",marginTop:"auto"}}>
+          {fmt(pt.cost)} coins · {pt.cards} cards
+        </button>
       </div>
-      <div style={{display:"flex",flexWrap:"wrap",gap:20,justifyContent:"center"}}>
-        {PACK_TYPES.map(function(pt){
-          var canAfford=balance>=pt.cost;
-          return (
-            <div key={pt.id} style={{flex:"1 1 220px",minWidth:210,maxWidth:265,background:"rgba(8,8,18,0.85)",backdropFilter:"blur(12px)",borderRadius:20,padding:22,border:"1px solid #1a1a2e",position:"relative",overflow:"hidden"}}>
-              {pt.badge&&<div style={{position:"absolute",top:14,right:14,fontSize:11,fontWeight:900,padding:"3px 9px",borderRadius:999,background:pt.id==="obsidian"?"#9d4edd":"#f5c518",color:pt.id==="obsidian"?"#fff":"#000",letterSpacing:1,fontFamily:"'Oswald',sans-serif"}}>{pt.badge}</div>}
-              <div style={{display:"flex",justifyContent:"center",marginBottom:16}}><BoosterPack packId={pt.id} size={100} floating={true}/></div>
-              <div style={{textAlign:"center",marginBottom:10}}>
-                <div style={{fontFamily:"'Oswald',sans-serif",fontSize:15,fontWeight:700,color:"#fff",textTransform:"uppercase"}}>{pt.name}</div>
-                <div style={{fontSize:13,color:"rgba(255,255,255,0.7)",marginTop:3}}>{pt.subtitle}</div>
-              </div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center",marginBottom:10}}>
-                {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0;}).map(function(r){
-         return <span key={r} style={{fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:999,background:"rgba(0,0,0,0.5)",color:RCOLORS[r]||"#aaa",border:"1px solid "+(RCOLORS[r]||"#aaa")+"33",textTransform:"uppercase"}}>{r} {pt.rates[r]}%</span>;
-                })}
-              </div>
-              {pt.guarantee&&<div style={{textAlign:"center",fontSize:12,color:"#34d399",fontWeight:700,marginBottom:8,textTransform:"uppercase"}}>+ {pt.guarantee} guaranteed</div>}
-              <button onClick={function(){onBuy(pt);}} disabled={!canAfford} style={{width:"100%",padding:10,borderRadius:999,border:"none",fontSize:14,fontWeight:900,cursor:canAfford?"pointer":"not-allowed",background:canAfford?(pt.id==="obsidian"?"linear-gradient(90deg,#4a0080,#9d4edd)":pt.id==="jumbo"?"linear-gradient(90deg,#2a0060,#11998e)":"linear-gradient(90deg,#0a2a60,#3a80ff)"):"rgba(255,255,255,0.05)",color:canAfford?"#fff":"#8899bb",opacity:canAfford?1:0.5,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
-                {fmt(pt.cost)} Coins - {pt.cards} Cards
-              </button>
-            </div>
-          );
-        })}
+    );
+  }
+  return (
+    <div style={{padding:"24px 16px 80px",maxWidth:920,margin:"0 auto"}}>
+      <div style={{textAlign:"center",marginBottom:24}}>
+        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:26,fontWeight:700,letterSpacing:"0.15em",marginBottom:6,textTransform:"uppercase"}}>Wax Wall</div>
+        {pityCount>0&&<div style={{fontSize:13,color:"#fb923c",marginTop:6}}>Pity: {pityCount}/10 Standard packs without Elite+</div>}
+      </div>
+      {/* Single-sport packs */}
+      <div style={{marginBottom:28}}>
+        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Single-Sport Packs · 4 Cards</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
+          {singleSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
+        </div>
+      </div>
+      {/* Multi-sport packs */}
+      <div style={{marginBottom:28}}>
+        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Multi-Sport Packs</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
+          {multiSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
+        </div>
+      </div>
+      {/* Bundle boxes */}
+      <div>
+        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Collector Boxes · Best Value</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
+          {bundles.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
+        </div>
       </div>
     </div>
   );
