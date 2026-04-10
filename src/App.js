@@ -349,6 +349,13 @@ var CSS=`
   @keyframes showcaseFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
   @keyframes editModalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
   @keyframes ringDraw{from{stroke-dashoffset:var(--full)}to{stroke-dashoffset:var(--offset)}}
+  @keyframes nebulaBreath{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:0.85;transform:scale(1.05)}}
+  @keyframes pulsarRed{0%{box-shadow:0 0 0 0 rgba(232,22,30,0.55)}100%{box-shadow:0 0 0 14px rgba(232,22,30,0)}}
+  @keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:0.9}}
+  @keyframes emberRise{0%{transform:translateY(0) scale(1);opacity:0.85}100%{transform:translateY(-52px) scale(0.2);opacity:0}}
+  @keyframes cosmicRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+  @keyframes iconFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.1)}}
+  @keyframes crownFloat{0%,100%{transform:translateY(0) scale(1) rotate(-5deg)}50%{transform:translateY(-2px) scale(1.12) rotate(5deg)}}
   .bento-card{animation:bentoSlide 0.45s ease-out both}
   .badge-unlocked{animation:badgeUnlock 0.55s cubic-bezier(0.3,1.4,0.5,1) both}
   .showcase-card-anim{animation:showcaseFloat 4s ease-in-out infinite}
@@ -539,13 +546,76 @@ function TeamEmblem(props) {
 // CD monogram badge — replaces the old single "D"
 // ── RARITY CONFIG ─────────────────────────────────────────────────────────────
 var RARITY_CFG={
-  Base:    {stripe:"#8899aa",stripeTxt:"#fff",photoTop:"#1a2030",photoBot:"#0e1520",abbvCol:"rgba(180,190,210,0.6)",plateBdr:"#ccc",nameCol:"#111",rarCol:"#666",tagBg:"#8899aa",tagTxt:"#fff",shadow:"none"},
-  Rare:    {stripe:"#1144cc",stripeTxt:"#fff",photoTop:"#081440",photoBot:"#040c28",abbvCol:"rgba(80,140,255,0.7)",plateBdr:"#3366cc",nameCol:"#111",rarCol:"#1144cc",tagBg:"#1144cc",tagTxt:"#fff",shadow:"0 0 20px rgba(68,136,255,0.25)"},
-  Elite:   {stripe:"#22aa55",stripeTxt:"#fff",photoTop:"#061a0e",photoBot:"#030e08",abbvCol:"rgba(60,180,100,0.7)",plateBdr:"#22aa55",nameCol:"#111",rarCol:"#22aa55",tagBg:"#22aa55",tagTxt:"#fff",shadow:"0 0 20px rgba(34,170,85,0.25)"},
-  Legacy:  {stripe:"#b8860b",stripeTxt:"#fff",photoTop:"#1a0e00",photoBot:"#0e0800",abbvCol:"rgba(200,160,40,0.75)",plateBdr:"#c8a800",nameCol:"#111",rarCol:"#b8860b",tagBg:"#c8a800",tagTxt:"#000",shadow:"0 0 24px rgba(200,168,0,0.3)"},
-  Legendary:{stripe:"#e8161e",stripeTxt:"#fff",photoTop:"#1a0408",photoBot:"#0e0204",abbvCol:"rgba(255,80,60,0.7)",plateBdr:"#e8161e",nameCol:"#111",rarCol:"#e8161e",tagBg:"#e8161e",tagTxt:"#fff",shadow:"0 0 28px rgba(232,22,30,0.35)"},
-  Dynasty: {stripe:"#7733cc",stripeTxt:"#fff",photoTop:"#0e0420",photoBot:"#080214",abbvCol:"rgba(160,80,255,0.75)",plateBdr:"#9944ee",nameCol:"#111",rarCol:"#7733cc",tagBg:"linear-gradient(90deg,#7733cc,#e8161e)",tagTxt:"#fff",shadow:"0 0 32px rgba(120,50,220,0.4),0 0 60px rgba(232,22,30,0.2)"},
+  Base:{
+    stripe:"#6b7280",stripeTxt:"#fff",
+    photoTop:"#141820",photoBot:"#0c1018",
+    abbvFn:function(c1){return "rgba("+hexToRgb(c1)+",0.55)";},
+    abbvShadow:"none",
+    plateBdr:"#777",nameCol:"#222",rarCol:"#777",
+    tagBg:"#6b7280",tagTxt:"#fff",
+    shadow:"none",
+    overlays:null,icon:null,serial:null,
+    photoExtra:function(W,H){return null;},
+  },
+  Rare:{
+    stripe:"#1144cc",stripeTxt:"#fff",
+    photoTop:"#081440",photoBot:"#040c28",
+    abbvFn:function(){return "rgba(80,140,255,0.72)";},
+    abbvShadow:"0 0 22px rgba(50,120,255,0.55)",
+    plateBdr:"#2255cc",nameCol:"#111",rarCol:"#1a44cc",
+    tagBg:"#1144cc",tagTxt:"#fff",
+    shadow:"0 0 18px rgba(40,100,230,0.45)",
+    icon:null,serial:null,
+  },
+  Elite:{
+    stripe:"#22aa55",stripeTxt:"#fff",
+    photoTop:"#040e08",photoBot:"#020a04",
+    abbvFn:function(){return "rgba(60,220,120,0.78)";},
+    abbvShadow:"0 0 18px rgba(34,200,100,0.7),0 0 40px rgba(0,180,80,0.3)",
+    plateBdr:"#22aa55",nameCol:"#111",rarCol:"#22aa55",
+    tagBg:"linear-gradient(90deg,#22aa55,#0aee77)",tagTxt:"#fff",
+    shadow:"0 0 22px rgba(34,170,85,0.5)",
+    icon:"⚡",serial:null,
+  },
+  Legacy:{
+    stripe:"#c8a800",stripeTxt:"#fff",
+    photoTop:"#1a0c00",photoBot:"#0a0500",
+    abbvFn:function(){return "rgba(255,210,40,0.9)";},
+    abbvShadow:"0 0 14px rgba(255,200,0,0.85),0 0 38px rgba(220,160,0,0.45),0 0 65px rgba(180,100,0,0.2)",
+    plateBdr:"#c8a800",nameCol:"#111",rarCol:"#b8900a",
+    tagBg:"linear-gradient(90deg,#c8a800,#ffe566,#c8a800)",tagTxt:"#000",
+    shadow:"0 0 28px rgba(200,168,0,0.62),0 0 60px rgba(200,168,0,0.18)",
+    icon:"🔥",serial:"/500",
+  },
+  Legendary:{
+    stripe:"#e8161e",stripeTxt:"#fff",
+    photoTop:"#0e0202",photoBot:"#060000",
+    abbvFn:function(){return "rgba(255,80,50,0.92)";},
+    abbvShadow:"0 0 14px rgba(255,40,20,0.95),0 0 40px rgba(232,22,30,0.65),0 0 80px rgba(180,0,0,0.3)",
+    plateBdr:"#e8161e",nameCol:"#111",rarCol:"#cc0010",
+    tagBg:"linear-gradient(90deg,#cc0010,#ff3322)",tagTxt:"#fff",
+    shadow:"0 0 32px rgba(232,22,30,0.7),0 0 70px rgba(232,22,30,0.25)",
+    icon:"★",serial:"/100",
+  },
+  Dynasty:{
+    stripe:"#9933ff",stripeTxt:"#fff",
+    photoTop:"#0a001e",photoBot:"#020008",
+    abbvFn:function(){return "rgba(200,120,255,0.95)";},
+    abbvShadow:"0 0 14px rgba(180,80,255,1),0 0 35px rgba(153,51,255,0.75),0 0 70px rgba(232,22,30,0.35)",
+    plateBdr:"transparent",nameCol:"#fff",rarCol:"#cc88ff",
+    tagBg:"linear-gradient(90deg,#9933ff,#cc0030)",tagTxt:"#fff",
+    shadow:"0 0 40px rgba(140,50,255,0.75),0 0 80px rgba(232,22,30,0.35)",
+    icon:"👑",serial:"/10",
+  },
 };
+// helper for Base team-color abbv
+function hexToRgb(hex){
+  if(!hex||hex[0]!=="#") return "180,190,210";
+  var r=parseInt(hex.slice(1,3),16)||180;
+  var g=parseInt(hex.slice(3,5),16)||190;
+  var b=parseInt(hex.slice(5,7),16)||210;
+  return r+","+g+","+b;
+}
 
 function PremiumCard(props) {
   var card=props.card; var isWinner=props.isWinner||false;
@@ -554,110 +624,188 @@ function PremiumCard(props) {
   var col=getColors(card.team); var c1=col[0];
   var code=teamCode(card.team);
   var isDyn=card.rarity==="Dynasty";
-  var isPremium=card.rarity==="Legendary"||isDyn;
-  var isGold=card.rarity==="Legacy"||isPremium;
+  var isLeg=card.rarity==="Legendary";
+  var isLegacy=card.rarity==="Legacy";
+  var isElite=card.rarity==="Elite";
+  var isRare=card.rarity==="Rare";
+  var isBase=card.rarity==="Base";
+  var abbvColor=isBase?cfg.abbvFn(c1):cfg.abbvFn();
+  var stripeStyle=isDyn
+    ?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+    :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+    :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+    :cfg.stripe;
 
   return (
     <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:4,overflow:"hidden",
-      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.35)",border:"1px solid rgba(0,0,0,0.15)"}}>
+      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.35)",
+      border:isDyn?"2px solid transparent":"1px solid rgba(0,0,0,0.15)"}}>
 
-      {/* ── LEFT STRIPE — Topps 2025 signature vertical team name ── */}
-      <div style={{position:"absolute",left:0,top:0,bottom:0,width:20,
-        background:cfg.stripe,zIndex:6,
+      {/* Dynasty animated rainbow border */}
+      {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+      {isDyn&&<div style={{position:"absolute",inset:0,background:cfg.photoBot,borderRadius:4,zIndex:1}}/>}
+
+      {/* LEFT STRIPE */}
+      <div style={{position:"absolute",left:0,top:0,bottom:0,width:20,background:stripeStyle,zIndex:6,
         display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
         <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
           letterSpacing:"0.2em",textTransform:"uppercase",color:cfg.stripeTxt,
-          writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",
-          userSelect:"none"}}>{card.team.toUpperCase()}</span>
+          writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",userSelect:"none"}}>{card.team.toUpperCase()}</span>
       </div>
 
-      {/* ── PHOTO AREA ── */}
+      {/* PHOTO AREA */}
       <div style={{position:"absolute",left:20,top:0,right:0,bottom:38,
-        background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden"}}>
+        background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
 
-        {/* Chrome refractor sheen */}
-        <div style={{position:"absolute",inset:0,
-          background:"linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0) 55%,rgba(255,255,255,0.03) 75%,rgba(255,255,255,0) 100%)",
-          pointerEvents:"none",zIndex:3}}/>
+        {/* Base: subtle grid texture */}
+        {isBase&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px),repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px)",zIndex:1}}/>}
 
-        {/* Team color radial */}
-        <div style={{position:"absolute",inset:0,
-          background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",
-          pointerEvents:"none",zIndex:2}}/>
-
-        {/* Dynasty shine sweep */}
-        {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none",zIndex:4}}>
-          <div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",
-            background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)",
-            animation:"dynastyShine 3s ease-in-out infinite"}}/>
+        {/* Rare: deep ocean caustic curves */}
+        {isRare&&<svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.14,zIndex:1}} viewBox="0 0 150 202" preserveAspectRatio="none">
+          <path d="M10,82 Q30,58 52,86 Q72,112 96,72" stroke="#4488ff" strokeWidth="1.5" fill="none"/>
+          <path d="M5,104 Q35,72 58,102 Q82,124 112,92" stroke="#6699ff" strokeWidth="1" fill="none"/>
+          <path d="M18,52 Q44,28 65,56 Q85,76 108,52" stroke="#3377ee" strokeWidth="1" fill="none"/>
+        </svg>}
+        {isRare&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+          <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
         </div>}
 
-        {/* Ghost watermark emblem */}
-        <div style={{position:"absolute",left:"50%",top:"44%",transform:"translate(-50%,-50%)",
-          zIndex:1,opacity:0.06,pointerEvents:"none"}}>
-          <TeamEmblem team={card.team} size={120}/>
-        </div>
+        {/* Elite: aurora bands + electric arc */}
+        {isElite&&<div style={{position:"absolute",left:0,right:0,top:"8%",height:"50%",background:"linear-gradient(180deg,transparent,rgba(0,230,120,0.18),rgba(0,180,220,0.12),transparent)",animation:"nebulaBreath 4s ease-in-out infinite",zIndex:1}}/>}
+        {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(55deg,transparent,transparent 9px,rgba(34,200,100,0.06) 9px,rgba(34,200,100,0.06) 10px)",zIndex:1}}/>}
+        {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+          <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(60,220,120,0.14),transparent)",animation:"shimmerSweep 3s ease-in-out infinite 0.5s"}}/>
+        </div>}
+        {isElite&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"20%",background:"linear-gradient(0deg,rgba(0,255,120,0.18) 0%,transparent 100%)",zIndex:3}}/>}
 
-        {/* Large team abbreviation — the hero element */}
+        {/* Legacy: sunray burst + holofoil */}
+        {isLegacy&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:180,height:180,opacity:0.1,zIndex:1}} viewBox="0 0 180 180">
+          <g transform="translate(90,90)">
+            {[0,45,90,135,22.5,67.5,112.5,157.5].map(function(a,i){return <line key={i} x1="0" y1="-85" x2="0" y2="85" stroke="#ffcc00" strokeWidth={i<4?1:0.6} transform={"rotate("+a+")"}/>;})}
+          </g>
+        </svg>}
+        {isLegacy&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 78% 62% at 60% 40%,rgba(255,200,0,0.36) 0%,rgba(220,120,0,0.2) 40%,transparent 90%)",zIndex:1}}/>}
+        {isLegacy&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(72deg,transparent,transparent 11px,rgba(255,200,0,0.055) 11px,rgba(255,200,0,0.055) 12px)",zIndex:1}}/>}
+        {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+          <div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
+          <div style={{position:"absolute",width:"22%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,255,180,0.09),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+        </div>}
+
+        {/* Legendary: supernova star field + shockwave rings */}
+        {isLeg&&<div style={{position:"absolute",inset:0,zIndex:1}}>
+          {[[15,24,2,2.1],[28,62,1,1.7],[11,76,2,2.5],[42,14,1,1.9],[21,46,2,2.3],[55,78,1,2.0],[65,35,1,2.6]].map(function(s,i){
+            return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.4)+"s",opacity:0.6}}/>;
+          })}
+        </div>}
+        {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.48) 0%,rgba(200,10,10,0.25) 35%,rgba(60,0,0,0.1) 65%,transparent 80%)",zIndex:2}}/>}
+        {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:80,height:80,border:"1px solid rgba(255,70,40,0.3)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite",zIndex:3}}/>}
+        {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:120,height:120,border:"1px solid rgba(255,60,30,0.15)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite 0.7s",zIndex:3}}/>}
+        {isLeg&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:4}}>
+          <div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,40,0.14),transparent)",animation:"shimmerSweep 2.2s ease-in-out infinite"}}/>
+        </div>}
+        {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35) 0%,transparent 100%)",zIndex:4}}/>}
+        {/* Legendary embers */}
+        {isLeg&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#ff6040","#ff4020","#ff7050"][i],borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.55)+"s",boxShadow:"0 0 4px #ff4020",zIndex:6}}/>;})}
+
+        {/* Dynasty: galaxy + black hole + nebula */}
+        {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.22) 0deg,transparent 60deg,rgba(232,22,30,0.14) 120deg,transparent 180deg,rgba(153,51,255,0.18) 240deg,transparent 300deg,rgba(80,20,180,0.1) 360deg)",animation:"cosmicRing 25s linear infinite",zIndex:1}}/>}
+        {isDyn&&<div style={{position:"absolute",left:"-20%",top:"-20%",width:"80%",height:"80%",background:"radial-gradient(ellipse at 60% 60%,rgba(153,51,255,0.28) 0%,rgba(80,20,180,0.12) 50%,transparent 70%)",animation:"nebulaBreath 5s ease-in-out infinite",zIndex:2}}/>}
+        {isDyn&&<div style={{position:"absolute",right:"-10%",top:"20%",width:"70%",height:"60%",background:"radial-gradient(ellipse at 40% 40%,rgba(232,22,30,0.18) 0%,rgba(120,10,40,0.08) 50%,transparent 70%)",animation:"nebulaBreath 4s ease-in-out infinite 1.5s",zIndex:2}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,zIndex:3}}>
+          {[[8,18,1,2.2],[15,55,2,1.8],[25,30,1,2.5],[18,80,2,1.6],[36,68,1,2.1],[12,40,2,3.0],[45,22,1,1.9],[56,76,1,2.4]].map(function(s,i){
+            return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:["#fff","#cc99ff","#fff","#ffbbcc","#aabbff","#fff","#fff","#aaffee"][i],borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.35)+"s",boxShadow:i%2===0?"0 0 2px #fff":"0 0 3px rgba(200,150,255,0.8)"}}/>; 
+          })}
+        </div>}
+        {/* Black hole core */}
+        {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:44,height:44,borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+        {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:80,height:20,borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",boxShadow:"0 0 8px rgba(180,80,255,0.3)",zIndex:5}}/>}
+        {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:100,height:25,borderRadius:"50%",border:"1px solid rgba(255,80,40,0.2)",zIndex:4}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(153,51,255,0.04) 3px,rgba(153,51,255,0.04) 4px)",zIndex:7,pointerEvents:"none"}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:8}}>
+          <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(180,80,255,0.14),rgba(255,255,255,0.05),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
+          <div style={{position:"absolute",width:"18%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,80,0.08),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+        </div>}
+        {/* Dynasty particles */}
+        {isDyn&&[20,36,52,66,82].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#cc66ff","#ff4460","#9933ff","#ffaa44","#ff3366"][i],borderRadius:"50%",animation:"emberRise "+(1.5+i*0.2)+"s ease-out infinite "+(i*0.4)+"s",boxShadow:"0 0 "+(5+i)+"px "+["#aa44ff","#ff2244","#8822ee","#ff8800","#ee1144"][i],zIndex:9}}/>;})}
+
+        {/* Team color radial — all tiers */}
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",pointerEvents:"none",zIndex:isDyn?1:4}}/>
+
+        {/* ABBREVIATION */}
         <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",
-          textAlign:"center",zIndex:5,paddingLeft:4}}>
+          textAlign:"center",zIndex:isDyn?9:5,paddingLeft:4}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",
             fontSize:code.length<=2?82:code.length<=3?62:code.length<=4?48:38,
             fontWeight:900,letterSpacing:code.length<=2?"0.04em":"0.02em",
-            color:cfg.abbvCol,lineHeight:1,userSelect:"none",
-            textShadow:isGold?"0 2px 24px rgba(0,0,0,0.5)":"0 2px 12px rgba(0,0,0,0.4)"}}>
-            {code}
-          </span>
+            color:abbvColor,lineHeight:1,userSelect:"none",
+            textShadow:cfg.abbvShadow}}>{code}</span>
         </div>
 
+        {/* Tier icon badge (Elite/Legacy/Legendary/Dynasty) */}
+        {cfg.icon&&<div style={{position:"absolute",top:18,right:6,zIndex:12,fontSize:14,lineHeight:1,
+          animation:isDyn?"crownFloat 2.2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+          filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95)) drop-shadow(0 0 12px rgba(255,150,0,0.6))"
+            :isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.95))"
+            :isLegacy?"drop-shadow(0 0 4px rgba(255,180,0,0.8))"
+            :isElite?"drop-shadow(0 0 5px rgba(34,200,100,0.9))"
+            :"none"}}>{cfg.icon}</div>}
+
+        {/* Serial number for Legacy+ */}
+        {cfg.serial&&<div style={{position:"absolute",bottom:5,left:22,zIndex:11,
+          fontFamily:"'Roboto Mono',monospace",fontSize:7,fontWeight:700,
+          color:isDyn?"rgba(200,140,255,0.6)":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",
+          letterSpacing:"0.05em"}}>{"#"+cfg.serial}</div>}
+
         {/* Rarity tag — top right */}
-        <div style={{position:"absolute",top:0,right:0,zIndex:8,
-          background:cfg.tagBg,
-          padding:"3px 8px"}}>
+        <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"3px 8px"}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,
             letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{card.rarity.toUpperCase()}</span>
         </div>
 
-        {/* Grade badge if slabbed */}
+        {/* Grade badge */}
         {card.graded&&card.grade&&(
-          <div style={{position:"absolute",top:0,left:0,zIndex:8,
-            background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"3px 7px"}}>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,
-              letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
+          <div style={{position:"absolute",top:0,left:0,zIndex:12,background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"3px 7px"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
           </div>
         )}
 
         {/* CD 2025 watermark */}
-        <div style={{position:"absolute",bottom:5,right:6,zIndex:7,
-          fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:700,
-          letterSpacing:"0.1em",color:"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2025</div>
+        <div style={{position:"absolute",bottom:5,right:6,zIndex:7,fontFamily:"'Barlow Condensed',sans-serif",
+          fontSize:7,fontWeight:700,letterSpacing:"0.1em",
+          color:isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2025</div>
 
         {/* Winner badge */}
-        {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:9,background:"#22aa44",padding:"2px 6px"}}>
+        {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:13,background:"#22aa44",padding:"2px 6px"}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#fff",letterSpacing:"0.08em"}}>WIN</span>
         </div>}
       </div>
 
-      {/* ── NAME PLATE — Topps bottom plate ── */}
+      {/* NAME PLATE */}
       <div style={{position:"absolute",bottom:0,left:0,right:0,height:38,
-        background:"#fff",borderTop:"2px solid "+cfg.plateBdr,zIndex:6,
-        display:"flex",flexDirection:"column",justifyContent:"center",
+        background:isDyn?"#0a0020":"#fff",
+        borderTop:isDyn?"3px solid transparent":"2px solid "+cfg.plateBdr,
+        borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+        zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
         paddingLeft:24,paddingRight:8,paddingTop:2,paddingBottom:2}}>
-        {/* Team name */}
         <div style={{fontFamily:"'Barlow Condensed',sans-serif",
           fontSize:card.team.length>10?11:card.team.length>7?13:15,
           fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",
-          color:cfg.nameCol,lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
-          {card.team.toUpperCase()}
-        </div>
-        {/* Sport · Rarity · Yield */}
+          lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",
+          background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+          WebkitBackgroundClip:isDyn?"text":undefined,
+          WebkitTextFillColor:isDyn?"transparent":undefined,
+          color:isDyn?undefined:cfg.nameCol}}>{card.team.toUpperCase()}</div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:2}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
-            letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.rarCol}}>
+            letterSpacing:"0.06em",textTransform:"uppercase",
+            background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+            WebkitBackgroundClip:isDyn?"text":undefined,
+            WebkitTextFillColor:isDyn?"transparent":undefined,
+            color:isDyn?undefined:cfg.rarCol}}>
             {card.sport} · {card.rarity.toUpperCase()}
           </span>
           <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:9,fontWeight:700,
-            color:"#c8a800"}}>{fmt(card.daily)}🪙</span>
+            color:isDyn?"#cc88ff":"#c8a800"}}>{fmt(card.daily)}🪙</span>
         </div>
       </div>
     </div>
@@ -796,67 +944,156 @@ function ParticleBurst(props) {
   );
 }
 function BoosterPack(props) {
-  var packId=props.packId; var size=props.size||130; var shaking=props.shaking||false;
+  var packId=props.packId; var size=props.size||120; var shaking=props.shaking||false;
   var floating=props.floating!==undefined?props.floating:true; var onClick=props.onClick;
-  var W=size; var H=Math.round(size*1.4);
-  // Topps-style product configs: each pack is a clean product card
-  var cfgs={
-    genesis:{top:"#e8161e",mid:"#111",acc:"#f5c518",lbl:"GENESIS",sub:"STARTER PACK",cards:"5",rar:"MULTI-SPORT",stripe:"#e8161e"},
-    standard:{top:"#1144cc",mid:"#04102a",acc:"#88aaff",lbl:"STANDARD",sub:"PRO CASE",cards:"5",rar:"RARE+",stripe:"#1144cc"},
-    jumbo:{top:"#22aa55",mid:"#061a0e",acc:"#88ffaa",lbl:"JUMBO",sub:"DIVISION",cards:"10",rar:"ELITE+",stripe:"#22aa55"},
-    nfl:{top:"#1144cc",mid:"#040c20",acc:"#6688ff",lbl:"NFL",sub:"FIELD PASS",cards:"4",rar:"NFL ONLY",stripe:"#1144cc"},
-    nba:{top:"#cc1133",mid:"#1a040a",acc:"#ff6688",lbl:"NBA",sub:"COURT PASS",cards:"4",rar:"NBA ONLY",stripe:"#cc1133"},
-    mlb:{top:"#1155bb",mid:"#040e22",acc:"#5588ff",lbl:"MLB",sub:"DIAMOND PASS",cards:"4",rar:"MLB ONLY",stripe:"#1155bb"},
-    mls:{top:"#228833",mid:"#061408",acc:"#66cc88",lbl:"MLS",sub:"PITCH PASS",cards:"4",rar:"MLS ONLY",stripe:"#228833"},
-    college:{top:"#cc5500",mid:"#1a0a00",acc:"#ffaa55",lbl:"COLLEGE",sub:"FANATICS",cards:"4",rar:"COLLEGE ONLY",stripe:"#cc5500"},
-    blaster:{top:"#7733cc",mid:"#0e0420",acc:"#bb77ff",lbl:"BLASTER",sub:"BOX",cards:"12",rar:"BUNDLE",stripe:"#7733cc"},
-    megabox:{top:"#0088cc",mid:"#00141e",acc:"#44bbff",lbl:"MEGA",sub:"BOX",cards:"30",rar:"MEGA VALUE",stripe:"#0088cc"},
-    hobbybox:{top:"#cc3300",mid:"#1e0800",acc:"#ff6644",lbl:"HOBBY",sub:"BOX",cards:"60",rar:"LEGACY GTEE",stripe:"#cc3300"},
+  // 3D box configs — all measurements fixed, no percentage-based font sizes
+  // Front face W×H. Depth = right/top face depth. Text positions verified against bounds.
+  var pd={
+    genesis:{W:90,H:121,dep:14,fTop:"#cc0010",fBot:"#550008",rSide:"#3a0006",tFace:"#cc0010",hd:"#cc0010",hdIsGold:false,
+      topLbl:"GENESIS PACK",hdFs:9,mainLbl:"GENESIS",subLbl:"STARTER",cntLbl:"5 CARDS · MULTI-SPORT",
+      dots:["#6688ff","#22aa55","rgba(255,255,255,0.15)","rgba(255,255,255,0.08)"],badge:null,stars:false,isHobby:false},
+    nfl:{W:90,H:121,dep:14,fTop:"#1a4acc",fBot:"#060e30",rSide:"#040c20",tFace:"#2255ee",hd:"#1a44cc",hdIsGold:false,
+      topLbl:"NFL · FIELD PASS",hdFs:9,mainLbl:"NFL",subLbl:"FIELD PASS",cntLbl:"4 CARDS · NFL ONLY",
+      dots:["#6688ff","rgba(255,255,255,0.15)","rgba(255,255,255,0.1)","rgba(255,255,255,0.07)"],badge:null,stars:false,isHobby:false},
+    nba:{W:90,H:121,dep:14,fTop:"#cc0018",fBot:"#2e0005",rSide:"#1a0003",tFace:"#cc0018",hd:"#cc0018",hdIsGold:false,
+      topLbl:"NBA · COURT PASS",hdFs:9,mainLbl:"NBA",subLbl:"COURT PASS",cntLbl:"4 CARDS · NBA ONLY",
+      dots:["#ff4455","rgba(255,255,255,0.15)","rgba(255,255,255,0.1)","rgba(255,255,255,0.07)"],badge:null,stars:false,isHobby:false},
+    mlb:{W:90,H:121,dep:14,fTop:"#1040aa",fBot:"#020a1e",rSide:"#010614",tFace:"#1040aa",hd:"#1040aa",hdIsGold:false,
+      topLbl:"MLB · DIAMOND PASS",hdFs:9,mainLbl:"MLB",subLbl:"DIAMOND",cntLbl:"4 CARDS · MLB ONLY",
+      dots:["#4488ff","rgba(255,255,255,0.15)","rgba(255,255,255,0.1)","rgba(255,255,255,0.07)"],badge:null,stars:false,isHobby:false},
+    mls:{W:90,H:121,dep:14,fTop:"#187730",fBot:"#031808",rSide:"#021008",tFace:"#187730",hd:"#187730",hdIsGold:false,
+      topLbl:"MLS · PITCH PASS",hdFs:9,mainLbl:"MLS",subLbl:"PITCH PASS",cntLbl:"4 CARDS · MLS ONLY",
+      dots:["#22cc55","rgba(255,255,255,0.15)","rgba(255,255,255,0.1)","rgba(255,255,255,0.07)"],badge:null,stars:false,isHobby:false},
+    college:{W:90,H:121,dep:14,fTop:"#cc5500",fBot:"#0a0400",rSide:"#060200",tFace:"#cc5500",hd:"#cc5500",hdIsGold:false,
+      topLbl:"COLLEGE FANATICS",hdFs:9,mainLbl:"NCAAF",subLbl:"FANATICS",cntLbl:"4 CARDS · COLLEGE",
+      dots:["#ffaa55","rgba(255,255,255,0.15)","rgba(255,255,255,0.1)","rgba(255,255,255,0.07)"],badge:null,stars:false,isHobby:false},
+    standard:{W:104,H:139,dep:16,fTop:"#1a3388",fBot:"#040c20",rSide:"#020814",tFace:"#1a3388",hd:"#1a3388",hdIsGold:false,
+      topLbl:"STANDARD · PRO CASE",hdFs:10,mainLbl:"STANDARD",subLbl:"PRO CASE",cntLbl:"5 CARDS · RARE+",
+      dots:["#6688ff","#22aa55","rgba(200,168,0,0.7)","rgba(255,255,255,0.14)","rgba(255,255,255,0.08)"],badge:null,stars:false,isHobby:false},
+    jumbo:{W:122,H:160,dep:18,fTop:"#7733cc",fBot:"#080220",rSide:"#040114",tFace:"#7733cc",hd:"#7733cc",hdIsGold:false,
+      topLbl:"DIVISION JUMBO",hdFs:11,mainLbl:"DIVISION",subLbl:"JUMBO",cntLbl:"10 CARDS · ELITE+",
+      dots:["#6688ff","#22aa55","#c8a800","#e8161e","rgba(255,255,255,0.15)","rgba(255,255,255,0.08)"],badge:null,stars:false,isHobby:false},
+    blaster:{W:130,H:152,dep:20,fTop:"#7733cc",fBot:"#150833",rSide:"#0c0422",tFace:"#7733cc",hd:"#7733cc",hdIsGold:false,
+      topLbl:"BLASTER BOX · 12 CARDS",hdFs:11,mainLbl:"BLASTER",subLbl:"BOX",cntLbl:"12 CARDS · BUNDLE",
+      dots:["#6688ff","#22aa55","#c8a800","#e8161e","rgba(255,255,255,0.14)","rgba(255,255,255,0.08)"],badge:"BUNDLE",stars:false,isHobby:false},
+    megabox:{W:154,H:172,dep:24,fTop:"#0066bb",fBot:"#001022",rSide:"#000c18",tFace:"#0066bb",hd:"#0066bb",hdIsGold:false,
+      topLbl:"MEGA BOX · 30 CARDS",hdFs:13,mainLbl:"MEGA",subLbl:"BOX",cntLbl:"30 CARDS · MEGA VALUE",
+      dots:["#6688ff","#22aa55","#c8a800","#e8161e","#7733cc","rgba(255,255,255,0.15)"],badge:"MEGA VALUE",stars:true,isHobby:false},
+    hobbybox:{W:184,H:189,dep:28,fTop:"#ff4422",fBot:"#0a0200",rSide:"#060100",tFace:"#bb2200",hd:"gold",hdIsGold:true,
+      topLbl:"HOBBY BOX · 60 CARDS",hdFs:16,mainLbl:"HOBBY",subLbl:"BOX",cntLbl:"60 CARDS",
+      dots:["#6688ff","#22aa55","#c8a800","#e8161e","#7733cc","rgba(255,255,255,0.62)"],badge:"LEGACY GTD",stars:true,isHobby:true},
   };
-  var c=cfgs[packId]||cfgs.standard;
+  var d=pd[packId]||pd.standard;
+  var W=d.W; var H=d.H; var dep=d.dep;
+  // Scale factor: render at native size, scale SVG to match size prop
+  var scale=size/(W*1.0);
+  var vbW=W+dep+12; var vbH=H+dep+8;
+  var svgW=Math.round(vbW*scale); var svgH=Math.round(vbH*scale);
+  // Front face position inside viewBox
+  var fx=8; var fy=dep+4;
+  var cx=fx+W/2; // horizontal center of front face
+  // 3D faces
+  var t1x=fx; var t1y=fy;
+  var t2x=fx+W; var t2y=fy;
+  var t3x=fx+W+dep; var t3y=4;
+  var t4x=fx+dep; var t4y=4;
+  var r1x=fx+W; var r1y=fy;
+  var r2x=fx+W+dep; var r2y=4;
+  var r3x=fx+W+dep; var r3y=4+H;
+  var r4x=fx+W; var r4y=fy+H;
+  // Dots: evenly spaced, verified inside front face [fx+13 .. fx+W-8]
+  var nDots=d.dots.length;
+  var dotSpacing=Math.min(13,(W-24)/(nDots-1||1));
+  var dotCX=cx; var dotY=fy+H-12;
+  var dot0X=dotCX-(nDots-1)*dotSpacing/2;
+  var hdH=d.isHobby?28:22;
+  var panelX=fx+14; var panelY=fy+hdH+5;
+  var panelW=W-16; var panelH=H-hdH-30;
+  // Clamp all text font sizes so text width < container
+  // Barlow Condensed: chars × fs × 0.52 = approx width
+  function fitFs(text,maxW,requested){return Math.min(requested,Math.floor(maxW/(text.length*0.52)));}
+  var mainFs=fitFs(d.mainLbl,panelW-8,12);
+  var subFs=fitFs(d.cntLbl,panelW-8,8);
+  var cdFs=Math.min(Math.round(panelH*0.4),Math.floor(panelW*0.48));
+  var topLblFs=fitFs(d.topLbl,W-4,7);
+  var hdFs=fitFs("CARD DYNASTY",W-16,d.hdFs);
+  var badgeW=Math.min(panelW-4,70); var badgeH=14;
+  var badgeFs=d.badge?fitFs(d.badge,badgeW-6,9):9;
   return (
     <div onClick={onClick} className={shaking?"pack-shake":floating?"pack-float":""}
-      style={{cursor:onClick?"pointer":"default",position:"relative",width:W,height:H,flexShrink:0}}>
-      <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{display:"block",borderRadius:3,overflow:"hidden",filter:"drop-shadow(0 4px 16px rgba(0,0,0,0.5))"}}>
+      style={{cursor:onClick?"pointer":"default",position:"relative",width:svgW,height:svgH,flexShrink:0}}>
+      <svg width={svgW} height={svgH} viewBox={"0 0 "+vbW+" "+vbH}
+        style={{display:"block",overflow:"visible",filter:"drop-shadow(0 4px 14px rgba(0,0,0,0.45))"}}>
         <defs>
-          <clipPath id={"pk_cl_"+packId+size}><rect x="0" y="0" width={W} height={H} rx="2"/></clipPath>
+          {d.isHobby&&<linearGradient id={"hbgold_"+packId} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#7a5200"/><stop offset="35%" stopColor="#f5c518"/>
+            <stop offset="65%" stopColor="#ffe566"/><stop offset="100%" stopColor="#7a5200"/>
+          </linearGradient>}
+          {d.isHobby&&<linearGradient id={"hbstripe_"+packId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ee4400"/><stop offset="50%" stopColor="#bb2200"/><stop offset="100%" stopColor="#ee4400"/>
+          </linearGradient>}
+          <linearGradient id={"front_"+packId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={d.fTop}/><stop offset="100%" stopColor={d.fBot}/>
+          </linearGradient>
+          <clipPath id={"fc_"+packId}><rect x={fx} y={fy} width={W} height={H}/></clipPath>
         </defs>
-        <g clipPath={"url(#pk_cl_"+packId+size+")"}>
-          {/* Base background */}
-          <rect x="0" y="0" width={W} height={H} fill={c.mid}/>
-          {/* Top color band */}
-          <rect x="0" y="0" width={W} height={Math.round(H*0.28)} fill={c.top}/>
-          {/* Left accent stripe */}
-          <rect x="0" y="0" width={Math.round(W*0.08)} height={H} fill={c.stripe} opacity="0.9"/>
-          {/* Top band text: CARD DYNASTY */}
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.12)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
-            fontSize={Math.round(W*0.115)} fill="rgba(255,255,255,0.95)" letterSpacing="1">{c.lbl}</text>
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.22)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
-            fontSize={Math.round(W*0.075)} fill="rgba(255,255,255,0.7)" letterSpacing="2">{c.sub}</text>
-          {/* Center CD logo area */}
-          <rect x={Math.round(W*0.12)} y={Math.round(H*0.31)} width={Math.round(W*0.76)} height={Math.round(H*0.38)} fill="rgba(0,0,0,0.6)"/>
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.49)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
-            fontSize={Math.round(W*0.32)} fill={c.acc} opacity="0.9">CD</text>
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.63)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
-            fontSize={Math.round(W*0.07)} fill="rgba(255,255,255,0.45)" letterSpacing="2">CARD DYNASTY</text>
-          {/* Bottom info strip */}
-          <rect x="0" y={Math.round(H*0.74)} width={W} height={Math.round(H*0.26)} fill="rgba(0,0,0,0.7)"/>
-          <line x1="0" y1={Math.round(H*0.74)} x2={W} y2={Math.round(H*0.74)} stroke={c.acc} strokeWidth="1.5" opacity="0.8"/>
-          {/* Cards count */}
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.82)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
-            fontSize={Math.round(W*0.1)} fill="#fff">{c.cards} CARDS</text>
-          {/* Rarity label */}
-          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.92)} textAnchor="middle" dominantBaseline="middle"
-            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
-            fontSize={Math.round(W*0.072)} fill={c.acc} letterSpacing="1">{c.rar}</text>
-          {/* Border */}
-          <rect x="0.5" y="0.5" width={W-1} height={H-1} rx="2" fill="none" stroke={c.acc} strokeWidth="1" opacity="0.35"/>
-        </g>
+        {/* ground shadow */}
+        <ellipse cx={cx} cy={fy+H+dep*0.55} rx={W*0.44} ry={dep*0.32} fill="rgba(0,0,0,0.16)"/>
+        {/* RIGHT face */}
+        <path d={"M"+r1x+","+r1y+" L"+r2x+","+r2y+" L"+r3x+","+r3y+" L"+r4x+","+r4y+" Z"} fill={d.rSide}/>
+        <line x1={r2x} y1={r2y} x2={r3x} y2={r3y} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5"/>
+        {/* TOP face */}
+        <path d={"M"+t1x+","+t1y+" L"+t2x+","+t2y+" L"+t3x+","+t3y+" L"+t4x+","+t4y+" Z"} fill={d.tFace}/>
+        <line x1={t4x} y1={t4y} x2={t3x} y2={t3y} stroke="rgba(255,255,255,0.22)" strokeWidth="0.7"/>
+        {/* top face label — font clamped, centered in top face */}
+        <text x={(t4x+t3x)/2} y={(t4y+t3y)/2+0.5} textAnchor="middle" dominantBaseline="middle"
+          fontSize={topLblFs} fontWeight="700" fill="rgba(255,255,255,0.85)" letterSpacing="0.7">{d.topLbl}</text>
+        {/* FRONT face */}
+        <rect x={fx} y={fy} width={W} height={H} fill={"url(#front_"+packId+")"}/>
+        {/* Star field motif — Mega/Hobby */}
+        {d.stars&&[[0.18,0.14,1],[0.5,0.07,0.8],[0.78,0.17,0.6],[0.32,0.27,0.5],[0.88,0.09,0.7],[0.12,0.34,0.4],[0.62,0.36,0.6]].map(function(s,i){
+          return <circle key={i} cx={fx+s[0]*W} cy={fy+s[1]*H} r={s[2]} fill="white" opacity={s[2]*0.45} clipPath={"url(#fc_"+packId+")"}/>;
+        })}
+        {/* Hobby nebula */}
+        {d.isHobby&&<>
+          <circle cx={fx+W*0.36} cy={fy+H*0.46} r={W*0.26} fill="rgba(255,40,0,0.05)" clipPath={"url(#fc_"+packId+")"}/>
+          <circle cx={fx+W*0.68} cy={fy+H*0.53} r={W*0.20} fill="rgba(200,20,0,0.04)" clipPath={"url(#fc_"+packId+")"}/>
+        </>}
+        {/* HEADER BAND */}
+        <rect x={fx} y={fy} width={W} height={hdH}
+          fill={d.isHobby?"url(#hbgold_"+packId+")":d.hd} clipPath={"url(#fc_"+packId+")"}/>
+        <line x1={fx} y1={fy+hdH} x2={fx+W} y2={fy+hdH}
+          stroke={d.isHobby?"rgba(255,220,100,0.4)":"rgba(255,255,255,0.22)"} strokeWidth="0.8"/>
+        <text x={cx} y={fy+hdH/2} textAnchor="middle" dominantBaseline="middle"
+          fontSize={hdFs} fontWeight="900" fill={d.isHobby?"#1a0600":"white"} letterSpacing="1.5">CARD DYNASTY</text>
+        {/* LEFT STRIPE */}
+        <rect x={fx} y={fy+hdH} width={11} height={H-hdH}
+          fill={d.isHobby?"url(#hbstripe_"+packId+")":d.hd} opacity="0.65" clipPath={"url(#fc_"+packId+")"}/>
+        <rect x={fx} y={fy+hdH} width={3} height={H-hdH}
+          fill={d.isHobby?"#ff5522":"rgba(255,255,255,0.18)"} opacity="0.45" clipPath={"url(#fc_"+packId+")"}/>
+        {/* INNER PANEL */}
+        <rect x={panelX} y={panelY} width={panelW} height={panelH} rx="1" fill="rgba(0,0,0,0.42)" clipPath={"url(#fc_"+packId+")"}/>
+        <text x={panelX+panelW/2} y={panelY+panelH*0.3} textAnchor="middle" dominantBaseline="middle"
+          fontSize={mainFs} fontWeight="900" fill="rgba(255,255,255,0.58)" letterSpacing="1.5">{d.mainLbl}</text>
+        <text x={panelX+panelW/2} y={panelY+panelH*0.65} textAnchor="middle" dominantBaseline="middle"
+          fontSize={cdFs} fontWeight="900" fill="white">CD</text>
+        <text x={panelX+panelW/2} y={panelY+panelH*0.88} textAnchor="middle" dominantBaseline="middle"
+          fontSize={subFs} fontWeight="700" fill="rgba(255,255,255,0.4)" letterSpacing="0.8">{d.cntLbl}</text>
+        {/* BADGE */}
+        {d.badge&&<>
+          <rect x={cx-badgeW/2} y={fy+H-badgeH-14} width={badgeW} height={badgeH}
+            fill={d.isHobby?"url(#hbgold_"+packId+")":"rgba(153,51,255,0.9)"} clipPath={"url(#fc_"+packId+")"}/>
+          <text x={cx} y={fy+H-14-badgeH/2} textAnchor="middle" dominantBaseline="middle"
+            fontSize={badgeFs} fontWeight="900" fill={d.isHobby?"#1a0600":"white"} letterSpacing="0.8">{d.badge}</text>
+        </>}
+        {/* RARITY DOTS — all verified inside [fx+13 .. fx+W-8] */}
+        {d.dots.map(function(fill,i){
+          return <circle key={i} cx={dot0X+i*dotSpacing} cy={dotY} r="3.5" fill={fill} clipPath={"url(#fc_"+packId+")"}/>;
+        })}
+        {/* front border + edge highlights */}
+        <rect x={fx} y={fy} width={W} height={H} fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.8"/>
+        <line x1={fx} y1={fy} x2={fx} y2={fy+H} stroke="rgba(255,255,255,0.2)" strokeWidth="1.3"/>
+        <line x1={fx} y1={fy} x2={fx+W} y2={fy} stroke="rgba(255,255,255,0.16)" strokeWidth="0.8"/>
       </svg>
     </div>
   );
@@ -1726,37 +1963,91 @@ function Onboarding(props) {
             </div>
           </div>
 
-          {/* Hero cards — authentic Topps anatomy */}
-          <div style={{display:"flex",gap:14,alignItems:"flex-end",flexShrink:0}}>
+          {/* Hero cards — showcasing all key rarity tiers */}
+          <div style={{display:"flex",gap:10,alignItems:"flex-end",flexShrink:0,perspective:1200}}>
             {[
-              {team:"Celtics",sport:"NBA",rarity:"RARE",color:"#004488",accent:"#3388ff",code:"BOS",serial:null,rotate:-5,shift:14},
-              {team:"Lakers",sport:"NBA",rarity:"DYNASTY",color:"#7a4f00",accent:"#f5c518",code:"LAL",serial:"2 / 10",rotate:0,shift:0,featured:true},
-              {team:"Chiefs",sport:"NFL",rarity:"ELITE",color:"#8a0000",accent:"#ff6040",code:"KC",serial:null,rotate:5,shift:14},
+              {team:"Celtics",sport:"NBA",rarity:"Base",col:"#1a6b3a",code:"BOS",rotate:-6,shift:28,scale:0.82},
+              {team:"Chiefs",sport:"NFL",rarity:"Rare",col:"#8a0010",code:"KC",rotate:-2,shift:12,scale:0.9},
+              {team:"Lakers",sport:"NBA",rarity:"Dynasty",col:"#4a0080",code:"LAL",rotate:0,shift:0,scale:1.08,featured:true},
+              {team:"Patriots",sport:"NFL",rarity:"Legendary",col:"#002244",code:"NE",rotate:2,shift:12,scale:0.9},
+              {team:"Yankees",sport:"MLB",rarity:"Legacy",col:"#003087",code:"NYY",rotate:6,shift:28,scale:0.82},
             ].map(function(c){
-              var W=c.featured?124:104; var H=c.featured?176:148;
+              var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
+              var baseW=154; var baseH=218;
+              var W=Math.round(baseW*c.scale); var H=Math.round(baseH*c.scale);
+              var isDyn=c.rarity==="Dynasty";
+              var isLeg=c.rarity==="Legendary";
+              var isLegacy=c.rarity==="Legacy";
+              var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)":isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)":isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)":cfg.stripe;
+              var abbvCol=c.rarity==="Base"?("rgba("+hexToRgb(c.col)+",0.55)"):cfg.abbvFn();
               return (
-                <div key={c.team} style={{width:W,height:H,background:"#fff",position:"relative",borderRadius:4,overflow:"hidden",boxShadow:c.featured?"0 12px 48px rgba(0,0,0,0.7),0 0 0 1px rgba(245,197,24,0.3)":"0 8px 32px rgba(0,0,0,0.6)",transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",flexShrink:0,cursor:"pointer",transition:"transform 0.15s"}}>
-                  {/* Left team stripe — authentic 2025 Topps design */}
-                  <div style={{position:"absolute",left:0,top:0,bottom:0,width:16,background:c.color,zIndex:4,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:900,letterSpacing:"0.15em",textTransform:"uppercase",writingMode:"vertical-rl",transform:"rotate(180deg)",color:"rgba(255,255,255,0.95)",whiteSpace:"nowrap"}}>{c.team.toUpperCase()}</span>
+                <div key={c.team} style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
+                  flexShrink:0,cursor:"pointer",
+                  boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
+                  transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",
+                  transition:"transform 0.2s",
+                  border:isDyn?"2px solid transparent":"1px solid rgba(0,0,0,0.2)"}}>
+                  {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+                  {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
+                  {/* Stripe */}
+                  <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
                   </div>
                   {/* Photo area */}
-                  <div style={{position:"absolute",left:16,top:0,right:0,bottom:34,background:"linear-gradient(145deg,"+c.color+"dd,"+c.color+"88)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:c.featured?32:26,fontWeight:900,letterSpacing:"0.05em",color:c.accent,opacity:0.85}}>{c.code}</span>
-                    {/* Chrome refractor sheen */}
-                    <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.1) 35%,rgba(255,255,255,0) 55%,rgba("+c.accent.replace("#","").match(/../g).map(function(h){return parseInt(h,16);}).join(",")+",.06) 75%,rgba(255,255,255,0) 100%)"}}/>
+                  <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
+                    background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+                    {/* Rarity overlays — abbreviated for landing */}
+                    {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
+                    {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
+                    {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
+                    {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
+                    {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
+                    {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
+                    {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;}) }
+                    {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+                    {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
+                    <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
+                    {/* Abbreviation */}
+                    <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:5}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+                        fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
+                        fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
+                    </div>
+                    {/* Tier icon */}
+                    {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
+                      animation:isDyn?"crownFloat 2.2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+                      filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
+                    {/* Serial */}
+                    {cfg.serial&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.04),fontWeight:700,color:isDyn?"rgba(200,140,255,0.6)":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",letterSpacing:"0.05em"}}>{"#"+cfg.serial}</div>}
+                    {/* Rarity tag */}
+                    <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px 6px"}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{c.rarity.toUpperCase()}</span>
+                    </div>
+                    {c.featured&&<div style={{position:"absolute",bottom:4,right:5,zIndex:8,fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.04),fontWeight:700,letterSpacing:"0.1em",color:isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)"}}>CD 2025</div>}
                   </div>
-                  {/* Serial */}
-                  {c.serial&&<div className="topps-serial" style={{position:"absolute",top:6,right:6,zIndex:5}}>{c.serial}</div>}
-                  {/* Rarity tag */}
-                  <div style={{position:"absolute",top:0,right:0,zIndex:5,background:c.featured?"#f5c518":"#e8161e",color:c.featured?"#000":"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,letterSpacing:"0.06em",padding:"2px 7px"}}>{c.rarity}</div>
-                  {/* CD watermark */}
-                  <div style={{position:"absolute",bottom:36,right:6,zIndex:3,fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:700,color:"rgba(255,255,255,0.25)",letterSpacing:"0.1em"}}>CD 2025</div>
                   {/* Name plate */}
-                  <div style={{position:"absolute",bottom:0,left:0,right:0,height:34,background:"#fff",borderTop:"2px solid "+(c.featured?"#c8a800":"#222"),padding:"0 8px 0 20px",display:"flex",flexDirection:"column",justifyContent:"center"}}>
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:c.featured?12:10,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",lineHeight:1}}>{c.team.toUpperCase()}</div>
-                    <div style={{display:"flex",justifyContent:"space-between",marginTop:2}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:600,color:"#888",letterSpacing:"0.08em",textTransform:"uppercase"}}>{c.sport} · {c.rarity}</span>
+                  <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
+                    background:isDyn?"#0a0020":"#fff",
+                    borderTop:isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
+                    borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+                    zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+                    paddingLeft:Math.round(W*0.14),paddingRight:6}}>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+                      fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
+                      fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
+                      background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+                      WebkitBackgroundClip:isDyn?"text":undefined,
+                      WebkitTextFillColor:isDyn?"transparent":undefined,
+                      color:isDyn?undefined:cfg.nameCol,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>
+                      {c.team.toUpperCase()}
+                    </div>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
+                        letterSpacing:"0.05em",textTransform:"uppercase",
+                        background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+                        WebkitBackgroundClip:isDyn?"text":undefined,
+                        WebkitTextFillColor:isDyn?"transparent":undefined,
+                        color:isDyn?undefined:cfg.rarCol}}>{c.sport} · {c.rarity}</span>
                     </div>
                   </div>
                 </div>
