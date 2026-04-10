@@ -537,317 +537,173 @@ function TeamEmblem(props) {
 }
 
 // CD monogram badge — replaces the old single "D"
-function CDBadge(props) {
-  var rarity=props.rarity;
-  var isDyn=rarity==="Dynasty"; var isLeg=rarity==="Legendary"; var isLegacy=rarity==="Legacy";
-  var isPremium=isDyn||isLeg;
-  var bg1=isPremium?"#7c3aed":isLegacy?"#5b21b6":"#3b1f8a";
-  var bg2=isPremium?"#4c1d95":isLegacy?"#3b1f8a":"#1e1060";
-  var glow=isPremium?10:isLegacy?6:4;
-  return (
-    <div style={{position:"absolute",top:8,right:8,zIndex:20,filter:"drop-shadow(0 0 "+glow+"px rgba(139,92,246,"+(isPremium?0.95:0.6)+"))"}}>
-      <svg width={32} height={36} viewBox="0 0 32 36">
-        <defs>
-          <linearGradient id={"cdg"+rarity} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={bg1}/>
-            <stop offset="100%" stopColor={bg2}/>
-          </linearGradient>
-        </defs>
-        <path d="M16,1.5 L30,7.5 L30,20 Q30,32 16,35 Q2,32 2,20 L2,7.5 Z" fill={"url(#cdg"+rarity+")"} stroke="rgba(167,139,250,0.7)" strokeWidth="1.2"/>
-        {/* "CD" text */}
-        <text x="16" y="22" textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontSize="11" fontWeight="900" fill="rgba(255,255,255,0.95)" letterSpacing="0.5">CD</text>
-      </svg>
-    </div>
-  );
-}
-
-function CrownBadge() {
-  return (
-    <div style={{width:22,height:22,borderRadius:"50%",background:"rgba(0,0,0,0.5)",border:"1px solid rgba(200,155,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-      <svg width={14} height={14} viewBox="0 0 24 24">
-        <path d="M4,17 L4,11 L8,14 L12,7 L16,14 L20,11 L20,17 Z" fill="rgba(220,175,0,0.95)"/>
-        <path d="M5,19 L19,19" stroke="rgba(200,160,0,0.7)" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
-    </div>
-  );
-}
-
-// Sport badge — clear colored text pill instead of ambiguous icon
-function SportBadge(props) {
-  var sport=props.sport; var small=props.small||false;
-  var configs={
-    NFL:{label:"NFL",bg:"rgba(0,53,148,0.85)",color:"#fff",border:"rgba(100,150,255,0.4)"},
-    NBA:{label:"NBA",bg:"rgba(200,16,46,0.85)",color:"#fff",border:"rgba(255,80,100,0.4)"},
-    MLB:{label:"MLB",bg:"rgba(0,45,114,0.85)",color:"#fff",border:"rgba(80,120,255,0.4)"},
-    MLS:{label:"MLS",bg:"rgba(16,24,80,0.85)",color:"#4ade80",border:"rgba(74,222,128,0.4)"},
-    College:{label:"NCAAF",bg:"rgba(60,20,0,0.85)",color:"#fb923c",border:"rgba(251,146,60,0.4)"},
-  };
-  var cfg=configs[sport]||{label:sport,bg:"rgba(30,30,50,0.85)",color:"#aaa",border:"rgba(255,255,255,0.55)"};
-  var sz=small?6:7;
-  return (
-    <div style={{background:cfg.bg,border:"1px solid "+cfg.border,borderRadius:4,padding:small?"1px 4px":"2px 6px",flexShrink:0}}>
-      <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:sz,color:cfg.color,letterSpacing:"0.08em",textTransform:"uppercase"}}>{cfg.label}</span>
-    </div>
-  );
-}
-
-// Rarity banner — the key missing piece
-function RarityBanner(props) {
-  var rarity=props.rarity; var W=props.W;
-  var cfgs={
-    Dynasty:{bg:"linear-gradient(90deg,transparent,rgba(168,85,247,0.9),rgba(245,197,24,0.9),rgba(168,85,247,0.9),transparent)",color:"#fff",label:"✦ DYNASTY ✦",glow:"rgba(168,85,247,0.8)"},
-    Legendary:{bg:"linear-gradient(90deg,transparent,rgba(245,197,24,0.9),rgba(255,240,150,0.95),rgba(245,197,24,0.9),transparent)",color:"#000",label:"★ LEGENDARY ★",glow:"rgba(245,197,24,0.7)"},
-    Legacy:{bg:"linear-gradient(90deg,transparent,rgba(180,120,0,0.85),rgba(255,200,80,0.9),rgba(180,120,0,0.85),transparent)",color:"#000",label:"◆ LEGACY ◆",glow:"rgba(200,150,0,0.6)"},
-    Elite:{bg:"linear-gradient(90deg,transparent,rgba(16,120,60,0.85),rgba(52,211,153,0.9),rgba(16,120,60,0.85),transparent)",color:"#fff",label:"▲ ELITE ▲",glow:"rgba(52,211,153,0.5)"},
-    Rare:{bg:"linear-gradient(90deg,transparent,rgba(30,80,200,0.85),rgba(96,165,250,0.9),rgba(30,80,200,0.85),transparent)",color:"#fff",label:"◉ RARE ◉",glow:"rgba(96,165,250,0.5)"},
-    Base:{bg:"linear-gradient(90deg,transparent,rgba(140,155,170,0.6),rgba(180,190,205,0.7),rgba(140,155,170,0.6),transparent)",color:"#8899bb",label:"BASE",glow:"transparent"},
-  };
-  var cfg=cfgs[rarity]||cfgs.Base;
-  return (
-    <div style={{position:"absolute",top:44,left:0,width:W,zIndex:12,display:"flex",alignItems:"center",justifyContent:"center",pointerEvents:"none",filter:rarity!=="Base"?"drop-shadow(0 0 4px "+cfg.glow+")":"none"}}>
-      <div style={{background:cfg.bg,width:"100%",padding:"3px 0",textAlign:"center"}}>
-        <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:11,letterSpacing:"0.25em",color:cfg.color,textTransform:"uppercase"}}>{cfg.label}</span>
-      </div>
-    </div>
-  );
-}
+// ── RARITY CONFIG ─────────────────────────────────────────────────────────────
+var RARITY_CFG={
+  Base:    {stripe:"#8899aa",stripeTxt:"#fff",photoTop:"#1a2030",photoBot:"#0e1520",abbvCol:"rgba(180,190,210,0.6)",plateBdr:"#ccc",nameCol:"#111",rarCol:"#666",tagBg:"#8899aa",tagTxt:"#fff",shadow:"none"},
+  Rare:    {stripe:"#1144cc",stripeTxt:"#fff",photoTop:"#081440",photoBot:"#040c28",abbvCol:"rgba(80,140,255,0.7)",plateBdr:"#3366cc",nameCol:"#111",rarCol:"#1144cc",tagBg:"#1144cc",tagTxt:"#fff",shadow:"0 0 20px rgba(68,136,255,0.25)"},
+  Elite:   {stripe:"#22aa55",stripeTxt:"#fff",photoTop:"#061a0e",photoBot:"#030e08",abbvCol:"rgba(60,180,100,0.7)",plateBdr:"#22aa55",nameCol:"#111",rarCol:"#22aa55",tagBg:"#22aa55",tagTxt:"#fff",shadow:"0 0 20px rgba(34,170,85,0.25)"},
+  Legacy:  {stripe:"#b8860b",stripeTxt:"#fff",photoTop:"#1a0e00",photoBot:"#0e0800",abbvCol:"rgba(200,160,40,0.75)",plateBdr:"#c8a800",nameCol:"#111",rarCol:"#b8860b",tagBg:"#c8a800",tagTxt:"#000",shadow:"0 0 24px rgba(200,168,0,0.3)"},
+  Legendary:{stripe:"#e8161e",stripeTxt:"#fff",photoTop:"#1a0408",photoBot:"#0e0204",abbvCol:"rgba(255,80,60,0.7)",plateBdr:"#e8161e",nameCol:"#111",rarCol:"#e8161e",tagBg:"#e8161e",tagTxt:"#fff",shadow:"0 0 28px rgba(232,22,30,0.35)"},
+  Dynasty: {stripe:"#7733cc",stripeTxt:"#fff",photoTop:"#0e0420",photoBot:"#080214",abbvCol:"rgba(160,80,255,0.75)",plateBdr:"#9944ee",nameCol:"#111",rarCol:"#7733cc",tagBg:"linear-gradient(90deg,#7733cc,#e8161e)",tagTxt:"#fff",shadow:"0 0 32px rgba(120,50,220,0.4),0 0 60px rgba(232,22,30,0.2)"},
+};
 
 function PremiumCard(props) {
   var card=props.card; var isWinner=props.isWinner||false;
+  var W=170; var H=240;
+  var cfg=RARITY_CFG[card.rarity]||RARITY_CFG.Base;
   var col=getColors(card.team); var c1=col[0];
-  var mouseState=useState({x:0.5,y:0.5}); var mouse=mouseState[0]; var setMouse=mouseState[1];
-  var cardRef=useRef(null);
-  // Bigger card — real sports card proportions (2.5" × 3.5" = 1:1.4)
-  var W=170,H=240;
-  var isBase=card.rarity==="Base"; var isRare=card.rarity==="Rare";
-  var isElite=card.rarity==="Elite"; var isLegacy=card.rarity==="Legacy";
-  var isLeg=card.rarity==="Legendary"; var isDyn=card.rarity==="Dynasty";
-  var isPremium=isLeg||isDyn; var isGold=isLegacy||isPremium;
-
-  var cardBg=isBase
-    ?"linear-gradient(160deg,#e8ecf0 0%,#f5f7fa 40%,#dde2e8 100%)"
-    :isRare
-    ?"linear-gradient(160deg,#050d1f 0%,#091830 50%,#050d1f 100%)"
-    :isElite
-    ?"linear-gradient(160deg,#061810 0%,#0d2818 50%,#061810 100%)"
-    :isLegacy
-    ?"linear-gradient(160deg,#120d00 0%,#221800 50%,#120d00 100%)"
-    :"linear-gradient(160deg,#070415 0%,#10082a 50%,#070415 100%)";
-
-  var borderCol=isDyn?"#e879f9":isPremium?"#f5c518":isLegacy?"rgba(200,155,0,0.85)":isElite?"rgba(52,211,153,0.7)":isRare?"rgba(96,165,250,0.75)":"rgba(160,172,190,0.6)";
-  var bshadow=isDyn
-    ?"0 0 32px rgba(168,85,247,0.6), 0 0 60px rgba(245,197,24,0.3), 0 24px 48px rgba(0,0,0,0.9)"
-    :isPremium
-    ?"0 0 24px rgba(245,197,24,0.55), 0 24px 48px rgba(0,0,0,0.9)"
-    :isLegacy
-    ?"0 0 16px rgba(200,155,0,0.35), 0 20px 40px rgba(0,0,0,0.85)"
-    :isElite
-    ?"0 0 12px rgba(52,211,153,0.3), 0 20px 40px rgba(0,0,0,0.85)"
-    :isRare
-    ?"0 0 14px rgba(96,165,250,0.4), 0 20px 40px rgba(0,0,0,0.85)"
-    :"0 8px 24px rgba(0,0,0,0.5)";
-
-  var nameColor=isBase?"#ccd6f6":isRare?"#93c5fd":isDyn?"#e879f9":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#6ee7b7":"#fff";
-  var statColor=isBase?"#8899bb":isRare?"#60a5fa":isDyn?"#d8b4fe":isPremium?"#f5c518":isLegacy?"#fde68a":isElite?"#34d399":"#aac";
-  var plateBg=isBase
-    ?"linear-gradient(180deg,#c8d0da,#d8e0ea)"
-    :isRare
-    ?"linear-gradient(180deg,#06112a,#0d1e3d)"
-    :isDyn
-    ?"linear-gradient(180deg,#1a0535,#0d0220)"
-    :isPremium
-    ?"linear-gradient(180deg,#0f0a00,#1a1200)"
-    :isLegacy
-    ?"linear-gradient(180deg,#0c0800,#1a1000)"
-    :"linear-gradient(180deg,rgba(0,0,0,0.9),rgba(10,6,20,0.95))";
-
-  function onMouseMove(e) {
-    if(!cardRef.current) return;
-    var r=cardRef.current.getBoundingClientRect();
-    setMouse({x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height});
-  }
-  function onMouseLeave(){ setMouse({x:0.5,y:0.5}); }
-
-  // Perspective tilt from mouse
-  var rotY=((mouse.x-0.5)*18).toFixed(1);
-  var rotX=(-(mouse.y-0.5)*14).toFixed(1);
+  var code=teamCode(card.team);
+  var isDyn=card.rarity==="Dynasty";
+  var isPremium=card.rarity==="Legendary"||isDyn;
+  var isGold=card.rarity==="Legacy"||isPremium;
 
   return (
-    <div ref={cardRef} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}
-      style={{width:W,height:H,position:"relative",flexShrink:0,perspective:800,cursor:"default",
-        animation:isDyn?"goldPulse 2.5s ease-in-out infinite":isRare?"rareShimmer 3s ease-in-out infinite":"none"}}>
-      {/* Outer glow halo */}
-      {!isBase&&<div style={{position:"absolute",inset:-4,borderRadius:18,background:borderCol,filter:"blur(12px)",opacity:isPremium?0.5:0.25,pointerEvents:"none",zIndex:0}}/>}
-      <div style={{width:W,height:H,position:"relative",borderRadius:14,overflow:"hidden",
-        border:"2px solid "+borderCol,boxShadow:bshadow,
-        transform:"rotateY("+rotY+"deg) rotateX("+rotX+"deg)",
-        transition:"transform 0.1s ease-out",transformStyle:"preserve-3d",zIndex:1}}>
+    <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:4,overflow:"hidden",
+      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.35)",border:"1px solid rgba(0,0,0,0.15)"}}>
 
-        {/* ── LAYER 1: Base background ── */}
-        <div style={{position:"absolute",inset:0,background:cardBg}}/>
+      {/* ── LEFT STRIPE — Topps 2025 signature vertical team name ── */}
+      <div style={{position:"absolute",left:0,top:0,bottom:0,width:20,
+        background:cfg.stripe,zIndex:6,
+        display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+          letterSpacing:"0.2em",textTransform:"uppercase",color:cfg.stripeTxt,
+          writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",
+          userSelect:"none"}}>{card.team.toUpperCase()}</span>
+      </div>
 
-        {/* ── LAYER 2: Team color radial spotlight ── */}
-        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 80% 60% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, "+c1+"38 0%, transparent 72%)",transition:"background 0.12s"}}/>
+      {/* ── PHOTO AREA ── */}
+      <div style={{position:"absolute",left:20,top:0,right:0,bottom:38,
+        background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden"}}>
 
-        {/* ── LAYER 3: Rarity-specific overlays ── */}
-        {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(30,60,160,0.3),rgba(60,130,255,0.18),rgba(120,80,255,0.22),rgba(30,60,160,0.28))",mixBlendMode:"screen"}}/>}
-        {isRare&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(96,165,250,0.15) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 2.8s ease-in-out infinite",pointerEvents:"none"}}/>}
-        {isPremium&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,120,0,0.18),rgba(160,0,255,0.15),rgba(0,180,255,0.1),rgba(255,180,0,0.15))",mixBlendMode:"screen"}}/>}
-        {isDyn&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(168,85,247,0.2),rgba(245,197,24,0.15),rgba(168,85,247,0.2))",mixBlendMode:"screen"}}/>}
-        {isLegacy&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(255,180,0,0.1),rgba(80,40,0,0.06),rgba(255,180,0,0.1))",mixBlendMode:"screen"}}/>}
+        {/* Chrome refractor sheen */}
+        <div style={{position:"absolute",inset:0,
+          background:"linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0.07) 35%,rgba(255,255,255,0) 55%,rgba(255,255,255,0.03) 75%,rgba(255,255,255,0) 100%)",
+          pointerEvents:"none",zIndex:3}}/>
 
-        {/* ── LAYER 4: Film grain ── */}
-        <div style={{position:"absolute",inset:0,backgroundImage:NOISE,backgroundSize:"160px",opacity:isBase?0.25:0.5,mixBlendMode:"overlay",pointerEvents:"none"}}/>
+        {/* Team color radial */}
+        <div style={{position:"absolute",inset:0,
+          background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",
+          pointerEvents:"none",zIndex:2}}/>
 
-        {/* ── LAYER 5: Shimmer sweep for gold tiers ── */}
-        {isGold&&<div style={{position:"absolute",inset:0,background:"linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.18) 50%,transparent 80%)",backgroundSize:"200% 100%",animation:"shimmerSweep 3s ease-in-out infinite",mixBlendMode:"screen",pointerEvents:"none"}}/>}
-        {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}><div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(245,197,24,0.1),transparent)",animation:"dynastyShine 3s ease-in-out infinite"}}/></div>}
+        {/* Dynasty shine sweep */}
+        {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none",zIndex:4}}>
+          <div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",
+            background:"linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)",
+            animation:"dynastyShine 3s ease-in-out infinite"}}/>
+        </div>}
 
-        {/* ── LAYER 6: Mouse glint ── */}
-        <div style={{position:"absolute",inset:0,borderRadius:13,background:"radial-gradient(ellipse 50% 40% at "+(mouse.x*100)+"% "+(mouse.y*100)+"%, rgba(255,255,255,0.09) 0%, transparent 70%)",pointerEvents:"none",zIndex:6}}/>
-
-        {/* ── LAYER 7: Border glow ring ── */}
-        {(isGold||isRare)&&(
-          <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{position:"absolute",inset:0,zIndex:8,pointerEvents:"none"}}>
-            <defs>
-              <linearGradient id={"brg"+card.rarity+W} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor={borderCol} stopOpacity="0.9"/>
-                <stop offset="50%" stopColor={isBase?"#ccc":"#fff"} stopOpacity="0.6"/>
-                <stop offset="100%" stopColor={borderCol} stopOpacity="0.9"/>
-              </linearGradient>
-            </defs>
-            <rect x="4" y="4" width={W-8} height={H-8} rx="11" fill="none" stroke={"url(#brg"+card.rarity+W+")"} strokeWidth={isPremium?"1.5":"1"}/>
-            {/* Corner accents */}
-            <polyline points={"5,22 5,5 22,5"} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
-            <polyline points={(W-22)+",5 "+(W-5)+",5 "+(W-5)+",22"} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
-            <polyline points={"5,"+(H-22)+" 5,"+(H-5)+" 22,"+(H-5)} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
-            <polyline points={(W-22)+","+(H-5)+" "+(W-5)+","+(H-5)+" "+(W-5)+","+(H-22)} fill="none" stroke={borderCol} strokeWidth="2.5" opacity="0.9"/>
-          </svg>
-        )}
-
-        {/* ── HEADER BAR ── */}
-        <div style={{position:"absolute",top:0,left:0,right:0,zIndex:11,
-          display:"flex",alignItems:"center",justifyContent:"space-between",
-          padding:"6px 10px 5px",
-          background:isBase?"rgba(180,190,205,0.85)":isRare?"rgba(4,10,30,0.9)":"rgba(0,0,0,0.75)",
-          borderBottom:"1px solid "+(isGold?"rgba(245,197,24,0.2)":isRare?"rgba(96,165,250,0.2)":"rgba(255,255,255,0.08)")}}>
-          <SportBadge sport={card.sport}/>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:statColor}}>🪙{card.daily}</span>
-            <span style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>·</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,color:statColor}}>{card.win}W</span>
-            {isWinner&&<span style={{fontSize:10,fontWeight:900,background:"#34d399",color:"#000",padding:"1px 6px",borderRadius:999,marginLeft:2}}>WIN</span>}
-          </div>
+        {/* Ghost watermark emblem */}
+        <div style={{position:"absolute",left:"50%",top:"44%",transform:"translate(-50%,-50%)",
+          zIndex:1,opacity:0.06,pointerEvents:"none"}}>
+          <TeamEmblem team={card.team} size={120}/>
         </div>
 
-        {/* ── RARITY BANNER — right below header ── */}
-        <RarityBanner rarity={card.rarity} W={W}/>
+        {/* Large team abbreviation — the hero element */}
+        <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",
+          textAlign:"center",zIndex:5,paddingLeft:4}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:code.length<=2?82:code.length<=3?62:code.length<=4?48:38,
+            fontWeight:900,letterSpacing:code.length<=2?"0.04em":"0.02em",
+            color:cfg.abbvCol,lineHeight:1,userSelect:"none",
+            textShadow:isGold?"0 2px 24px rgba(0,0,0,0.5)":"0 2px 12px rgba(0,0,0,0.4)"}}>
+            {code}
+          </span>
+        </div>
 
-        {/* ── CD MONOGRAM BADGE ── */}
-        <CDBadge rarity={card.rarity}/>
+        {/* Rarity tag — top right */}
+        <div style={{position:"absolute",top:0,right:0,zIndex:8,
+          background:typeof cfg.tagBg==="string"&&cfg.tagBg.startsWith("linear")?cfg.tagBg:cfg.tagBg,
+          padding:"3px 8px"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,
+            letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{card.rarity.toUpperCase()}</span>
+        </div>
+
+        {/* Grade badge if slabbed */}
         {card.graded&&card.grade&&(
-          <div style={{position:"absolute",top:8,left:8,zIndex:20,background:"linear-gradient(135deg,rgba(0,0,0,0.9),rgba(10,8,20,0.95))",borderRadius:6,padding:"2px 7px",border:"1px solid rgba(255,215,0,0.4)",boxShadow:"0 0 8px rgba(255,215,0,0.3)"}}>
-            <span style={{fontFamily:"'Oswald',sans-serif",fontSize:9,fontWeight:900,color:"#FFD700",letterSpacing:"0.1em"}}>PSA {card.grade}</span>
+          <div style={{position:"absolute",top:0,left:0,zIndex:8,
+            background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"3px 7px"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,
+              letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
           </div>
         )}
 
-        {/* ── VERTICAL WATERMARK TEXT ── */}
-        <div style={{position:"absolute",left:5,top:"50%",transform:"translateY(-50%) rotate(-90deg)",transformOrigin:"center",whiteSpace:"nowrap",zIndex:9,pointerEvents:"none"}}>
-          <span style={{fontSize:9,letterSpacing:"0.3em",color:isBase?"rgba(0,0,0,0.1)":"rgba(255,255,255,0.08)",fontWeight:400,textTransform:"uppercase"}}>Card Dynasty</span>
-        </div>
+        {/* CD 2025 watermark */}
+        <div style={{position:"absolute",bottom:5,right:6,zIndex:7,
+          fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:700,
+          letterSpacing:"0.1em",color:"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2025</div>
 
-        {/* ── GHOST EMBLEM (background watermark) ── */}
-        <div style={{position:"absolute",left:"50%",top:"46%",transform:"translate(-50%,-50%)",zIndex:2,opacity:0.08,pointerEvents:"none"}}>
-          <TeamEmblem team={card.team} size={Math.round(W*0.72)}/>
-        </div>
+        {/* Winner badge */}
+        {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:9,background:"#22aa44",padding:"2px 6px"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#fff",letterSpacing:"0.08em"}}>WIN</span>
+        </div>}
+      </div>
 
-        {/* ── MAIN EMBLEM ── */}
-        <div style={{position:"absolute",left:"50%",top:"46%",transform:"translate(-50%,-50%)",zIndex:10,
-          filter:isDyn
-            ?"drop-shadow(0 0 18px "+c1+"ee) drop-shadow(0 0 36px rgba(168,85,247,0.6))"
-            :isPremium
-            ?"drop-shadow(0 0 16px "+c1+"dd) drop-shadow(0 0 32px "+c1+"88)"
-            :isRare
-            ?"drop-shadow(0 0 10px "+c1+"cc)"
-            :isElite
-            ?"drop-shadow(0 0 8px "+c1+"aa)"
-            :"none"}}>
-          <TeamEmblem team={card.team} size={Math.round(W*0.58)}/>
+      {/* ── NAME PLATE — Topps bottom plate ── */}
+      <div style={{position:"absolute",bottom:0,left:0,right:0,height:38,
+        background:"#fff",borderTop:"2px solid "+cfg.plateBdr,zIndex:6,
+        display:"flex",flexDirection:"column",justifyContent:"center",
+        paddingLeft:24,paddingRight:8,paddingTop:2,paddingBottom:2}}>
+        {/* Team name */}
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+          fontSize:card.team.length>10?11:card.team.length>7?13:15,
+          fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",
+          color:cfg.nameCol,lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+          {card.team.toUpperCase()}
         </div>
-
-        {/* ── BOTTOM NAME PLATE ── */}
-        <div style={{position:"absolute",bottom:0,left:0,right:0,zIndex:11}}>
-          {/* Separator line */}
-          <div style={{height:1,background:isGold?"linear-gradient(90deg,transparent,rgba(245,197,24,0.6),transparent)":isRare?"linear-gradient(90deg,transparent,rgba(96,165,250,0.5),transparent)":"linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent)"}}/>
-          <div style={{background:plateBg,padding:"8px 10px 10px"}}>
-            {/* Team name — full width, properly sized */}
-            <div style={{textAlign:"center",marginBottom:5}}>
-              <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,
-                fontSize:card.team.length>10?11:card.team.length>7?13:15,
-                color:nameColor,letterSpacing:"0.12em",textTransform:"uppercase",
-                display:"block",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"clip"}}>
-                {card.team}
-              </span>
-            </div>
-            {/* Stats row */}
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              {isGold?<CrownBadge/>:<div style={{width:6}}/>}
-              <div style={{background:isPremium?"rgba(20,14,0,0.8)":isRare?"rgba(3,8,22,0.8)":"rgba(0,0,0,0.6)",borderRadius:6,padding:"3px 10px",border:"1px solid "+(isGold?"rgba(245,197,24,0.25)":isRare?"rgba(96,165,250,0.25)":"rgba(255,255,255,0.08)")}}>
-                <div style={{fontSize:9,color:isGold?"rgba(245,197,24,0.5)":isRare?"rgba(96,165,250,0.5)":"rgba(255,255,255,0.7)",letterSpacing:"0.15em",textTransform:"uppercase",textAlign:"center",fontWeight:700,fontFamily:"'Oswald',sans-serif"}}>MAX POT</div>
-                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:isGold?"#f5c518":isRare?"#93c5fd":isBase?"#8899bb":"#dde",textAlign:"center",lineHeight:1.2}}>{fmt(card.mp)}</div>
-              </div>
-              {isGold?<CrownBadge/>:<div style={{width:6}}/>}
-            </div>
-          </div>
+        {/* Sport · Rarity · Yield */}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:2}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+            letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.rarCol}}>
+            {card.sport} · {card.rarity.toUpperCase()}
+          </span>
+          <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:9,fontWeight:700,
+            color:"#c8a800"}}>{fmt(card.daily)}🪙</span>
         </div>
       </div>
     </div>
   );
 }
-// Renders a genuine sports-card back: color border, diagonal pattern, holographic
+
+// Card back — Topps-style foil back
 function CardBack(props) {
-  var W=props.width||148; var H=props.height||212; var autoFlip=props.autoFlip||false;
-  var uid="cb"+W+"x"+H;
-  var serial="#"+String(Math.floor(W*H*7+314)).padStart(6,"0");
-  var r1=(W*0.64-14)/2; var circ1=2*Math.PI*r1;
+  var W=props.width||170; var H=props.height||240; var autoFlip=props.autoFlip||false;
   return (
-    <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{display:"block",borderRadius:12}}>
-      <defs>
-        <linearGradient id={uid+"b"} x1="15%" y1="0%" x2="85%" y2="100%"><stop offset="0%" stopColor="#06031a"/><stop offset="45%" stopColor="#09052a"/><stop offset="100%" stopColor="#04021a"/></linearGradient>
-        <linearGradient id={uid+"g"} x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#6a4400"/><stop offset="50%" stopColor="#f5c518"/><stop offset="100%" stopColor="#b8860b"/></linearGradient>
-        <linearGradient id={uid+"h"} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#ff0066" stopOpacity="0.5"/><stop offset="25%" stopColor="#ff8800" stopOpacity="0.35"/><stop offset="50%" stopColor="#00e5ff" stopOpacity="0.45"/><stop offset="75%" stopColor="#aa00ff" stopOpacity="0.4"/><stop offset="100%" stopColor="#ff0066" stopOpacity="0.45"/></linearGradient>
-        <pattern id={uid+"d"} patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)"><rect width="10" height="10" fill="#070520"/><line x1="0" y1="5" x2="10" y2="5" stroke="#0d0835" strokeWidth="3.5"/></pattern>
-        <radialGradient id={uid+"gw"} cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#2a1580" stopOpacity="0.65"/><stop offset="100%" stopColor="transparent" stopOpacity="0"/></radialGradient>
-        <radialGradient id={uid+"vg"} cx="50%" cy="50%" r="70%"><stop offset="55%" stopColor="transparent"/><stop offset="100%" stopColor="rgba(0,0,0,0.75)"/></radialGradient>
-        <clipPath id={uid+"cl"}><rect x="0" y="0" width={W} height={H} rx="11"/></clipPath>
-      </defs>
-      <g clipPath={"url(#"+uid+"cl)"}>
-        <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"b)"}/>
-        <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"d)"} opacity="1"/>
-        <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"gw)"}/>
-        <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"h)"} opacity="0.55" style={{animation:"holoShine 4s ease-in-out infinite"}}/>
-        <line x1={W*0.08} y1={H*0.02} x2={W*0.55} y2={H*0.98} stroke="rgba(255,255,255,0.07)" strokeWidth={W*0.18}/>
-        <rect x="3" y="3" width={W-6} height={H-6} rx="9" fill="none" stroke={"url(#"+uid+"g)"} strokeWidth="2.5"/>
-        <rect x="7" y="7" width={W-14} height={Math.round(H*0.1)} rx="6" fill="rgba(0,0,0,0.82)"/>
-        <rect x="7" y={7+Math.round(H*0.1)-1} width={W-14} height="1.5" fill={"url(#"+uid+"g)"} opacity="0.8"/>
-        <text x={W/2} y={7+Math.round(H*0.1)*0.52} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={Math.round(W*0.11)} fill="#f5c518" letterSpacing="3" style={{filter:"drop-shadow(0 0 6px rgba(245,197,24,0.8))"}}>CARD DYNASTY</text>
-        <path d={"M"+(W/2)+","+(H*0.185)+" L"+(W*0.815)+","+(H*0.275)+" L"+(W*0.815)+","+(H*0.515)+" Q"+(W*0.815)+","+(H*0.695)+" "+(W/2)+","+(H*0.775)+" Q"+(W*0.185)+","+(H*0.695)+" "+(W*0.185)+","+(H*0.515)+" L"+(W*0.185)+","+(H*0.275)+" Z"} fill="rgba(255,255,255,0.03)" stroke={"url(#"+uid+"g)"} strokeWidth="1.2" strokeOpacity="0.45"/>
-        <text x={W/2} y={H*0.495} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={Math.round(W*0.52)} fill="rgba(180,140,255,0.07)">D</text>
-        <text x={W/2} y={H*0.655} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="700" fontSize={Math.round(W*0.072)} fill="rgba(245,197,24,0.3)" letterSpacing="3">DYNASTY</text>
-        {[{cx:W*0.14,cy:H*0.14},{cx:W*0.86,cy:H*0.14},{cx:W*0.14,cy:H*0.86},{cx:W*0.86,cy:H*0.86}].map(function(pt,i){var s=Math.round(W*0.038);return <rect key={i} x={pt.cx-s} y={pt.cy-s} width={s*2} height={s*2} transform={"rotate(45,"+pt.cx+","+pt.cy+")"} fill="rgba(245,197,24,0.12)" stroke={"url(#"+uid+"g)"} strokeWidth="1" strokeOpacity="0.6"/>;}) }
-        <rect x={W*0.1} y={H*0.795} width={W*0.8} height={H*0.085} rx="4" fill="rgba(0,0,0,0.7)" stroke="rgba(245,197,24,0.2)" strokeWidth="0.75"/>
-        {[{x:W*0.22,v:"PWR"},{x:W*0.5,v:"SPD"},{x:W*0.78,v:"RTG"}].map(function(s,i){return <g key={i}><text x={s.x} y={H*0.828} textAnchor="middle" dominantBaseline="middle" fontFamily="'JetBrains Mono',monospace" fontWeight="700" fontSize={Math.round(W*0.06)} fill="rgba(200,200,255,0.5)">{s.v}</text><text x={s.x} y={H*0.855} textAnchor="middle" dominantBaseline="middle" fontFamily="'JetBrains Mono',monospace" fontWeight="700" fontSize={Math.round(W*0.075)} fill="#f5c518">{["99","88","95"][i]}</text></g>;})}
-        <line x1={W*0.37} y1={H*0.802} x2={W*0.37} y2={H*0.872} stroke="rgba(245,197,24,0.2)" strokeWidth="0.75"/>
-        <line x1={W*0.63} y1={H*0.802} x2={W*0.63} y2={H*0.872} stroke="rgba(245,197,24,0.2)" strokeWidth="0.75"/>
-        <rect x="7" y={H-7-Math.round(H*0.075)} width={W-14} height={Math.round(H*0.075)} rx="6" fill="rgba(0,0,0,0.82)"/>
-        <rect x="7" y={H-7-Math.round(H*0.075)} width={W-14} height="1.5" fill={"url(#"+uid+"g)"} opacity="0.8"/>
-        <text x={W*0.22} y={H-7-Math.round(H*0.075)*0.48} textAnchor="middle" dominantBaseline="middle" fontFamily="'JetBrains Mono',monospace" fontWeight="700" fontSize={Math.round(W*0.055)} fill="rgba(245,197,24,0.65)">{serial}</text>
-        <text x={W*0.75} y={H-7-Math.round(H*0.075)*0.48} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="700" fontSize={Math.round(W*0.075)} fill="rgba(245,197,24,0.65)" letterSpacing="1">2025</text>
-        {!autoFlip&&<g><rect x={W*0.18} y={H*0.89} width={W*0.64} height={H*0.072} rx="999" fill="rgba(245,197,24,0.1)" stroke="rgba(245,197,24,0.35)" strokeWidth="0.75"/><text x={W/2} y={H*0.926} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="700" fontSize={Math.round(W*0.072)} fill="rgba(245,197,24,0.8)" letterSpacing="1.5">TAP TO REVEAL</text></g>}
-        <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"vg)"}/>
-        <rect x="1.5" y="1.5" width={W-3} height={H-3} rx="11" fill="none" stroke="rgba(245,197,24,0.5)" strokeWidth="1.5"/>
-      </g>
-    </svg>
+    <div style={{width:W,height:H,borderRadius:4,overflow:"hidden",position:"relative",
+      background:"linear-gradient(145deg,#0a0e18,#111828,#0a0e18)",
+      border:"1px solid rgba(255,255,255,0.08)"}}>
+      {/* Background pattern */}
+      <svg width={W} height={H} style={{position:"absolute",inset:0,opacity:0.12}} viewBox={"0 0 "+W+" "+H}>
+        {Array.from({length:Math.ceil(H/12)},function(_,row){
+          return Array.from({length:Math.ceil(W/12)},function(_,col){
+            return <rect key={row+"-"+col} x={col*12+2} y={row*12+2} width={7} height={7} rx={1} fill="rgba(255,255,255,0.5)"/>;
+          });
+        })}
+      </svg>
+      {/* Center logo area */}
+      <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",
+        alignItems:"center",justifyContent:"center",gap:6,zIndex:2}}>
+        <div style={{background:"rgba(232,22,30,0.9)",padding:"6px 16px",marginBottom:4}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,
+            letterSpacing:"0.06em",color:"#fff",textTransform:"uppercase"}}>CARD <em style={{color:"#f5c518",fontStyle:"normal"}}>DYNASTY</em></span>
+        </div>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+          letterSpacing:"0.4em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Official Collector Edition</span>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+          color:"rgba(255,255,255,0.2)",letterSpacing:"0.2em",textTransform:"uppercase",marginTop:4}}>2025 Series 1</span>
+        {!autoFlip&&<div style={{marginTop:12,background:"rgba(232,22,30,0.15)",border:"1px solid rgba(232,22,30,0.4)",padding:"5px 16px"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:800,
+            letterSpacing:"0.25em",color:"#e8161e",textTransform:"uppercase"}}>Tap to Reveal</span>
+        </div>}
+      </div>
+      {/* Corner marks */}
+      {[[4,4],[W-4,4],[4,H-4],[W-4,H-4]].map(function(pt,i){
+        var sx=i%2===0?1:-1; var sy=i<2?1:-1;
+        return <svg key={i} width={14} height={14} style={{position:"absolute",left:pt[0]-7,top:pt[1]-7,zIndex:3}}>
+          <polyline points={"0,8 0,0 8,0"} fill="none" stroke="rgba(232,22,30,0.5)" strokeWidth="1.5"
+            transform={"scale("+sx+","+sy+") translate("+(sx<0?-14:0)+","+(sy<0?-14:0)+")")}/>
+        </svg>;
+      })}
+    </div>
   );
 }
 
@@ -857,9 +713,9 @@ function FlipCard(props) {
   var flippedState=useState(false); var flipped=flippedState[0]; var setFlipped=flippedState[1];
   var sfxState=useState(null); var sfx=sfxState[0]; var setSfx=sfxState[1];
   var isWin=winners&&winners.has(card.team);
-  var W=compact?128:170; var H=compact?179:240;
-  var SFX={Rare:"SHINK!",Elite:"CRACK!",Legacy:"BLAZE!",Legendary:"FIRE!",Dynasty:"BOOM!"};
-  var ac=RCOLORS[card.rarity]||"#aaa";
+  var W=compact?120:170; var H=compact?168:240;
+  var SFX={Rare:"RARE!",Elite:"ELITE!",Legacy:"LEGACY!",Legendary:"LEGENDARY!",Dynasty:"DYNASTY!"};
+  var cfg=RARITY_CFG[card.rarity]||RARITY_CFG.Base;
   useEffect(function(){if(autoFlip)setTimeout(function(){doFlip();},120);},[autoFlip]);
   function doFlip(){
     if(flipped)return;
@@ -870,38 +726,59 @@ function FlipCard(props) {
   }
   return (
     <div style={{width:W,height:H,perspective:900,flexShrink:0,position:"relative"}}>
-      {sfx&&<div style={{position:"absolute",top:-16,left:"50%",transform:"translateX(-50%)",zIndex:30,fontSize:13,fontWeight:900,color:ac,textShadow:"0 0 14px "+ac,whiteSpace:"nowrap",animation:"popIn 0.8s ease-out forwards",pointerEvents:"none"}}>{sfx}</div>}
-      <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",transition:"transform 0.65s cubic-bezier(0.3,1.4,0.5,1)",transform:flipped?"rotateY(180deg)":"rotateY(0deg)"}}>
-        {/* CARD BACK — universal foil sports card back, no team info */}
-        <div onClick={doFlip} style={{position:"absolute",inset:0,backfaceVisibility:"hidden",WebkitBackfaceVisibility:"hidden",cursor:!flipped?"pointer":"default",borderRadius:12,overflow:"hidden"}}>
+      {sfx&&<div style={{position:"absolute",top:-20,left:"50%",transform:"translateX(-50%)",
+        zIndex:30,fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,
+        color:cfg.rarCol,background:"#fff",border:"1px solid "+cfg.rarCol,
+        padding:"2px 10px",whiteSpace:"nowrap",
+        animation:"popIn 0.8s ease-out forwards",pointerEvents:"none",
+        letterSpacing:"0.1em",textTransform:"uppercase"}}>{sfx}</div>}
+      <div style={{width:"100%",height:"100%",position:"relative",transformStyle:"preserve-3d",
+        transition:"transform 0.55s cubic-bezier(0.3,1.2,0.5,1)",
+        transform:flipped?"rotateY(180deg)":"rotateY(0deg)"}}>
+        <div onClick={doFlip} style={{position:"absolute",inset:0,backfaceVisibility:"hidden",
+          WebkitBackfaceVisibility:"hidden",cursor:!flipped?"pointer":"default"}}>
           <CardBack width={W} height={H} autoFlip={autoFlip}/>
         </div>
-        {/* CARD FRONT — premium card face, shows after flip */}
-        <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",WebkitBackfaceVisibility:"hidden",transform:"rotateY(180deg)",borderRadius:12}}>
+        <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",
+          WebkitBackfaceVisibility:"hidden",transform:"rotateY(180deg)"}}>
           <PremiumCard card={card} isWinner={isWin}/>
         </div>
       </div>
     </div>
   );
 }
+
 function MiniCard(props) {
   var card=props.card;
-  var col=getColors(card.team); var c1=col[0];
-  var isBase=card.rarity==="Base";
-  var isRare=card.rarity==="Rare";
-  var isGold=card.rarity==="Legendary"||card.rarity==="Dynasty"||card.rarity==="Legacy";
-  var bc=isGold?"rgba(245,197,24,0.7)":isRare?"rgba(96,165,250,0.7)":isBase?"rgba(150,160,175,0.5)":"rgba(100,120,200,0.4)";
-  var bg=isBase?"linear-gradient(160deg,#e8ecf0,#f5f7fa)":isRare?"linear-gradient(160deg,#050d1f,#091830)":isGold?"linear-gradient(160deg,#120d00,#221800)":"linear-gradient(160deg,#070415,#10082a)";
-  var nameCol=isBase?"#ccd6f6":isRare?"#93c5fd":isGold?"#f5c518":"#ccd";
-  var rarCol=isBase?"#556":isRare?"#60a5fa":isGold?"#aa8800":"#778";
+  var cfg=RARITY_CFG[card.rarity]||RARITY_CFG.Base;
+  var code=teamCode(card.team);
   return (
-    <div style={{width:56,height:76,borderRadius:8,overflow:"hidden",flexShrink:0,position:"relative",border:"1.5px solid "+bc,boxShadow:isGold?"0 0 10px rgba(245,197,24,0.3)":isRare?"0 0 8px rgba(96,165,250,0.3)":"none"}}>
-      <div style={{position:"absolute",inset:0,background:bg}}/>
-      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 80% 60% at 80% 15%,"+c1+"30 0%,transparent 70%)"}}/>
-      <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,zIndex:5}}>
-        <TeamEmblem team={card.team} size={34}/>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:9,fontWeight:700,color:nameCol,textTransform:"uppercase",textAlign:"center",padding:"0 3px",overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis",maxWidth:"90%"}}>{card.team}</div>
-        <div style={{fontSize:9,color:rarCol}}>{card.rarity.slice(0,3).toUpperCase()}</div>
+    <div style={{width:52,height:72,borderRadius:2,overflow:"hidden",flexShrink:0,position:"relative",
+      border:"1px solid rgba(0,0,0,0.12)",boxShadow:cfg.shadow}}>
+      {/* Left stripe */}
+      <div style={{position:"absolute",left:0,top:0,bottom:0,width:8,background:cfg.stripe,zIndex:3}}/>
+      {/* Photo */}
+      <div style={{position:"absolute",left:8,top:0,right:0,bottom:20,
+        background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",
+        display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+          fontSize:code.length<=2?28:code.length<=3?22:16,fontWeight:900,
+          color:cfg.abbvCol,letterSpacing:"0.02em",userSelect:"none"}}>{code}</span>
+      </div>
+      {/* Rarity tag */}
+      <div style={{position:"absolute",top:0,right:0,background:cfg.tagBg.startsWith?.("linear")?cfg.tagBg:cfg.tagBg,padding:"1px 4px",zIndex:4}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:5,fontWeight:900,
+          color:cfg.tagTxt,letterSpacing:"0.04em",textTransform:"uppercase"}}>{card.rarity.slice(0,3).toUpperCase()}</span>
+      </div>
+      {/* Name plate */}
+      <div style={{position:"absolute",bottom:0,left:0,right:0,height:20,
+        background:"#fff",borderTop:"1.5px solid "+cfg.plateBdr,zIndex:3,
+        display:"flex",flexDirection:"column",justifyContent:"center",paddingLeft:10,paddingRight:3}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:900,
+          letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",lineHeight:1,
+          overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>{card.team.toUpperCase()}</div>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:6,fontWeight:700,
+          letterSpacing:"0.04em",color:cfg.rarCol,textTransform:"uppercase"}}>{card.sport}</div>
       </div>
     </div>
   );
@@ -921,56 +798,64 @@ function ParticleBurst(props) {
 function BoosterPack(props) {
   var packId=props.packId; var size=props.size||130; var shaking=props.shaking||false;
   var floating=props.floating!==undefined?props.floating:true; var onClick=props.onClick;
-  var W=size; var H=Math.round(size*1.75); var uid="pk_"+packId+"_"+size;
+  var W=size; var H=Math.round(size*1.4);
+  // Topps-style product configs: each pack is a clean product card
   var cfgs={
-    genesis:{bg:"#1a1200",acc:"#f5c518",b2:"#3d2e00",lbl:"GENESIS",sub:"STARTER PACK",cards:"5",rar:"MULTI-SPORT",rc:"#f5c518"},
-    standard:{bg:"#04102a",acc:"#5599ff",b2:"#0d3090",lbl:"STANDARD",sub:"PRO CASE",cards:"5",rar:"RARE+",rc:"#88ccff"},
-    jumbo:{bg:"#0a0420",acc:"#cc77ff",b2:"#300e80",lbl:"JUMBO",sub:"DIVISION",cards:"10",rar:"ELITE+",rc:"#f5c518"},
-    obsidian:{bg:"#020204",acc:"#dd88ff",b2:"#0c0620",lbl:"OBSIDIAN",sub:"BLACK BOX",cards:"3",rar:"LEGACY+",rc:"#e879f9"},
+    genesis:{top:"#e8161e",mid:"#111",acc:"#f5c518",lbl:"GENESIS",sub:"STARTER PACK",cards:"5",rar:"MULTI-SPORT",stripe:"#e8161e"},
+    standard:{top:"#1144cc",mid:"#04102a",acc:"#88aaff",lbl:"STANDARD",sub:"PRO CASE",cards:"5",rar:"RARE+",stripe:"#1144cc"},
+    jumbo:{top:"#22aa55",mid:"#061a0e",acc:"#88ffaa",lbl:"JUMBO",sub:"DIVISION",cards:"10",rar:"ELITE+",stripe:"#22aa55"},
+    nfl:{top:"#1144cc",mid:"#040c20",acc:"#6688ff",lbl:"NFL",sub:"FIELD PASS",cards:"4",rar:"NFL ONLY",stripe:"#1144cc"},
+    nba:{top:"#cc1133",mid:"#1a040a",acc:"#ff6688",lbl:"NBA",sub:"COURT PASS",cards:"4",rar:"NBA ONLY",stripe:"#cc1133"},
+    mlb:{top:"#1155bb",mid:"#040e22",acc:"#5588ff",lbl:"MLB",sub:"DIAMOND PASS",cards:"4",rar:"MLB ONLY",stripe:"#1155bb"},
+    mls:{top:"#228833",mid:"#061408",acc:"#66cc88",lbl:"MLS",sub:"PITCH PASS",cards:"4",rar:"MLS ONLY",stripe:"#228833"},
+    college:{top:"#cc5500",mid:"#1a0a00",acc:"#ffaa55",lbl:"COLLEGE",sub:"FANATICS",cards:"4",rar:"COLLEGE ONLY",stripe:"#cc5500"},
+    blaster:{top:"#7733cc",mid:"#0e0420",acc:"#bb77ff",lbl:"BLASTER",sub:"BOX",cards:"12",rar:"BUNDLE",stripe:"#7733cc"},
+    megabox:{top:"#0088cc",mid:"#00141e",acc:"#44bbff",lbl:"MEGA",sub:"BOX",cards:"30",rar:"MEGA VALUE",stripe:"#0088cc"},
+    hobbybox:{top:"#cc3300",mid:"#1e0800",acc:"#ff6644",lbl:"HOBBY",sub:"BOX",cards:"60",rar:"LEGACY GTEE",stripe:"#cc3300"},
   };
   var c=cfgs[packId]||cfgs.standard;
-  var crimpH=Math.round(H*0.09); var artH=H-crimpH*2;
   return (
-    <div onClick={onClick} className={shaking?"pack-shake":floating?"pack-float":""} style={{cursor:onClick?"pointer":"default",position:"relative",width:W,height:H,filter:"drop-shadow(0 8px 24px "+c.acc+"88) drop-shadow(0 2px 4px rgba(0,0,0,0.9))"}}>
-      <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{display:"block",borderRadius:4,overflow:"hidden"}}>
+    <div onClick={onClick} className={shaking?"pack-shake":floating?"pack-float":""}
+      style={{cursor:onClick?"pointer":"default",position:"relative",width:W,height:H,flexShrink:0}}>
+      <svg width={W} height={H} viewBox={"0 0 "+W+" "+H} style={{display:"block",borderRadius:3,overflow:"hidden",filter:"drop-shadow(0 4px 16px rgba(0,0,0,0.5))"}}>
         <defs>
-          <linearGradient id={uid+"b"} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={c.bg}/><stop offset="100%" stopColor={c.b2}/></linearGradient>
-          <linearGradient id={uid+"f"} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={c.bg}/><stop offset="30%" stopColor={c.acc} stopOpacity="0.7"/><stop offset="55%" stopColor={c.acc} stopOpacity="0.9"/><stop offset="100%" stopColor={c.bg}/></linearGradient>
-          <linearGradient id={uid+"g"} x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#6a4400"/><stop offset="50%" stopColor="#f5c518"/><stop offset="100%" stopColor="#b8860b"/></linearGradient>
-          <linearGradient id={uid+"c"} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor={c.acc} stopOpacity="0.6"/><stop offset="100%" stopColor={c.acc} stopOpacity="0.3"/></linearGradient>
-          <pattern id={uid+"s"} patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)"><rect width="10" height="10" fill={c.b2}/><line x1="0" y1="5" x2="10" y2="5" stroke={c.bg} strokeWidth="3.5"/></pattern>
-          <radialGradient id={uid+"sp"} cx="50%" cy="45%" r="55%"><stop offset="0%" stopColor={c.acc} stopOpacity="0.2"/><stop offset="100%" stopColor="transparent" stopOpacity="0"/></radialGradient>
-          <clipPath id={uid+"cl"}><rect x="0" y="0" width={W} height={H} rx="3"/></clipPath>
+          <clipPath id={"pk_cl_"+packId+size}><rect x="0" y="0" width={W} height={H} rx="2"/></clipPath>
         </defs>
-        <g clipPath={"url(#"+uid+"cl)"}>
-          <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"b)"}/>
-          <rect x="0" y={crimpH} width={W} height={artH} fill={"url(#"+uid+"s)"} opacity="0.35"/>
-          <rect x="0" y={crimpH} width={W} height={artH} fill={"url(#"+uid+"f)"} opacity="0.6" style={{animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
-          <rect x="0" y="0" width={W} height={H} fill={"url(#"+uid+"sp)"}/>
-          <rect x="0" y="0" width={W} height={crimpH} fill={"url(#"+uid+"c)"}/>
-          {[0.15,0.5,0.85].map(function(f,i){return <line key={i} x1="0" y1={crimpH*f} x2={W} y2={crimpH*f} stroke={c.acc} strokeWidth="0.7" opacity="0.5"/>;}) }
-          <rect x="0" y="0" width={W} height="2" fill={c.acc} opacity="0.6"/>
-          <rect x="0" y={H-crimpH} width={W} height={crimpH} fill={"url(#"+uid+"c)"}/>
-          {[0.15,0.5,0.85].map(function(f,i){return <line key={i} x1="0" y1={H-crimpH+crimpH*f} x2={W} y2={H-crimpH+crimpH*f} stroke={c.acc} strokeWidth="0.7" opacity="0.5"/>;}) }
-          <rect x="0" y={H-2} width={W} height="2" fill={c.acc} opacity="0.6"/>
-          <rect x="4" y={crimpH+5} width={W-8} height={Math.round(H*0.07)} rx="2" fill="rgba(0,0,0,0.7)"/>
-          <rect x="4" y={crimpH+5} width={W-8} height="1.5" fill={c.acc} opacity="0.8"/>
-          <text x={W/2} y={crimpH+5+Math.round(H*0.07)*0.6} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="700" fontSize={Math.round(W*0.1)} fill="#ffffff" letterSpacing="3" style={{filter:"drop-shadow(0 1px 3px rgba(0,0,0,0.9))"}}>{c.sub}</text>
-          <rect x={Math.round(W*0.08)} y={crimpH+Math.round(H*0.13)} width={Math.round(W*0.84)} height={Math.round(H*0.38)} rx="6" fill="rgba(0,0,0,0.55)" stroke={c.acc} strokeWidth="0.8" strokeOpacity="0.4"/>
-          <text x={W/2} y={crimpH+Math.round(H*0.27)} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={Math.round(W*0.23)} fill="#ffffff" letterSpacing="2" style={{filter:"drop-shadow(0 0 8px "+c.acc+") drop-shadow(0 2px 4px rgba(0,0,0,1))"}} >CD</text>
-          <line x1={Math.round(W*0.2)} y1={crimpH+Math.round(H*0.345)} x2={Math.round(W*0.8)} y2={crimpH+Math.round(H*0.345)} stroke={c.acc} strokeWidth="1" opacity="0.7"/>
-          <text x={W/2} y={crimpH+Math.round(H*0.385)} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="600" fontSize={Math.round(W*0.078)} fill="#ffffff" letterSpacing="3" style={{filter:"drop-shadow(0 1px 4px rgba(0,0,0,1))"}}>CARD DYNASTY</text>
-          <rect x="4" y={crimpH+Math.round(H*0.558)} width={W-8} height="1.5" fill={"url(#"+uid+"g)"} opacity="1"/>
-          <rect x="4" y={crimpH+Math.round(H*0.561)} width={W-8} height={Math.round(H*0.108)} rx="2" fill="rgba(0,0,0,0.88)"/>
-          <rect x="4" y={crimpH+Math.round(H*0.669)} width={W-8} height="1.5" fill={"url(#"+uid+"g)"} opacity="1"/>
-          <text x={W/2} y={crimpH+Math.round(H*0.615)} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={Math.round(W*0.16)} fill="#ffffff" letterSpacing="1" style={{filter:"drop-shadow(0 2px 6px rgba(0,0,0,1)) drop-shadow(0 0 12px "+c.acc+")"}}>{c.lbl}</text>
-          <rect x={Math.round(W*0.06)} y={crimpH+Math.round(H*0.72)} width={Math.round(W*0.40)} height={Math.round(H*0.072)} rx="3" fill="rgba(0,0,0,0.75)" stroke={c.acc} strokeWidth="1" strokeOpacity="0.7"/>
-          <text x={Math.round(W*0.26)} y={crimpH+Math.round(H*0.757)} textAnchor="middle" dominantBaseline="middle" fontFamily="'JetBrains Mono',monospace" fontWeight="700" fontSize={Math.round(W*0.082)} fill="#ffffff" style={{filter:"drop-shadow(0 1px 3px rgba(0,0,0,1))"}}>{c.cards} CARDS</text>
-          <rect x={Math.round(W*0.54)} y={crimpH+Math.round(H*0.72)} width={Math.round(W*0.40)} height={Math.round(H*0.072)} rx="3" fill="rgba(0,0,0,0.75)" stroke={c.rc} strokeWidth="1" strokeOpacity="0.8"/>
-          <text x={Math.round(W*0.74)} y={crimpH+Math.round(H*0.757)} textAnchor="middle" dominantBaseline="middle" fontFamily="'Oswald',sans-serif" fontWeight="900" fontSize={Math.round(W*0.082)} fill={c.rc} style={{filter:"drop-shadow(0 1px 3px rgba(0,0,0,1))"}}>{c.rar}</text>
-          <text x={W/2} y={crimpH+Math.round(H*0.9)} textAnchor="middle" dominantBaseline="middle" fontFamily="'JetBrains Mono',monospace" fontWeight="700" fontSize={Math.round(W*0.06)} fill="#ffffff" opacity="0.5">2025 SEASON EDITION</text>
-          <line x1={W-12} y1={crimpH} x2={W} y2={crimpH+12} stroke={c.acc} strokeWidth="1" opacity="0.7"/>
-          <rect x="0.5" y="0.5" width={W-1} height={H-1} rx="3" fill="none" stroke={c.acc} strokeWidth="1" opacity="0.4"/>
+        <g clipPath={"url(#pk_cl_"+packId+size+")"}>
+          {/* Base background */}
+          <rect x="0" y="0" width={W} height={H} fill={c.mid}/>
+          {/* Top color band */}
+          <rect x="0" y="0" width={W} height={Math.round(H*0.28)} fill={c.top}/>
+          {/* Left accent stripe */}
+          <rect x="0" y="0" width={Math.round(W*0.08)} height={H} fill={c.stripe} opacity="0.9"/>
+          {/* Top band text: CARD DYNASTY */}
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.12)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
+            fontSize={Math.round(W*0.115)} fill="rgba(255,255,255,0.95)" letterSpacing="1">{c.lbl}</text>
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.22)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
+            fontSize={Math.round(W*0.075)} fill="rgba(255,255,255,0.7)" letterSpacing="2">{c.sub}</text>
+          {/* Center CD logo area */}
+          <rect x={Math.round(W*0.12)} y={Math.round(H*0.31)} width={Math.round(W*0.76)} height={Math.round(H*0.38)} fill="rgba(0,0,0,0.6)"/>
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.49)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
+            fontSize={Math.round(W*0.32)} fill={c.acc} opacity="0.9">CD</text>
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.63)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
+            fontSize={Math.round(W*0.07)} fill="rgba(255,255,255,0.45)" letterSpacing="2">CARD DYNASTY</text>
+          {/* Bottom info strip */}
+          <rect x="0" y={Math.round(H*0.74)} width={W} height={Math.round(H*0.26)} fill="rgba(0,0,0,0.7)"/>
+          <line x1="0" y1={Math.round(H*0.74)} x2={W} y2={Math.round(H*0.74)} stroke={c.acc} strokeWidth="1.5" opacity="0.8"/>
+          {/* Cards count */}
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.82)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="900"
+            fontSize={Math.round(W*0.1)} fill="#fff">{c.cards} CARDS</text>
+          {/* Rarity label */}
+          <text x={W/2+Math.round(W*0.04)} y={Math.round(H*0.92)} textAnchor="middle" dominantBaseline="middle"
+            fontFamily="'Barlow Condensed',sans-serif" fontWeight="700"
+            fontSize={Math.round(W*0.072)} fill={c.acc} letterSpacing="1">{c.rar}</text>
+          {/* Border */}
+          <rect x="0.5" y="0.5" width={W-1} height={H-1} rx="2" fill="none" stroke={c.acc} strokeWidth="1" opacity="0.35"/>
         </g>
       </svg>
     </div>
