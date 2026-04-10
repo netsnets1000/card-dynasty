@@ -307,7 +307,7 @@ var NOISE='url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http:/
 var CSS=`
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Barlow:wght@400;500;600;700&family=Oswald:wght@600;700&family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&family=Roboto+Mono:wght@500;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:#07070f;color:#e8eaf0;font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5}
+  body{background:#f0ede8;color:#111;font-family:'Barlow',sans-serif;font-size:15px;line-height:1.5}
   input,textarea,button{font-family:inherit}
   @keyframes holoShine{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   @keyframes shimmerSweep{0%,40%{background-position:-200% center}70%,100%{background-position:300% center}}
@@ -364,15 +364,15 @@ var CSS=`
   .fade-in{animation:fadeIn 0.8s ease-out forwards}
   .notif{animation:notifSlide 4s ease-in-out forwards}
   .live-dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse 1.5s ease-in-out infinite}
-  .tab-btn{padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;color:#8899bb;white-space:nowrap;transition:color .2s}
-  .tab-btn.on{color:#f5c518;border-bottom-color:#f5c518}
-  .tab-btn:hover{color:#ccd6f6}
+  .tab-btn{padding:11px 16px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;background:none;border:none;border-bottom:3px solid transparent;color:#888;white-space:nowrap;transition:color .15s,border-color .15s}
+  .tab-btn.on{color:#e8161e;border-bottom-color:#e8161e}
+  .tab-btn:hover{color:#111}
   .inv-wrap{position:relative}
   .inv-wrap:hover .list-ov{opacity:1}
   .list-ov{position:absolute;inset:0;border-radius:14px;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;z-index:20}
   .mrow{background:rgba(10,10,22,0.8);border:1px solid #2a2a4a;border-radius:14px;padding:14px;transition:border-color .2s,transform .15s}
   .mrow:hover{border-color:#3a3a6a;transform:translateY(-1px)}
-  .set-bar{background:#1a1a2e;border-radius:999px;height:6px;overflow:hidden;flex:1}
+  .set-bar{background:#e8e8e8;border-radius:999px;height:5px;overflow:hidden;flex:1}
   .set-bar-fill{height:100%;border-radius:999px;transition:width 0.8s}
   .haptic{animation:hapticShake 0.35s ease-in-out}
   .redZone{animation:redZoneShake 0.15s ease-in-out infinite}
@@ -426,7 +426,7 @@ var CSS=`
   .holo-text{background:linear-gradient(90deg,#f5c518,#ff80ff,#00eeff,#f5c518);background-size:300% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:holoShine 3s linear infinite}
   .shimmer-text{background:linear-gradient(90deg,#f5c518,#fff8c0,#f5c518);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:balShimmer 2.5s linear infinite}
   .gold-logo{background:linear-gradient(180deg,#fff8e1 0%,#f5c518 30%,#b8860b 60%,#f5c518 82%,#fff8e1 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:logoGlow 3s ease-in-out infinite;font-family:'Oswald',sans-serif}
-  .bal-shimmer{background:linear-gradient(90deg,#f5c518 20%,#fff8c0 40%,#f5c518 60%,#fde68a 80%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:balShimmer 3s linear infinite}
+  .bal-shimmer{color:#e8161e;font-weight:900}
   .pack-float{animation:packFloat 3s ease-in-out infinite}
   .pack-shake{animation:packShake 0.13s ease-in-out infinite}
   .seam-glow{animation:seamGlow 0.4s ease-in-out 4}
@@ -434,17 +434,7 @@ var CSS=`
   .slide-up{animation:slideUp 0.4s ease-out forwards}
   .fade-in{animation:fadeIn 0.8s ease-out forwards}
   .notif{animation:notifSlide 4s ease-in-out forwards}
-  .live-dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse 1.5s ease-in-out infinite}
-  .inv-wrap{position:relative}
-  .inv-wrap:hover .list-ov{opacity:1}
-  .list-ov{position:absolute;inset:0;border-radius:14px;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;z-index:20}
-  .mrow{background:rgba(10,10,22,0.8);border:1px solid #1e1e3a;border-radius:14px;padding:14px;transition:border-color .2s,transform .15s}
-  .mrow:hover{border-color:#2e2e5a;transform:translateY(-1px)}
-  .set-bar{background:#0e0e1e;border-radius:999px;height:5px;overflow:hidden;flex:1}
-  .set-bar-fill{height:100%;border-radius:999px;transition:width 0.8s}
-  .haptic{animation:hapticShake 0.35s ease-in-out}
-  .redZone{animation:redZoneShake 0.15s ease-in-out infinite}
-  .screen-jolt{animation:screenJolt 0.5s ease-out}
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#22cc55;animation:pulse 1.5s ease-in-out infinite}
   /* ── GRADING LAB ──────────────────────────────────────────────────────────── */
   @keyframes envelopeFlap{0%{transform:rotateX(0deg)}100%{transform:rotateX(-160deg)}}
   @keyframes cardSlideOut{0%{transform:translateY(40px) scale(0.9);opacity:0}60%{opacity:1}100%{transform:translateY(-20px) scale(1);opacity:1}}
@@ -1283,46 +1273,33 @@ function HowToPlayModal(props) {
   var isLast=step===steps.length-1;
   var s=steps[step];
   return (
-    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(16px)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div className="popup-anim" style={{background:"linear-gradient(160deg,rgba(8,6,20,0.98),rgba(4,3,14,0.99))",border:"1px solid rgba(245,197,24,0.2)",borderRadius:24,padding:"32px 28px",maxWidth:440,width:"100%",boxShadow:"0 0 80px rgba(245,197,24,0.08)"}}>
-        {/* Header */}
-        <div style={{textAlign:"center",marginBottom:24}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"rgba(245,197,24,0.6)",letterSpacing:"0.3em",textTransform:"uppercase",marginBottom:6}}>Welcome to</div>
-          <div className="gold-logo" style={{fontSize:28,fontWeight:900,letterSpacing:3}}>CARD DYNASTY</div>
+    <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.55)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{background:"#fff",border:"1px solid #e0ddd8",maxWidth:440,width:"100%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+        <div style={{background:"#e8161e",padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>CARD <span style={{color:"rgba(255,255,255,0.8)"}}>DYNASTY</span></div>
+          <div style={{display:"flex",gap:4}}>
+            {steps.map(function(_,i){return <div key={i} style={{width:i===step?20:6,height:6,background:i<=step?"#fff":"rgba(255,255,255,0.3)",transition:"all 0.25s"}}/>;}) }
+          </div>
         </div>
-        {/* Step dots */}
-        <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:28}}>
-          {steps.map(function(_,i){
-            return <div key={i} style={{width:i===step?24:8,height:8,borderRadius:999,background:i===step?"#f5c518":i<step?"rgba(245,197,24,0.4)":"rgba(255,255,255,0.15)",transition:"all 0.3s"}}/>;
-          })}
-        </div>
-        {/* Step content */}
-        <div key={step} className="popup-anim" style={{textAlign:"center",marginBottom:28,minHeight:140}}>
-          <div style={{fontSize:48,marginBottom:14,filter:"drop-shadow(0 0 16px "+s.color+"88)"}}>{s.icon}</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:18,fontWeight:900,color:s.color,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>{s.title}</div>
-          <div style={{fontSize:14,color:"#b8c8e0",lineHeight:1.65,maxWidth:360,margin:"0 auto"}}>{s.body}</div>
-        </div>
-        {/* Navigation */}
-        <div style={{display:"flex",gap:10}}>
-          {step>0&&(
-            <button onClick={function(){setStep(function(s){return s-1;});}}
-              style={{flex:1,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"12px",color:"#8899bb",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
-              ← Back
-            </button>
-          )}
-          <button onClick={isLast?onClose:function(){setStep(function(s){return s+1;});}}
-            style={{flex:2,background:isLast?"linear-gradient(135deg,#7a5500,#f5c518,#b8860b)":"linear-gradient(135deg,#1a1a3a,#2a2a5a)",border:isLast?"none":"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"13px",color:isLast?"#000":"#ccd6f6",fontSize:14,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.08em"}}>
-            {isLast?"Let's Go! 🏆":"Next →"}
-          </button>
-        </div>
-        {/* Skip */}
-        {!isLast&&(
-          <div style={{textAlign:"center",marginTop:12}}>
-            <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:12,color:"rgba(255,255,255,0.3)",fontFamily:"'Inter',sans-serif",padding:0}}>
-              Skip intro
+        <div style={{padding:"24px 24px"}}>
+          <div key={step} className="popup-anim" style={{textAlign:"center",marginBottom:24,minHeight:140}}>
+            <div style={{fontSize:40,marginBottom:12}}>{s.icon}</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",marginBottom:8}}>{s.title}</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#555",lineHeight:1.65,maxWidth:360,margin:"0 auto"}}>{s.body}</div>
+          </div>
+          <div style={{display:"flex",gap:8}}>
+            {step>0&&(
+              <button onClick={function(){setStep(function(s){return s-1;});}}
+                style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"12px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>← Back</button>
+            )}
+            <button onClick={isLast?onClose:function(){setStep(function(s){return s+1;});}}
+              className={isLast?"topps-btn-primary":""} 
+              style={isLast?{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0}:{flex:2,background:"#111",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,padding:"12px",border:"none",cursor:"pointer",letterSpacing:"0.1em",textTransform:"uppercase"}}>
+              {isLast?"Let's Go! →":"Next →"}
             </button>
           </div>
-        )}
+          {!isLast&&<button onClick={onClose} style={{width:"100%",marginTop:8,background:"none",border:"none",fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}>Skip intro</button>}
+        </div>
       </div>
     </div>
   );
@@ -1354,80 +1331,87 @@ function DailyLoginModal(props) {
 
   // ── ALREADY CLAIMED STATE ─────────────────────────────────────────────────
   if(alreadyClaimedToday){
-    var nextDayIdx=Math.min(currentStreak,6); // next reward
+    var nextDayIdx=Math.min(currentStreak,6);
     var nextReward=STREAK_REWARDS[nextDayIdx];
     return (
-      <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)"}}>
-        <div className="popup-anim" style={{background:"linear-gradient(160deg,rgba(4,10,4,0.97),rgba(8,18,8,0.98))",border:"1px solid rgba(52,211,153,0.3)",borderRadius:24,padding:"28px 24px",maxWidth:380,width:"94%",boxShadow:"0 0 80px rgba(52,211,153,0.08)",textAlign:"center"}}>
-          <div style={{fontSize:48,marginBottom:12}}>✅</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:700,color:"rgba(52,211,153,0.7)",letterSpacing:"0.3em",textTransform:"uppercase",marginBottom:6}}>Already Claimed</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:900,color:"#fff",marginBottom:6}}>Come Back Tomorrow</div>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:20}}>
-            <span style={{fontSize:16}}>🔥</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{currentStreak} Day Streak</span>
+      <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.55)"}}>
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",maxWidth:360,width:"94%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+          <div style={{background:"#22aa44",padding:"16px 20px",textAlign:"center"}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.4em",textTransform:"uppercase",color:"rgba(255,255,255,0.8)",marginBottom:4}}>Already Collected</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>Come Back Tomorrow</div>
           </div>
-          <div style={{background:"rgba(52,211,153,0.06)",border:"1px solid rgba(52,211,153,0.2)",borderRadius:14,padding:"14px 18px",marginBottom:20}}>
-            <div style={{fontSize:13,color:"#8899bb",marginBottom:8}}>Next reward unlocks in</div>
-            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:22,fontWeight:700,color:"#34d399",marginBottom:10}}>{timeUntilReset}</div>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
-              <div style={{fontSize:24}}>{nextReward.icon}</div>
-              <div style={{textAlign:"left"}}>
-                <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:"#f5c518",textTransform:"uppercase"}}>Day {nextDayIdx+1} — {nextReward.label}</div>
-                <div style={{fontSize:12,color:"#8899bb"}}>Keep your streak alive!</div>
+          <div style={{padding:"20px 24px"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:16}}>
+              <span style={{fontSize:16}}>🔥</span>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#333"}}>{currentStreak} Day Streak</span>
+            </div>
+            <div style={{border:"1px solid #e0ddd8",padding:"14px 16px",marginBottom:16,textAlign:"center"}}>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888",marginBottom:6}}>Next reward in</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:24,fontWeight:700,color:"#22aa44",marginBottom:10}}>{timeUntilReset}</div>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+                <div style={{fontSize:22}}>{nextReward.icon}</div>
+                <div style={{textAlign:"left"}}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>Day {nextDayIdx+1} — {nextReward.label}</div>
+                  <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>Keep your streak alive!</div>
+                </div>
               </div>
             </div>
+            <button onClick={onClose} className="topps-btn-primary" style={{width:"100%",fontSize:14,padding:"13px",clipPath:"none",borderRadius:0}}>Back to Collection</button>
           </div>
-          <button onClick={onClose} style={{width:"100%",background:"linear-gradient(135deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.12em"}}>
-            Back to Vault
-          </button>
         </div>
       </div>
     );
   }
   return (
-    <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.85)",backdropFilter:"blur(8px)"}}>
+    <div style={{position:"fixed",inset:0,zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.55)"}}>
       {particles&&(
         <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:2100,overflow:"hidden"}}>
           {goldPts.map(function(p){return <div key={p.id} style={{position:"absolute",left:"50%",top:"50%",width:p.size,height:p.size,borderRadius:p.id%3===0?"50%":2,background:p.color,"--tx":p.tx+"px","--ty":p.ty+"px",animation:"particle "+p.dur+"ms ease-out "+p.delay+"ms forwards",opacity:0}}/>;})}
         </div>
       )}
-      <div className="popup-anim" style={{background:"linear-gradient(160deg,rgba(10,8,2,0.97),rgba(20,15,0,0.98))",border:"1px solid rgba(245,197,24,0.35)",borderRadius:24,padding:"28px 24px",maxWidth:420,width:"94%",boxShadow:"0 0 80px rgba(245,197,24,0.15)"}}>
-        <div style={{textAlign:"center",marginBottom:22}}>
-          <div style={{fontSize:14,color:"rgba(245,197,24,0.6)",letterSpacing:"0.3em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:4}}>Daily Ritual</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:700,color:"#fff",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:4}}>Welcome Back</div>
+      <div style={{background:"#fff",border:"1px solid #e0ddd8",maxWidth:400,width:"94%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+        <div style={{background:"#e8161e",padding:"16px 20px",textAlign:"center"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.4em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",marginBottom:4}}>Daily Streak</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff",marginBottom:4}}>Welcome Back</div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
-            <span style={{fontSize:16}}>🔥</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#fb923c"}}>{currentStreak} Day Streak</span>
+            <span style={{fontSize:14}}>🔥</span>
+            <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:"rgba(255,255,255,0.9)"}}>{currentStreak} Day Streak</span>
           </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:5,marginBottom:24}}>
-          {STREAK_REWARDS.map(function(r,i){
-            var isClaimed=i<dayIdx; var isCurrent=i===dayIdx; var isFuture=i>dayIdx;
-            return (
-              <div key={r.day} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
-                <div style={{width:"100%",aspectRatio:"1",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:r.isDynasty?18:14,background:isClaimed?"rgba(52,211,153,0.12)":isCurrent?"rgba(245,197,24,0.1)":"rgba(255,255,255,0.03)",border:isClaimed?"1px solid rgba(52,211,153,0.4)":isCurrent?"1px solid rgba(245,197,24,0.5)":"1px solid rgba(255,255,255,0.08)",boxShadow:isCurrent?"0 0 16px rgba(245,197,24,0.4)":"none",animation:isCurrent?"goldPulse 2s ease-in-out infinite":"none",opacity:isFuture?0.45:1,position:"relative"}}>
-         {isClaimed?"✅":r.icon}
+        <div style={{padding:"20px 20px"}}>
+          {/* Day grid */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4,marginBottom:16}}>
+            {STREAK_REWARDS.map(function(r,i){
+              var isClaimed=i<dayIdx; var isCurrent=i===dayIdx; var isFuture=i>dayIdx;
+              return (
+                <div key={r.day} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+                  <div style={{width:"100%",aspectRatio:"1",display:"flex",alignItems:"center",justifyContent:"center",fontSize:r.isDynasty?16:13,background:isClaimed?"#e8f5ec":isCurrent?"#fff0f0":"#f5f3f0",border:isClaimed?"1px solid #c8e8d0":isCurrent?"2px solid #e8161e":"1px solid #e0ddd8",opacity:isFuture?0.5:1}}>
+                    {isClaimed?"✓":r.icon}
+                  </div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,color:isCurrent?"#e8161e":isClaimed?"#22aa44":"#aaa",textTransform:"uppercase",letterSpacing:"0.04em"}}>D{r.day}</div>
                 </div>
-                <div style={{fontSize:9,fontWeight:700,color:isCurrent?"#f5c518":isClaimed?"#34d399":"#8899bb",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif"}}>D{r.day}</div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          {/* Today's reward */}
+          <div style={{border:"1px solid #e8161e",padding:"12px 16px",marginBottom:16,display:"flex",alignItems:"center",gap:12,background:"#fff8f8"}}>
+            <div style={{fontSize:28,flexShrink:0}}>{reward.icon}</div>
+            <div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>Day {Math.min(currentStreak,7)} — {reward.label}</div>
+              {reward.isDynasty&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>+ Guaranteed Elite Card</div>}
+            </div>
+          </div>
+          {!claimed?(
+            <button onClick={claim} className="topps-btn-primary" style={{width:"100%",fontSize:15,padding:"14px",clipPath:"none",borderRadius:0}}>
+              Claim Day {Math.min(currentStreak,7)} Reward
+            </button>
+          ):(
+            <button onClick={onClose} style={{width:"100%",background:"#22aa44",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",padding:"14px",border:"none",cursor:"pointer"}}>
+              Claimed! Enter Collection →
+            </button>
+          )}
+          {!claimed&&<button onClick={onClose} style={{width:"100%",marginTop:8,background:"none",border:"none",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}>Skip for now</button>}
         </div>
-        <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:14,padding:"14px 18px",marginBottom:20,textAlign:"center"}}>
-          <div style={{fontSize:32,marginBottom:4}}>{reward.icon}</div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:700,color:"#f5c518",textTransform:"uppercase",letterSpacing:"0.1em"}}>{reward.label}</div>
-          {reward.isDynasty&&<div style={{fontSize:13,color:"rgba(245,197,24,0.6)"}}>+ Guaranteed Elite Card</div>}
-        </div>
-        {!claimed?(
-          <button onClick={claim} style={{width:"100%",background:"linear-gradient(135deg,#8a6200,#f5c518,#b8860b)",color:"#000",fontWeight:900,fontSize:15,padding:"15px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.15em",textTransform:"uppercase"}}>
-            Claim Day {Math.min(currentStreak,7)} Reward
-          </button>
-        ):(
-          <button onClick={onClose} style={{width:"100%",background:"linear-gradient(135deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.12em",textTransform:"uppercase"}}>
-            Claimed! Enter The Vault
-          </button>
-        )}
-        {!claimed&&<button onClick={onClose} style={{width:"100%",marginTop:10,background:"none",border:"none",color:"#8899bb",fontSize:14,cursor:"pointer",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>Skip for now</button>}
       </div>
     </div>
   );
@@ -1435,12 +1419,13 @@ function DailyLoginModal(props) {
 function Notifications(props) {
   var notifs=props.notifs;
   return (
-    <div style={{position:"fixed",top:64,right:12,zIndex:999,display:"flex",flexDirection:"column",gap:8,pointerEvents:"none"}}>
+    <div style={{position:"fixed",top:80,right:12,zIndex:999,display:"flex",flexDirection:"column",gap:8,pointerEvents:"none"}}>
       {notifs.map(function(n){
+        var bg=n.type==="sale"?"#22aa44":n.type==="buy"?"#7733cc":"#e8161e";
         return (
-          <div key={n.id} className="notif" style={{backdropFilter:"blur(12px)",background:n.type==="sale"?"rgba(5,30,15,0.9)":n.type==="buy"?"rgba(15,5,30,0.9)":"rgba(20,16,5,0.9)",border:"1px solid "+(n.type==="sale"?"#34d399":n.type==="buy"?"#c4b5fd":"#f5c518"),borderRadius:12,padding:"10px 14px",maxWidth:250}}>
-            <div style={{fontSize:14,fontWeight:700,color:n.type==="sale"?"#34d399":n.type==="buy"?"#c4b5fd":"#fbbf24",marginBottom:2}}>{n.title}</div>
-            <div style={{fontSize:13,color:"rgba(255,255,255,0.55)"}}>{n.msg}</div>
+          <div key={n.id} className="notif" style={{background:"#fff",borderLeft:"4px solid "+bg,boxShadow:"0 4px 16px rgba(0,0,0,0.12)",padding:"10px 14px",maxWidth:260}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:bg,marginBottom:2}}>{n.title}</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#555"}}>{n.msg}</div>
           </div>
         );
       })}
@@ -1450,36 +1435,45 @@ function Notifications(props) {
 function QuickBuyModal(props) {
   var listing=props.listing; var balance=props.balance; var onConfirm=props.onConfirm; var onClose=props.onClose;
   var canAfford=balance>=listing.price;
-  var isGold=["Legendary","Dynasty","Legacy"].includes(listing.card.rarity);
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,backdropFilter:"blur(4px)"}} onClick={onClose}>
-      <div className="popup-anim" onClick={function(e){e.stopPropagation();}} style={{background:"rgba(8,8,18,0.96)",backdropFilter:"blur(20px)",border:"1px solid "+(isGold?"rgba(245,197,24,0.4)":"rgba(100,100,200,0.3)"),borderRadius:20,padding:24,maxWidth:340,width:"92%"}}>
-        <div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.2em",marginBottom:14,textAlign:"center",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Quick Buy Confirmation</div>
-        <div style={{display:"flex",gap:14,alignItems:"flex-start",marginBottom:16}}>
-          <MiniCard card={listing.card}/>
-          <div style={{flex:1}}>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:700,color:"#fff",marginBottom:4,textTransform:"uppercase"}}>{listing.card.team}</div>
-            <div style={{fontSize:13,color:"#99aacc",marginBottom:10}}>{listing.card.sport} - {listing.seller}</div>
-            <div style={{display:"flex",gap:8}}>
-              <div style={{flex:1,background:"rgba(0,0,0,0.5)",borderRadius:8,padding:6,textAlign:"center",border:"1px solid rgba(251,191,36,0.2)"}}>
-                <div style={{fontSize:11,color:"#aabbdd"}}>Daily</div>
-                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fbbf24"}}>{listing.card.daily}</div>
-              </div>
-              <div style={{flex:1,background:"rgba(0,0,0,0.5)",borderRadius:8,padding:6,textAlign:"center",border:"1px solid rgba(251,146,60,0.2)"}}>
-                <div style={{fontSize:11,color:"#aabbdd"}}>Win</div>
-                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{listing.card.win}</div>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}} onClick={onClose}>
+      <div onClick={function(e){e.stopPropagation();}} style={{background:"#fff",border:"1px solid #e0ddd8",maxWidth:320,width:"92%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+        <div style={{background:"#e8161e",padding:"12px 16px"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>Confirm Purchase</div>
+        </div>
+        <div style={{padding:"16px"}}>
+          <div style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:14}}>
+            <MiniCard card={listing.card}/>
+            <div style={{flex:1}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",marginBottom:2}}>{listing.card.team}</div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888",marginBottom:8}}>{listing.card.sport} · {listing.seller}</div>
+              <div style={{display:"flex",gap:6}}>
+                <div style={{background:"#fffbeb",border:"1px solid #f5e0a0",padding:"4px 8px",textAlign:"center"}}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#888",textTransform:"uppercase"}}>Daily</div>
+                  <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#c8a800"}}>{listing.card.daily}</div>
+                </div>
+                <div style={{background:"#fff0f0",border:"1px solid #f5c0c0",padding:"4px 8px",textAlign:"center"}}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#888",textTransform:"uppercase"}}>Win</div>
+                  <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#e8161e"}}>{listing.card.win}</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div style={{background:"rgba(0,0,0,0.4)",borderRadius:10,padding:"10px 14px",marginBottom:14}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:14,color:"#99aacc"}}>Price</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#f5c518"}}>{fmt(listing.price)}</span></div>
-          <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:14,color:"#99aacc"}}>Balance</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:canAfford?"#34d399":"#f87171"}}>{fmt(balance)}</span></div>
-          {!canAfford&&<div style={{fontSize:13,color:"#f87171",marginTop:6,textAlign:"center"}}>Insufficient coins</div>}
-        </div>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={canAfford?onConfirm:undefined} disabled={!canAfford} style={{flex:2,background:canAfford?"linear-gradient(90deg,#4a0080,#9d4edd)":"#ccd6f6",color:canAfford?"#fff":"#8899bb",fontWeight:900,fontSize:14,padding:10,borderRadius:999,border:"none",cursor:canAfford?"pointer":"not-allowed",opacity:canAfford?1:0.5,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Confirm</button>
-          <button onClick={onClose} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#99aacc",fontWeight:700,fontSize:14,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Cancel</button>
+          <div style={{border:"1px solid #e8e8e8",marginBottom:14}}>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"8px 12px",borderBottom:"1px solid #f0f0f0"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#888",letterSpacing:"0.06em",textTransform:"uppercase"}}>Price</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:"#111"}}>{fmt(listing.price)}</span>
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"8px 12px"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#888",letterSpacing:"0.06em",textTransform:"uppercase"}}>Your Balance</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:canAfford?"#22aa44":"#e8161e"}}>{fmt(balance)}</span>
+            </div>
+          </div>
+          {!canAfford&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#e8161e",fontWeight:600,marginBottom:10,textAlign:"center"}}>Insufficient coins</div>}
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={canAfford?onConfirm:undefined} disabled={!canAfford} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"11px",clipPath:"none",borderRadius:0,opacity:canAfford?1:0.5}}>Buy Now</button>
+            <button onClick={onClose} style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"11px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1490,18 +1484,28 @@ function ListModal(props) {
   var suggested=mkPrice(card.rarity);
   var priceState=useState(suggested); var price=priceState[0]; var setPrice=priceState[1];
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,backdropFilter:"blur(4px)"}} onClick={onClose}>
-      <div className="popup-anim" onClick={function(e){e.stopPropagation();}} style={{background:"rgba(8,8,18,0.96)",backdropFilter:"blur(20px)",border:"1px solid rgba(100,100,200,0.3)",borderRadius:20,padding:24,maxWidth:300,width:"92%"}}>
-        <div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.2em",marginBottom:14,textAlign:"center",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>List For Sale</div>
-        <div style={{display:"flex",gap:12,alignItems:"center",marginBottom:16}}><MiniCard card={card}/><div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:15,fontWeight:700,color:"#fff",textTransform:"uppercase"}}>{card.team}</div><div style={{fontSize:13,color:"#99aacc"}}>{card.sport} - {card.rarity}</div></div></div>
-        <div style={{marginBottom:14}}>
-          <div style={{fontSize:13,color:"#99aacc",marginBottom:6,letterSpacing:"0.1em",textTransform:"uppercase"}}>Your Price</div>
-          <input type="number" value={price} onChange={function(e){setPrice(Math.max(1,parseInt(e.target.value)||0));}} style={{width:"100%",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:14,fontWeight:700,outline:"none",fontFamily:"'JetBrains Mono',monospace"}}/>
-          <div style={{fontSize:12,color:"#8899bb",marginTop:4}}>Suggested: {fmt(suggested)} coins</div>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}} onClick={onClose}>
+      <div onClick={function(e){e.stopPropagation();}} style={{background:"#fff",border:"1px solid #e0ddd8",maxWidth:300,width:"92%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+        <div style={{background:"#22aa44",padding:"12px 16px"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>List for Sale</div>
         </div>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={function(){onConfirm(price);}} style={{flex:2,background:"linear-gradient(90deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>List For {fmt(price)}</button>
-          <button onClick={onClose} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#99aacc",fontWeight:700,fontSize:14,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Cancel</button>
+        <div style={{padding:"16px"}}>
+          <div style={{display:"flex",gap:10,alignItems:"center",marginBottom:14}}>
+            <MiniCard card={card}/>
+            <div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{card.team}</div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>{card.sport} · {card.rarity}</div>
+            </div>
+          </div>
+          <div style={{marginBottom:14}}>
+            <label className="topps-label">Your Price</label>
+            <input type="number" value={price} onChange={function(e){setPrice(Math.max(1,parseInt(e.target.value)||0));}} className="topps-input" style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700}}/>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginTop:4}}>Suggested: {fmt(suggested)} coins</div>
+          </div>
+          <div style={{display:"flex",gap:8}}>
+            <button onClick={function(){onConfirm(price);}} style={{flex:2,background:"#22aa44",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,padding:"11px",border:"none",cursor:"pointer",letterSpacing:"0.1em",textTransform:"uppercase",clipPath:"polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))"}}>List for {fmt(price)}</button>
+            <button onClick={onClose} style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"11px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2112,63 +2116,74 @@ function Shop(props) {
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
   var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle;});
   var bundles=PACK_TYPES.filter(function(p){return p.bundle;});
-  var sportColors={NFL:"linear-gradient(135deg,#0a2060,#2255cc)",NBA:"linear-gradient(135deg,#6b0012,#cc1133)",MLB:"linear-gradient(135deg,#002a5c,#1155bb)",MLS:"linear-gradient(135deg,#0a200a,#116611)",College:"linear-gradient(135deg,#4a2200,#cc6600)"};
-  var bundleColors={blaster:"linear-gradient(135deg,#1a0a30,#6633cc)",mega:"linear-gradient(135deg,#003050,#0088cc)",hobbybox:"linear-gradient(135deg,#300a00,#cc3300)"};
+  var sportBg={NFL:"linear-gradient(145deg,#0a1628,#162040)",NBA:"linear-gradient(145deg,#1a0608,#2a0c10)",MLB:"linear-gradient(145deg,#08102a,#101840)",MLS:"linear-gradient(145deg,#051408,#0a2010)",College:"linear-gradient(145deg,#1a0c00,#281800)"};
+  var sportAccent={NFL:"#3366cc",NBA:"#cc2233",MLB:"#2255bb",MLS:"#228833",College:"#cc6600"};
+  var bundleBg={blaster:"linear-gradient(145deg,#12081e,#1e1030)",mega:"linear-gradient(145deg,#061420,#0c2030)",hobbybox:"linear-gradient(145deg,#1e0800,#2e1000)"};
+
   function PackCard(p){
-    var pt=p.pt;
-    var canAfford=balance>=pt.cost;
-    var isBundle=!!pt.bundle;
-    var isSingle=!!pt.sport;
-    var btnBg=!canAfford?"rgba(255,255,255,0.05)":isBundle?bundleColors[pt.id]||"linear-gradient(90deg,#2a0060,#9d4edd)":isSingle?sportColors[pt.sport]||"linear-gradient(90deg,#0a2a60,#3a80ff)":"linear-gradient(90deg,#0a2a60,#3a80ff)";
-    var badgeBg=pt.id==="megabox"?"#0088cc":pt.id==="hobbybox"?"#cc3300":pt.id==="blaster"?"#6633cc":"#f5c518";
-    var badgeColor=pt.id==="standard"||pt.id==="jumbo"?"#000":"#fff";
+    var pt=p.pt; var canAfford=balance>=pt.cost;
+    var isBundle=!!pt.bundle; var isSingle=!!pt.sport;
+    var imgBg=isSingle?(sportBg[pt.sport]||"linear-gradient(145deg,#111,#222)"):isBundle?(bundleBg[pt.id]||"linear-gradient(145deg,#111,#222)"):"linear-gradient(145deg,#0a1628,#162040)";
+    var acc=isSingle?(sportAccent[pt.sport]||"#3366cc"):isBundle?(pt.id==="megabox"?"#0088cc":pt.id==="hobbybox"?"#cc3300":"#6633cc"):"#4466cc";
+    var badgeBg=pt.badge==="BEST VALUE"?"#e8161e":pt.badge==="BUNDLE"?"#7733cc":pt.badge==="MEGA"?"#0088cc":pt.badge==="HOBBY BOX"?"#333":"#e8161e";
     return (
-      <div style={{flex:"1 1 200px",minWidth:195,maxWidth:250,background:"rgba(8,8,18,0.9)",backdropFilter:"blur(12px)",borderRadius:20,padding:20,border:"1px solid "+(isBundle?"rgba(255,255,255,0.12)":isSingle?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.1)"),position:"relative",overflow:"hidden",display:"flex",flexDirection:"column",gap:10}}>
-        {pt.badge&&<div style={{position:"absolute",top:12,right:12,fontSize:10,fontWeight:900,padding:"3px 8px",borderRadius:999,background:badgeBg,color:badgeColor,letterSpacing:1,fontFamily:"'Oswald',sans-serif"}}>{pt.badge}</div>}
-        {isSingle&&<div style={{position:"absolute",top:0,left:0,right:0,height:3,background:sportColors[pt.sport]||"#888"}}/>}
-        <div style={{display:"flex",justifyContent:"center"}}><BoosterPack packId={pt.id} size={88} floating={true}/></div>
-        <div style={{textAlign:"center"}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#fff",textTransform:"uppercase",marginBottom:3}}>{pt.name}</div>
-          <div style={{fontSize:12,color:"rgba(255,255,255,0.6)"}}>{pt.subtitle}</div>
+      <div className="topps-product-card" style={{flex:"1 1 175px",minWidth:170,maxWidth:220,display:"flex",flexDirection:"column"}}>
+        {/* Image area */}
+        <div style={{height:130,background:imgBg,position:"relative",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
+          {pt.badge&&<div style={{position:"absolute",top:0,left:0,background:badgeBg,color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",padding:"3px 8px",clipPath:"polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)"}}>{pt.badge}</div>}
+          {isSingle&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:acc}}/>}
+          <BoosterPack packId={pt.id} size={80} floating={true}/>
+          {/* Odds dots */}
+          <div style={{position:"absolute",bottom:8,left:0,right:0,display:"flex",gap:4,justifyContent:"center"}}>
+            {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0;}).slice(0,5).map(function(r){
+              return <span key={r} style={{width:6,height:6,borderRadius:"50%",background:RCOLORS[r]||"#aaa",display:"inline-block",opacity:0.8}}/>;
+            })}
+          </div>
         </div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>
-          {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0;}).map(function(r){
-            return <span key={r} style={{fontSize:10,fontWeight:700,padding:"2px 5px",borderRadius:999,background:"rgba(0,0,0,0.5)",color:RCOLORS[r]||"#aaa",border:"1px solid "+(RCOLORS[r]||"#aaa")+"33",textTransform:"uppercase"}}>{r} {pt.rates[r]}%</span>;
-          })}
+        {/* Info area */}
+        <div style={{padding:"10px 12px",flex:1,display:"flex",flexDirection:"column",gap:6,background:"#fff",borderTop:"1px solid #e8e8e8"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{pt.name}</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>{pt.subtitle}</div>
+          {/* Odds */}
+          <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:2}}>
+            {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0&&pt.rates[k]>=1;}).map(function(r){
+              return <span key={r} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,padding:"1px 5px",border:"1px solid "+(RCOLORS[r]||"#aaa")+"55",color:RCOLORS[r]||"#aaa",letterSpacing:"0.04em",textTransform:"uppercase"}}>{r} {pt.rates[r]}%</span>;
+            })}
+          </div>
+          {pt.guarantee&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase"}}>✓ {pt.guarantee} Guaranteed</div>}
+          <button onClick={function(){onBuy(pt);}} disabled={!canAfford}
+            style={{marginTop:"auto",width:"100%",padding:"9px",background:canAfford?"#e8161e":"#e0ddd8",color:canAfford?"#fff":"#aaa",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",border:"none",cursor:canAfford?"pointer":"not-allowed",clipPath:canAfford?"polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))":"none"}}>
+            <span style={{fontFamily:"'Roboto Mono',monospace"}}>{fmt(pt.cost)}</span> coins · {pt.cards} cards
+          </button>
         </div>
-        {pt.guarantee&&<div style={{textAlign:"center",fontSize:11,color:"#34d399",fontWeight:700,textTransform:"uppercase"}}>✓ {pt.guarantee} guaranteed</div>}
-        <button onClick={function(){onBuy(pt);}} disabled={!canAfford} style={{width:"100%",padding:"10px",borderRadius:999,border:"none",fontSize:13,fontWeight:900,cursor:canAfford?"pointer":"not-allowed",background:btnBg,color:canAfford?"#fff":"#8899bb",opacity:canAfford?1:0.5,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",marginTop:"auto"}}>
-          {fmt(pt.cost)} coins · {pt.cards} cards
-        </button>
       </div>
     );
   }
+
+  function SectionHead(p){
+    return <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#888",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
+      {p.label}
+      <div style={{flex:1,height:1,background:"#e0ddd8"}}/>
+    </div>;
+  }
+
   return (
-    <div style={{padding:"24px 16px 80px",maxWidth:920,margin:"0 auto"}}>
-      <div style={{textAlign:"center",marginBottom:24}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:26,fontWeight:700,letterSpacing:"0.15em",marginBottom:6,textTransform:"uppercase"}}>Wax Wall</div>
-        {pityCount>0&&<div style={{fontSize:13,color:"#fb923c",marginTop:6}}>Pity: {pityCount}/10 Standard packs without Elite+</div>}
+    <div style={{background:"#f0ede8",padding:"24px 20px 80px",maxWidth:960,margin:"0 auto"}}>
+      <div style={{marginBottom:24}}>
+        <div className="topps-section-title">Wax Wall</div>
+        {pityCount>0&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#e8161e",letterSpacing:"0.1em",textTransform:"uppercase",marginTop:4}}>Pity {pityCount}/10 — Elite+ due soon</div>}
       </div>
-      {/* Single-sport packs */}
       <div style={{marginBottom:28}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Single-Sport Packs · 4 Cards</div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
-          {singleSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
-        </div>
+        <SectionHead label="Single-Sport Passes · 4 Cards"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{singleSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
-      {/* Multi-sport packs */}
       <div style={{marginBottom:28}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Multi-Sport Packs</div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
-          {multiSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
-        </div>
+        <SectionHead label="Multi-Sport Packs"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{multiSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
-      {/* Bundle boxes */}
       <div>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:12,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:12}}>Collector Boxes · Best Value</div>
-        <div style={{display:"flex",flexWrap:"wrap",gap:14,justifyContent:"flex-start"}}>
-          {bundles.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;}) }
-        </div>
+        <SectionHead label="Collector Boxes · Best Value"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{bundles.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
     </div>
   );
@@ -2194,36 +2209,60 @@ function OpeningScreen(props) {
   var totalWin=fc.reduce(function(s,c){return s+c.win;},0);
   var rarCounts=cards.reduce(function(a,c){a[c.rarity]=(a[c.rarity]||0)+1;return a;},{});
   return (
-    <div style={{minHeight:"calc(100vh - 110px)",display:"flex",flexDirection:"column",alignItems:"center",padding:"28px 16px",gap:24}}>
+    <div style={{minHeight:"calc(100vh - 110px)",display:"flex",flexDirection:"column",alignItems:"center",padding:"32px 16px",gap:24,background:"#111"}}>
       {!showCards&&(
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:18}}>
+        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.4em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Opening {pack.name}</div>
           <div style={{position:"relative"}}><ParticleBurst active={particles}/><BoosterPack packId={pack.id} size={140} shaking={shaking} floating={!shaking}/></div>
-          {shaking&&<div style={{fontSize:13,color:"rgba(255,255,255,0.6)",letterSpacing:"0.2em",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Ripping Pack...</div>}
+          {shaking&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.3em",color:"rgba(255,255,255,0.5)",textTransform:"uppercase"}}>Ripping Pack...</div>}
+          <div style={{width:180,height:3,background:"#222",overflow:"hidden"}}>
+            <div style={{height:"100%",background:"#e8161e",animation:"shimmerSweep 1.5s ease-in-out infinite",backgroundSize:"200% 100%",backgroundImage:"linear-gradient(90deg,#e8161e 0%,#ff6060 50%,#e8161e 100%)"}}/>
+          </div>
         </div>
       )}
       {showCards&&!showSummary&&(
         <div className="slide-up" style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16,width:"100%"}}>
-          <div style={{fontSize:14,color:"#f5c518",letterSpacing:"0.15em",fontWeight:700,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{allFlipped?"All Revealed!":"Click Each Card - "+flippedIds.length+"/"+cards.length}</div>
-          <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12,maxWidth:760}}>{cards.map(function(c){return <FlipCard key={c.id} card={c} winners={winners} onFlip={handleFlip}/>;})}</div>
+          <div style={{width:"100%",maxWidth:760,display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:8}}>
+            <div>
+              <div className="topps-eyebrow" style={{marginBottom:4}}>Pack Opening</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:900,letterSpacing:"0.02em",textTransform:"uppercase",color:"#fff"}}>
+                {allFlipped?"All Revealed!":"Click Each Card"}
+              </div>
+            </div>
+            <div style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",padding:"8px 16px",textAlign:"center"}}>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:20,fontWeight:700,color:"#fff",lineHeight:1}}>{flippedIds.length}<span style={{color:"#666"}}>/{cards.length}</span></div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,letterSpacing:"0.2em",color:"#666",textTransform:"uppercase",marginTop:2}}>Revealed</div>
+            </div>
+          </div>
+          <div style={{width:"100%",maxWidth:760,height:3,background:"#222",marginBottom:8}}>
+            <div style={{height:"100%",background:"#e8161e",width:(flippedIds.length/cards.length*100)+"%",transition:"width 0.3s"}}/>
+          </div>
+          <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12,maxWidth:760}}>
+            {cards.map(function(c){return <FlipCard key={c.id} card={c} winners={winners} onFlip={handleFlip}/>;}) }
+          </div>
         </div>
       )}
       {showSummary&&(
-        <div className="popup-anim" style={{background:"rgba(8,8,16,0.96)",backdropFilter:"blur(20px)",borderRadius:20,padding:"24px 28px",maxWidth:360,width:"100%",boxShadow:"0 0 0 1px rgba(245,197,24,0.35)"}}>
-          <div style={{textAlign:"center",marginBottom:14}}>
-            <div style={{fontSize:24,marginBottom:4}}>📊</div>
-            <div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.2em",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Pack Summary</div>
+        <div style={{background:"#fff",maxWidth:380,width:"100%",border:"1px solid #e0ddd8",boxShadow:"0 16px 48px rgba(0,0,0,0.3)"}}>
+          <div style={{background:"#e8161e",padding:"16px 20px"}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>Pack Summary</div>
           </div>
-          <div style={{background:"rgba(255,255,255,0.03)",borderRadius:12,padding:"12px 14px",marginBottom:12}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:14,color:"#99aacc"}}>Cards</span><span style={{fontWeight:700,color:"#fff"}}>{cards.length}</span></div>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:14,color:"#99aacc"}}>Daily Yield</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:"#fbbf24"}}>+{fmt(totalDaily)}/day</span></div>
-            <div style={{display:"flex",justifyContent:"space-between",paddingTop:8,borderTop:"1px solid #1a1a2e"}}><span style={{fontSize:14,color:"#99aacc"}}>Win Pool</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:"#fb923c"}}>+{fmt(totalWin)}/win</span></div>
-          </div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:14,justifyContent:"center"}}>
-            {Object.keys(rarCounts).map(function(r){return <span key={r} style={{fontSize:12,fontWeight:700,padding:"3px 8px",borderRadius:999,background:"rgba(0,0,0,0.5)",color:RCOLORS[r]||"#aaa",border:"1px solid "+(RCOLORS[r]||"#aaa")+"33",textTransform:"uppercase"}}>{r} x{rarCounts[r]}</span>;})}
-          </div>
-          <div style={{display:"flex",gap:8}}>
-            <button onClick={onDone} style={{flex:2,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,fontSize:14,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Add To Inventory</button>
-            <button style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#99aacc",fontWeight:700,fontSize:14,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Share</button>
+          <div style={{padding:"20px"}}>
+            <div style={{display:"flex",gap:0,border:"1px solid #e8e8e8",marginBottom:16}}>
+              {[["Cards",cards.length,"#111"],["Yield/Day","+"+fmt(totalDaily),"#22aa44"],["Win Pool","+"+fmt(totalWin),"#e8161e"]].map(function(s,i){
+                return <div key={i} style={{flex:1,padding:"12px 8px",textAlign:"center",borderRight:i<2?"1px solid #e8e8e8":"none"}}>
+                  <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:18,fontWeight:700,color:s[2],lineHeight:1}}>{s[1]}</div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#aaa",marginTop:3}}>{s[0]}</div>
+                </div>;
+              })}
+            </div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:16}}>
+              {Object.keys(rarCounts).map(function(r){return <span key={r} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"3px 8px",border:"1px solid "+(RCOLORS[r]||"#aaa")+"66",color:RCOLORS[r]||"#aaa",letterSpacing:"0.06em",textTransform:"uppercase"}}>{r} ×{rarCounts[r]}</span>;})}
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={onDone} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0}}>Add to Collection</button>
+              <button style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"12px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Share</button>
+            </div>
           </div>
         </div>
       )}
@@ -2246,46 +2285,57 @@ function SetTracker(props) {
   var total=base+bonus;
   var sports=["All","NFL","NBA","MLB","MLS","College"];
   var divs=Object.keys(ownedByDiv).filter(function(k){return filter==="All"||ownedByDiv[k].sport===filter;});
+  var sportAccents={NFL:"#1144cc",NBA:"#cc1133",MLB:"#1155bb",MLS:"#228833",College:"#cc6600"};
   return (
-    <div>
-      <div style={{background:"rgba(8,8,16,0.9)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:16,padding:16,marginBottom:16}}>
-        <div style={{fontSize:12,color:"#99aacc",letterSpacing:"0.2em",marginBottom:4,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Total Daily Passive Income</div>
-        <div style={{display:"flex",alignItems:"flex-end",gap:8}}><div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:30,fontWeight:700,color:"#f5c518",lineHeight:1}}>{fmt(total)}</div><div style={{fontSize:14,color:"#99aacc",marginBottom:3}}>coins/day</div></div>
-        <div style={{display:"flex",gap:12,marginTop:6,flexWrap:"wrap"}}>
-          <span style={{fontSize:14,color:"#99aacc"}}>Base: <span style={{color:"#fbbf24",fontWeight:700}}>{fmt(base)}</span></span>
-          {bonus>0&&<span style={{fontSize:14,color:"#99aacc"}}>Bonus: <span style={{color:"#34d399",fontWeight:700}}>+{fmt(bonus)}</span></span>}
-          {done>0&&<span style={{fontSize:14,color:"#34d399",fontWeight:700}}>{done} set{done>1?"s":""} complete!</span>}
+    <div style={{paddingBottom:40}}>
+      {/* Yield summary */}
+      <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"16px 20px",marginBottom:16}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#888",marginBottom:6}}>Total Daily Passive Income</div>
+        <div style={{display:"flex",alignItems:"flex-end",gap:8,marginBottom:8}}>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:32,fontWeight:700,color:"#111",lineHeight:1}}>{fmt(total)}</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,color:"#888",marginBottom:3,textTransform:"uppercase",letterSpacing:"0.06em"}}>coins/day</div>
+        </div>
+        <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#555"}}>Base: <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#111"}}>{fmt(base)}</span></span>
+          {bonus>0&&<span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#555"}}>Set Bonus: <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#22aa44"}}>+{fmt(bonus)}</span></span>}
+          {done>0&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#22aa44",letterSpacing:"0.06em",textTransform:"uppercase"}}>{done} set{done>1?"s":""} complete!</span>}
         </div>
       </div>
-      <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
-        {sports.map(function(s){return <button key={s} onClick={function(){setFilter(s);}} style={{fontSize:13,fontWeight:700,padding:"4px 12px",borderRadius:999,border:"1px solid",background:filter===s?(SPORT_COLORS[s]||"#f5c518"):"rgba(0,0,0,0.5)",color:filter===s?"#000":"#8899bb",borderColor:filter===s?(SPORT_COLORS[s]||"#f5c518"):"#2a2a4a",cursor:"pointer"}}>{s}</button>;})}
+      {/* Sport filter */}
+      <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
+        {sports.map(function(s){
+          var acc=sportAccents[s]||"#e8161e"; var active=filter===s;
+          return <button key={s} onClick={function(){setFilter(s);}}
+            style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"5px 14px",border:"1.5px solid "+(active?acc:acc+"55"),background:active?acc:"transparent",color:active?"#fff":(s==="All"?"#666":acc),cursor:"pointer",transition:"all 0.12s"}}>{s}</button>;
+        })}
       </div>
+      {/* Division cards */}
       <div style={{display:"flex",flexDirection:"column",gap:8}}>
         {divs.map(function(name){
           var d=ownedByDiv[name];
           var pct=Math.round((d.count/d.total)*100);
-          var sc=SPORT_COLORS[d.sport]||"#f5c518";
+          var acc=sportAccents[d.sport]||"#e8161e";
           return (
-            <div key={name} style={{background:"rgba(8,8,16,0.8)",border:d.complete?"1px solid rgba(52,211,153,0.4)":"1px solid #1a1a2e",borderRadius:12,padding:"10px 14px"}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-                <div style={{display:"flex",alignItems:"center",gap:8}}>
-         <span style={{fontSize:11,fontWeight:700,padding:"2px 7px",borderRadius:999,background:sc+"1a",color:sc,border:"1px solid "+sc+"44",textTransform:"uppercase"}}>{d.sport}</span>
-         <span style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:600,color:"#ccc"}}>{name}</span>
+            <div key={name} style={{background:"#fff",border:"1px solid "+(d.complete?"#22cc55":"#e0ddd8"),borderLeft:"3px solid "+(d.complete?"#22cc55":acc),padding:"12px 16px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                <div>
+                  <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>{name}</span>
+                  <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#888",marginLeft:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>{d.sport}</span>
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
-         <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:"#8899bb"}}>{d.count}/{d.total}</span>
-         {d.complete&&<span style={{fontSize:11,fontWeight:900,padding:"2px 8px",borderRadius:999,background:"#34d399",color:"#000",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Complete!</span>}
+                  {d.complete&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,background:"#e8f5ec",color:"#22aa44",border:"1px solid #c8e8d0",padding:"2px 8px",letterSpacing:"0.1em",textTransform:"uppercase"}}>Complete ✓</span>}
+                  <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#555"}}>{d.count}/{d.total}</span>
                 </div>
               </div>
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-                <div className="set-bar"><div className="set-bar-fill" style={{width:pct+"%",background:d.complete?"linear-gradient(90deg,#34d399,#059669)":"linear-gradient(90deg,"+sc+"88,"+sc+")"}}/></div>
-                <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:d.complete?"#34d399":"#8899bb",fontWeight:700,minWidth:28}}>{pct}%</span>
+              <div className="set-bar" style={{marginBottom:6}}>
+                <div className="set-bar-fill" style={{width:pct+"%",background:d.complete?"#22cc55":acc}}/>
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-                {d.teams.map(function(team){
-         var has=d.owned.has(team);
-         return <span key={team} style={{fontSize:11,padding:"2px 8px",borderRadius:5,fontWeight:has?700:500,background:has?sc+"22":"rgba(255,255,255,0.04)",color:has?sc:"#7788aa",border:"1px solid "+(has?sc+"55":"rgba(255,255,255,0.12)")}}>{has?"+ ":""}{team}</span>;
+                {d.teams.slice(0,12).map(function(t){
+                  var own=d.owned.has(t);
+                  return <span key={t} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,padding:"2px 6px",letterSpacing:"0.04em",textTransform:"uppercase",background:own?acc+"18":"transparent",color:own?acc:"#ccc",border:"1px solid "+(own?acc+"44":"#e8e8e8")}}>{t}</span>;
                 })}
+                {d.teams.length>12&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,color:"#aaa"}}>+{d.teams.length-12} more</span>}
               </div>
             </div>
           );
@@ -2304,30 +2354,43 @@ function Marketplace(props) {
   var filtered=filter==="All"?listings:listings.filter(function(l){return l.card.rarity===filter;});
   var countdown=Math.max(0,60-Math.floor((Date.now()-lastRefresh)/1000));
   return (
-    <div style={{maxWidth:820,margin:"0 auto",padding:16}}>
+    <div style={{maxWidth:880,margin:"0 auto",padding:"20px 16px 80px"}}>
       {buyModal&&<QuickBuyModal listing={buyModal} balance={balance} onConfirm={function(){onBuy(buyModal);setBuyModal(null);}} onClose={function(){setBuyModal(null);}}/>}
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16,flexWrap:"wrap",gap:10}}>
-        <div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:20,fontWeight:700,letterSpacing:"0.1em",marginBottom:2,textTransform:"uppercase"}}>Obsidian Exchange</div><div style={{fontSize:14,color:"#8899bb"}}>Live P2P market - rotates every 60s</div></div>
+      {/* Header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
+        <div>
+          <div className="topps-section-title">Card Exchange</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Live P2P market · Rotates every 60s</div>
+        </div>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{display:"flex",alignItems:"center",gap:6}}><div className="live-dot"/><span style={{fontSize:13,color:"#34d399",fontWeight:700}}>LIVE</span><span style={{fontSize:13,color:"#2a2a2a"}}>{countdown}s</span></div>
-          <button onClick={onRefresh} style={{background:"rgba(255,255,255,0.04)",border:"1px solid #1e1e2e",color:"#99aacc",fontSize:14,fontWeight:700,padding:"5px 12px",borderRadius:999,cursor:"pointer"}}>Refresh</button>
+          <div style={{display:"flex",alignItems:"center",gap:6,background:"#e8f5ec",border:"1px solid #c8e8d0",padding:"5px 10px"}}>
+            <div className="live-dot"/>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase"}}>Live</span>
+            <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#888"}}>{countdown}s</span>
+          </div>
+          <button onClick={onRefresh} className="topps-btn-outline" style={{padding:"5px 14px",fontSize:13}}>Refresh</button>
         </div>
       </div>
+      {/* Grail feed */}
       {grailFeed.length>0&&(
-        <div style={{background:"rgba(6,6,14,0.9)",border:"1px solid #1a1a2e",borderRadius:12,padding:"10px 14px",marginBottom:14,overflowX:"auto"}}>
-          <div style={{fontSize:11,color:"#8899bb",letterSpacing:"0.2em",marginBottom:6,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Last Big Sales</div>
-          <div style={{display:"flex",gap:16,minWidth:"max-content"}}>
-            {grailFeed.map(function(g,i){return <div key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:13,color:"#99aacc",whiteSpace:"nowrap"}}><span style={{color:RCOLORS[g.card.rarity]||"#aaa",fontWeight:700}}>•</span><span>{g.msg}</span></div>;})}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",borderLeft:"3px solid #e8161e",padding:"10px 14px",marginBottom:16,overflowX:"auto"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#888",marginBottom:6}}>Recent Big Sales</div>
+          <div style={{display:"flex",gap:20,minWidth:"max-content",flexWrap:"nowrap"}}>
+            {grailFeed.map(function(g,i){return <div key={i} style={{display:"flex",alignItems:"center",gap:6,fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#555",whiteSpace:"nowrap"}}><span style={{color:RCOLORS[g.card.rarity]||"#aaa",fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",textTransform:"uppercase",fontSize:11}}>{g.card.rarity}</span><span>{g.msg}</span></div>;})}
           </div>
         </div>
       )}
+      {/* Rarity filter */}
+      <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
+        {["All","Rare","Elite","Legacy","Legendary","Dynasty"].map(function(f){
+          var col=RCOLORS[f]||"#888"; var active=filter===f;
+          return <span key={f} onClick={function(){setFilter(f);}}
+            className="topps-rarity-pill" style={{borderColor:active?col:"#ddd",color:active?col:"#888",background:active?col+"11":"transparent",cursor:"pointer"}}>{f}</span>;
+        })}
+      </div>
       <div style={{display:"flex",gap:16,alignItems:"flex-start"}}>
+        {/* Listings */}
         <div style={{flex:1}}>
-          <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
-            {["All","Rare","Elite","Legacy","Legendary","Dynasty"].map(function(f){
-              return <button key={f} onClick={function(){setFilter(f);}} style={{fontSize:13,fontWeight:700,padding:"4px 10px",borderRadius:999,border:"1px solid",background:filter===f?"rgba(30,30,60,0.9)":"transparent",color:filter===f?(RCOLORS[f]||"#fff"):"#8899bb",borderColor:filter===f?(RCOLORS[f]||"#5555aa"):"#2a2a4a",cursor:"pointer",textTransform:"uppercase"}}>{f}</button>;
-            })}
-          </div>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {filtered.map(function(listing){
               var ac=RCOLORS[listing.card.rarity]||"#aaa";
@@ -2336,46 +2399,48 @@ function Marketplace(props) {
               var liveCol=getColors(listing.card.team)[0];
               return (
                 <div key={listing.id} className={"mrow"+(isShaking?" haptic":"")}
-         style={{borderColor:isShaking?liveCol+"88":"#1e1e3a",boxShadow:isShaking?"0 0 18px "+liveCol+"55":"none",transition:"border-color 0.2s,box-shadow 0.2s"}}>
-         <div style={{display:"flex",gap:12,alignItems:"center"}}>
-          <MiniCard card={listing.card}/>
-          <div style={{flex:1,minWidth:0}}>
-           <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-            <span style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#ddd",textTransform:"uppercase"}}>{listing.card.team}</span>
-            <span style={{fontSize:11,padding:"1px 6px",borderRadius:999,background:"rgba(0,0,0,0.5)",color:ac,fontWeight:700,border:"1px solid "+ac+"33",textTransform:"uppercase"}}>{listing.card.rarity}</span>
-            {isShaking&&<span style={{fontSize:11,fontWeight:900,color:"#00ff50",fontFamily:"'Oswald',sans-serif",animation:"pulse 0.5s ease-in-out infinite"}}>LIVE ⚡</span>}
-           </div>
-           <div style={{fontSize:13,color:"#8899bb",marginBottom:4}}>{listing.seller} - {listing.card.sport}</div>
-           <div style={{display:"flex",gap:10}}>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:"#fbbf24"}}>🪙 {listing.card.daily}/d</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:"#fb923c"}}>🔥 {listing.card.win}</span>
-           </div>
-          </div>
-          <div style={{textAlign:"right",flexShrink:0}}>
-           <div style={{fontSize:12,fontWeight:700,color:listing.trend==="up"?"#34d399":"#f87171",marginBottom:3}}>{listing.trend==="up"?"▲":"▼"} {listing.trendPct}%</div>
-           <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:16,fontWeight:700,color:"#f5c518",marginBottom:6}}>{fmt(listing.price)}</div>
-           <button onClick={function(){setBuyModal(listing);}} style={{fontSize:13,fontWeight:900,padding:"5px 14px",borderRadius:999,border:"none",background:canAfford?"linear-gradient(90deg,#4a0080,#9d4edd)":"rgba(255,255,255,0.04)",color:canAfford?"#fff":"#8899bb",cursor:canAfford?"pointer":"not-allowed",opacity:canAfford?1:0.6,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>
-            {canAfford?"Quick Buy":"No Funds"}
-           </button>
-          </div>
-         </div>
+                  style={{borderLeft:"3px solid "+(isShaking?liveCol:ac+"88"),boxShadow:isShaking?"0 0 12px "+liveCol+"33":"none",transition:"box-shadow 0.2s"}}>
+                  <div style={{display:"flex",gap:12,alignItems:"center"}}>
+                    <MiniCard card={listing.card}/>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3,flexWrap:"wrap"}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{listing.card.team}</span>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"1px 6px",border:"1px solid "+ac+"55",color:ac,letterSpacing:"0.08em",textTransform:"uppercase"}}>{listing.card.rarity}</span>
+                        {isShaking&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase",animation:"pulse 0.5s ease-in-out infinite"}}>⚡ LIVE</span>}
+                      </div>
+                      <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888",marginBottom:4}}>{listing.seller} · {listing.card.sport}</div>
+                      <div style={{display:"flex",gap:12}}>
+                        <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#c8a800",fontWeight:700}}>{fmt(listing.card.daily)}/d</span>
+                        <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#e8161e",fontWeight:700}}>+{fmt(listing.card.win)} win</span>
+                      </div>
+                    </div>
+                    <div style={{textAlign:"right",flexShrink:0}}>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:listing.trend==="up"?"#22aa44":"#e8161e",marginBottom:3,letterSpacing:"0.06em"}}>{listing.trend==="up"?"▲":"▼"} {listing.trendPct}%</div>
+                      <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:18,fontWeight:700,color:"#111",marginBottom:6}}>{fmt(listing.price)}</div>
+                      <button onClick={function(){setBuyModal(listing);}}
+                        style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:800,padding:"5px 14px",border:"none",background:canAfford?"#e8161e":"#e0ddd8",color:canAfford?"#fff":"#aaa",cursor:canAfford?"pointer":"not-allowed",letterSpacing:"0.1em",textTransform:"uppercase",clipPath:canAfford?"polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px))":"none"}}>
+                        {canAfford?"Buy Now":"No Funds"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
+        {/* My listings sidebar */}
         {myListings.length>0&&(
           <div style={{width:200,flexShrink:0}}>
-            <div style={{fontSize:12,color:"#8899bb",letterSpacing:"0.2em",marginBottom:8,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>My Listings</div>
-            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:8}}>My Listings</div>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
               {myListings.map(function(l){
                 var pct=Math.min(100,Math.floor(((Date.now()-l.listedAt)/(l.duration*1000))*100));
                 return (
-         <div key={l.id} style={{background:"rgba(6,6,14,0.9)",border:"1px solid rgba(100,100,180,0.2)",borderRadius:10,padding:10}}>
-          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><MiniCard card={l.card}/><div style={{flex:1}}><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#ccc",textTransform:"uppercase"}}>{l.card.team}</div><div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:"#f5c518",fontWeight:700}}>{fmt(l.price)}</div></div></div>
-          <div style={{background:"#0a0a14",borderRadius:999,height:3,overflow:"hidden"}}><div style={{height:"100%",background:"linear-gradient(90deg,#006633,#34d399)",width:pct+"%",transition:"width 1s linear",borderRadius:999}}/></div>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:"#8899bb",marginTop:3,textAlign:"right"}}>{pct}%</div>
-         </div>
+                  <div key={l.id} style={{background:"#fff",border:"1px solid #e0ddd8",padding:10}}>
+                    <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><MiniCard card={l.card}/><div style={{flex:1,minWidth:0}}><div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,textTransform:"uppercase",color:"#111",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{l.card.team}</div><div style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#e8161e",fontWeight:700}}>{fmt(l.price)}</div></div></div>
+                    <div style={{background:"#e0ddd8",height:3,overflow:"hidden"}}><div style={{height:"100%",background:"#22aa44",width:pct+"%",transition:"width 1s linear"}}/></div>
+                    <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,color:"#aaa",marginTop:3,textAlign:"right"}}>{pct}%</div>
+                  </div>
                 );
               })}
             </div>
@@ -2402,92 +2467,74 @@ function PublicVault(props) {
   });
   function toggleLike(id){setLiked(function(prev){var n=Object.assign({},prev);n[id]=!n[id];return n;});}
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(160deg,#020818,#040e20,#020818)",paddingBottom:40}}>
-      <div style={{background:"rgba(2,8,24,0.95)",backdropFilter:"blur(16px)",borderBottom:"1px solid rgba(68,136,255,0.2)",padding:"12px 20px",display:"flex",alignItems:"center",gap:14}}>
-        <button onClick={onBack} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:999,padding:"6px 14px",color:"#b8c8e0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Back</button>
-        <div style={{width:38,height:38,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-          <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{player.avatar}</span>
+    <div style={{minHeight:"100vh",background:"#f0ede8",paddingBottom:40}}>
+      {/* Header */}
+      <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"12px 20px",display:"flex",alignItems:"center",gap:14}}>
+        <button onClick={onBack} className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>← Back</button>
+        <div style={{width:36,height:36,background:player.color||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{player.avatar}</span>
         </div>
         <div style={{flex:1}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:700,color:"#fff",letterSpacing:"0.1em",textTransform:"uppercase"}}>{player.name}'s Vault</div>
-          <div style={{fontSize:13,color:"#4488ff"}}>{player.bio}</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>{player.name}</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>{player.bio}</div>
         </div>
         <div style={{textAlign:"right"}}>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fbbf24"}}>🪙 {fmt(player.yield)}/day</div>
-          <div style={{fontSize:12,color:"#99aacc",textTransform:"uppercase"}}>{player.inventory.length} cards</div>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:"#c8a800"}}>{fmt(player.yield)}/day</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#888",letterSpacing:"0.1em",textTransform:"uppercase"}}>{player.inventory.length} cards</div>
         </div>
       </div>
-      <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px"}}>
+      <div style={{maxWidth:720,margin:"0 auto",padding:"20px 16px"}}>
+        {/* Featured */}
         <div style={{marginBottom:24}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:"#4488ff",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>Featured Five</div>
+          <div className="topps-section-title">Featured Cards</div>
           <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:8}}>
             {featured.map(function(c){
               var isShaking=shakeTeams[c.team];
-              var liveCol=getColors(c.team)[0];
-              return (
-                <div key={c.id} style={{position:"relative",flexShrink:0}} className={isShaking?"haptic":""}>
-         {isShaking&&<div style={{position:"absolute",inset:-4,borderRadius:16,boxShadow:"0 0 20px 6px "+liveCol+"88",pointerEvents:"none",zIndex:25,animation:"liveBorderFlash 0.4s ease-in-out infinite"}}/>}
-         <FlipCard card={c} autoFlip={true}/>
-         <button onClick={function(){toggleLike(c.id);}} style={{position:"absolute",bottom:56,right:6,zIndex:20,background:liked[c.id]?"rgba(239,68,68,0.2)":"rgba(0,0,0,0.6)",border:liked[c.id]?"1px solid rgba(239,68,68,0.6)":"1px solid rgba(255,255,255,0.15)",borderRadius:999,padding:"4px 8px",cursor:"pointer",fontSize:13,fontWeight:700,color:liked[c.id]?"#f87171":"#b8c8e0"}}>
-          {liked[c.id]?"❤️":"🤍"} {(c.likes||0)+(liked[c.id]?1:0)}
-         </button>
-                </div>
-              );
+              return <div key={c.id} className={isShaking?"haptic":""} style={{flexShrink:0}}>
+                <FlipCard card={c} autoFlip={true}/>
+              </div>;
             })}
           </div>
         </div>
-        <button onClick={function(){setShowSets(function(s){return !s;});}} style={{width:"100%",background:"rgba(68,136,255,0.08)",border:"1px solid rgba(68,136,255,0.25)",borderRadius:10,padding:"10px 16px",color:"#4488ff",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",marginBottom:16,textAlign:"left"}}>
-          {showSets?"▼":"▶"} View Set Progress
-        </button>
-        {showSets&&(
-          <div style={{marginBottom:20,display:"flex",flexDirection:"column",gap:6}}>
-            {Object.keys(divsForPlayer).map(function(div){
-              var d=divsForPlayer[div];
-              var pct=Math.round((d.count/d.total)*100);
-              var sc=SPORT_COLORS[d.sport]||"#f5c518";
-              return (
-                <div key={div} style={{background:"rgba(4,8,24,0.8)",border:d.complete?"1px solid rgba(52,211,153,0.3)":"1px solid #0e1830",borderRadius:10,padding:"8px 12px"}}>
-         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-           <span style={{fontSize:11,fontWeight:700,padding:"1px 6px",borderRadius:999,background:sc+"1a",color:sc,border:"1px solid "+sc+"33",textTransform:"uppercase"}}>{d.sport}</span>
-           <span style={{fontFamily:"'Oswald',sans-serif",fontSize:14,color:"#aac"}}>{div}</span>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-           <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:"#8899bb"}}>{d.count}/{d.total}</span>
-           {d.complete&&<span style={{fontSize:10,fontWeight:900,background:"#34d399",color:"#000",padding:"1px 6px",borderRadius:999}}>DONE</span>}
-          </div>
-         </div>
-         <div style={{background:"#141830",borderRadius:999,height:4,overflow:"hidden",marginBottom:5}}>
-          <div style={{height:"100%",width:pct+"%",background:d.complete?"linear-gradient(90deg,#34d399,#059669)":"linear-gradient(90deg,"+sc+"88,"+sc+")",borderRadius:999,transition:"width 0.8s"}}/>
-         </div>
-         <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
-          {d.teams.map(function(team){
-           var has=d.owned.has(team);
-           var iMine=myInventory.some(function(c){return c.team===team;});
-           return <span key={team} style={{fontSize:11,padding:"2px 7px",borderRadius:4,background:has?sc+"22":"rgba(255,255,255,0.04)",color:has?sc:iMine?"#f5c518":"#7788aa",border:"1px solid "+(has?sc+"55":iMine?"rgba(245,197,24,0.3)":"rgba(255,255,255,0.12)"),fontWeight:has?700:500}}>{has?"+ ":iMine?"🪙 ":""}{team}</span>;
+        {/* Stats */}
+        <div style={{display:"flex",gap:0,border:"1px solid #e0ddd8",background:"#fff",marginBottom:20}}>
+          {[["Cards",player.inventory.length,"#111"],["Yield/Day",fmt(player.yield)+"/d","#c8a800"],["Top Rarity",(sorted[0]&&sorted[0].rarity)||"—",RCOLORS[(sorted[0]&&sorted[0].rarity)||"Base"]||"#888"]].map(function(s,i){
+            return <div key={i} style={{flex:1,padding:"16px 12px",textAlign:"center",borderRight:i<2?"1px solid #e8e8e8":"none"}}>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:22,fontWeight:700,color:s[2],lineHeight:1}}>{s[1]}</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#aaa",marginTop:4}}>{s[0]}</div>
+            </div>;
           })}
-         </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:"#4488ff",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>Full Collection</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:16}}>
+        </div>
+        {/* Full collection */}
+        <div style={{marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div className="topps-section-title" style={{marginBottom:0}}>Collection</div>
+          <button onClick={function(){setShowSets(!showSets);}} className="topps-btn-outline" style={{padding:"5px 14px",fontSize:12}}>{showSets?"Cards":"Set Progress"}</button>
+        </div>
+        {!showSets&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:12}}>
           {sorted.map(function(c,i){
             var isShaking=shakeTeams[c.team];
-            var liveCol=getColors(c.team)[0];
-            return (
-              <div key={c.id+i} style={{position:"relative"}} className={isShaking?"haptic":""}>
-                {isShaking&&<div style={{position:"absolute",inset:-4,borderRadius:16,boxShadow:"0 0 20px 6px "+liveCol+"88",pointerEvents:"none",zIndex:25,animation:"liveBorderFlash 0.4s ease-in-out infinite"}}/>}
-                <FlipCard card={c} autoFlip={true}/>
-                <button onClick={function(){toggleLike(c.id);}} style={{position:"absolute",bottom:56,right:6,zIndex:20,background:liked[c.id]?"rgba(239,68,68,0.2)":"rgba(0,0,0,0.6)",border:liked[c.id]?"1px solid rgba(239,68,68,0.5)":"1px solid rgba(255,255,255,0.12)",borderRadius:999,padding:"3px 7px",cursor:"pointer",fontSize:12,fontWeight:700,color:liked[c.id]?"#f87171":"#aabbdd"}}>
-         {liked[c.id]?"❤️":"🤍"} {(c.likes||0)+(liked[c.id]?1:0)}
-                </button>
+            return <div key={c.id+i} className={"inv-wrap"+(isShaking?" haptic":"")}>
+              <FlipCard card={c} autoFlip={true}/>
+              <div className="list-ov">
+                <button onClick={function(){toggleLike(c.id);}} style={{background:liked[c.id]?"#e8161e":"rgba(0,0,0,0.7)",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,padding:"7px 16px",border:"none",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>{liked[c.id]?"❤️ Liked":"♡ Like"}</button>
               </div>
-            );
+            </div>;
           })}
-        </div>
+        </div>}
+        {showSets&&<div style={{display:"flex",flexDirection:"column",gap:6}}>
+          {Object.keys(divsForPlayer).map(function(div){
+            var d=divsForPlayer[div];
+            var pct=Math.round(d.count/d.total*100);
+            var acc={NFL:"#1144cc",NBA:"#cc1133",MLB:"#1155bb",MLS:"#228833",College:"#cc6600"}[d.sport]||"#e8161e";
+            return <div key={div} style={{background:"#fff",border:"1px solid #e0ddd8",borderLeft:"3px solid "+(d.complete?"#22cc55":acc),padding:"10px 14px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111"}}>{div}</span>
+                <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#555"}}>{d.count}/{d.total}</span>
+              </div>
+              <div className="set-bar"><div className="set-bar-fill" style={{width:pct+"%",background:d.complete?"#22cc55":acc}}/></div>
+            </div>;
+          })}
+        </div>}
       </div>
     </div>
   );
@@ -2499,23 +2546,26 @@ function PlayerRow(props) {
   var topRarity=sortedInv[0]?sortedInv[0].rarity:"Base";
   var ac=RCOLORS[topRarity]||"#aaa";
   return (
-    <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,background:"rgba(10,10,20,0.9)",border:isFollowing?"1px solid rgba(245,197,24,0.2)":"1px solid #1a1a2e"}}>
-      <div style={{width:42,height:42,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-        <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{player.avatar}</span>
+    <div style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",background:"#fff",border:"1px solid "+(isFollowing?"#e8161e":"#e0ddd8"),borderLeft:"3px solid "+(isFollowing?"#e8161e":ac)}}>
+      <div style={{width:38,height:38,background:player.color||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{player.avatar}</span>
       </div>
       <div style={{flex:1,minWidth:0,cursor:"pointer"}} onClick={onView}>
-        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2}}>
-          <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#ddd",textTransform:"uppercase"}}>{player.name}</span>
-          <span style={{fontSize:10,fontWeight:700,padding:"1px 5px",borderRadius:999,background:ac+"22",color:ac,border:"1px solid "+ac+"44",textTransform:"uppercase"}}>{topRarity}</span>
+        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:2,flexWrap:"wrap"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:15,color:"#111",textTransform:"uppercase",letterSpacing:"0.04em"}}>{player.name}</span>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,padding:"1px 5px",border:"1px solid "+ac+"55",color:ac,letterSpacing:"0.08em",textTransform:"uppercase"}}>{topRarity}</span>
         </div>
-        <div style={{display:"flex",gap:10,alignItems:"center"}}>
-          <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:"#fbbf24"}}>🪙 {fmt(player.yield)}/day</span>
-          <span style={{fontSize:12,color:"#99aacc"}}>{(player.inventory||[]).length} cards</span>
+        <div style={{display:"flex",gap:12,alignItems:"center"}}>
+          <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#c8a800"}}>{fmt(player.yield)}/d</span>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>{(player.inventory||[]).length} cards</span>
         </div>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:5,alignItems:"flex-end"}}>
-        <button onClick={function(){onFollow(player.name);}} style={{padding:"5px 14px",borderRadius:999,border:isFollowing?"1px solid #f5c518":"1px solid rgba(255,255,255,0.15)",background:isFollowing?"linear-gradient(135deg,#f5c518,#b8860b)":"rgba(255,255,255,0.04)",color:isFollowing?"#000":"#b8c8e0",fontSize:13,fontWeight:900,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{isFollowing?"Following":"+ Follow"}</button>
-        <button onClick={onView} style={{padding:"4px 12px",borderRadius:999,border:"1px solid rgba(68,136,255,0.3)",background:"rgba(68,136,255,0.06)",color:"#4488ff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>View Vault</button>
+      <div style={{display:"flex",gap:6,alignItems:"center"}}>
+        <button onClick={onView} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,padding:"5px 12px",border:"1px solid #e0ddd8",background:"#f0ede8",color:"#555",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>View</button>
+        <button onClick={function(){onFollow(player.name);}}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:800,padding:"5px 12px",border:"none",background:isFollowing?"#111":"#e8161e",color:"#fff",cursor:"pointer",letterSpacing:"0.08em",textTransform:"uppercase"}}>
+          {isFollowing?"Following":"+ Follow"}
+        </button>
       </div>
     </div>
   );
@@ -2561,19 +2611,29 @@ function Social(props) {
   var filtered=players.filter(function(p){return p.name.toLowerCase().includes(search.toLowerCase());});
   var following=players.filter(function(p){return followed.includes(p.name)||followed.includes(p.id);});
   return (
-    <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px 40px"}}>
-      <div style={{textAlign:"center",marginBottom:20}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:4}}>Social</div>
-        <div style={{fontSize:14,color:"#8899bb"}}>Discover collectors · Follow rivals · Raid vaults</div>
+    <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px 60px"}}>
+      <div style={{marginBottom:20}}>
+        <div className="topps-section-title">Collectors</div>
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Discover collectors · Follow rivals · Browse vaults</div>
       </div>
-      <div style={{position:"relative",marginBottom:20}}>
-        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search players..." style={{width:"100%",background:"rgba(14,14,28,0.95)",border:"1px solid #1e1e2e",borderRadius:12,padding:"11px 14px 11px 36px",color:"#fff",fontSize:13,outline:"none"}}/>
-        <div style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#8899bb",pointerEvents:"none"}}>🔍</div>
+      <div style={{position:"relative",marginBottom:16}}>
+        <input value={search} onChange={function(e){setSearch(e.target.value);}} placeholder="Search collectors..."
+          className="topps-input" style={{paddingLeft:36}}/>
+        <div style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#aaa",pointerEvents:"none"}}>🔍</div>
       </div>
-      {loading&&<div style={{textAlign:"center",padding:40,color:"#8899bb",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>Loading Players...</div>}
-      {!loading&&players.length===0&&<div style={{textAlign:"center",padding:40}}><div style={{fontSize:32,marginBottom:12}}>👥</div><div style={{fontFamily:"'Oswald',sans-serif",color:"#8899bb",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>No other collectors yet</div><div style={{fontSize:14,color:"#8899bb"}}>Invite friends — their vaults will appear here</div></div>}
-      {!loading&&following.length>0&&!search&&<div style={{marginBottom:20}}><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>Following ({following.length})</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{following.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div></div>}
-      {!loading&&filtered.length>0&&<div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:10}}>{search?"Results":"All Collectors"} ({filtered.length})</div><div style={{display:"flex",flexDirection:"column",gap:8}}>{filtered.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div></div>}
+      {loading&&<div style={{textAlign:"center",padding:40,fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#aaa"}}>Loading...</div>}
+      {!loading&&players.length===0&&<div style={{textAlign:"center",padding:60,background:"#fff",border:"1px solid #e0ddd8"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:6}}>No collectors yet</div>
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Invite friends — their vaults will appear here</div>
+      </div>}
+      {!loading&&following.length>0&&!search&&<div style={{marginBottom:20}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#e8161e",marginBottom:10}}>Following ({following.length})</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>{following.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div>
+      </div>}
+      {!loading&&filtered.length>0&&<div>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#888",marginBottom:10}}>{search?"Results":"All Collectors"} ({filtered.length})</div>
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>{filtered.map(function(p){return <PlayerRow key={p.id||p.name} player={p} followed={followed} onFollow={toggleFollow} onView={function(){setViewing(p.name);}}/>;})}</div>
+      </div>}
     </div>
   );
 }
@@ -2614,63 +2674,86 @@ function Leaderboard(props) {
   var podiumOrder=[top3[1],top3[0],top3[2]].filter(Boolean);
   var podiumColors=["#b0b8c8","#f5c518","#cd7f32"]; var podiumHeights=[80,110,65]; var podiumRanks=[2,1,3];
   return (
-    <div style={{maxWidth:680,margin:"0 auto",padding:"16px 16px 80px"}}>
-      <div style={{textAlign:"center",marginBottom:20}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:22,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:4}}>Rankings</div>
-        <div style={{fontSize:14,color:"#8899bb"}}>Live leaderboard · Real players</div>
+    <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px 120px"}}>
+      <div style={{marginBottom:20}}>
+        <div className="topps-section-title">Rankings</div>
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Live leaderboard · Real players</div>
       </div>
-      <div style={{display:"flex",justifyContent:"center",marginBottom:24}}>
-        <div style={{display:"flex",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:999,padding:3,gap:2}}>
-          {[["yield","🪙 Highest Yield"],["power","⚡ Collection Power"]].map(function(pair){
-            return <button key={pair[0]} onClick={function(){setMode(pair[0]);}} style={{padding:"7px 18px",borderRadius:999,border:"none",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",background:mode===pair[0]?"linear-gradient(135deg,#f5c518,#b8860b)":"transparent",color:mode===pair[0]?"#000":"#99aacc"}}>{pair[1]}</button>;
+      {/* Mode toggle */}
+      <div style={{display:"flex",gap:6,marginBottom:24}}>
+        {[["yield","🪙 Highest Yield"],["power","⚡ Collection Power"]].map(function(pair){
+          var active=mode===pair[0];
+          return <button key={pair[0]} onClick={function(){setMode(pair[0]);}}
+            style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"7px 18px",border:"1.5px solid "+(active?"#e8161e":"#ddd"),background:active?"#e8161e":"transparent",color:active?"#fff":"#888",cursor:"pointer"}}>
+            {pair[1]}
+          </button>;
+        })}
+      </div>
+      {loading&&<div style={{textAlign:"center",padding:40,fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#aaa"}}>Loading Rankings...</div>}
+      {!loading&&allPlayers.length<2&&<div style={{textAlign:"center",padding:60,background:"#fff",border:"1px solid #e0ddd8"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:6}}>You're First!</div>
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Invite friends to compete</div>
+      </div>}
+      {/* Podium */}
+      {!loading&&allPlayers.length>=2&&(
+        <div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:8,marginBottom:24}}>
+          {podiumOrder.map(function(player,pi){
+            var rank=podiumRanks[pi]; var h=podiumHeights[pi]; var col=podiumColors[pi]; var isFirst=rank===1;
+            var val=mode==="yield"?fmt(player.yield)+"/d":fmt(player.power)+" pts";
+            return <div key={player.id||player.name} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+              {isFirst&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:900,color:"#e8161e",letterSpacing:"0.2em",textTransform:"uppercase",background:"rgba(232,22,30,0.08)",border:"1px solid rgba(232,22,30,0.2)",padding:"2px 10px",marginBottom:2}}>Dynasty King</div>}
+              <div style={{width:isFirst?44:36,height:isFirst?44:36,background:player.color||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:isFirst?"0 4px 16px rgba(232,22,30,0.3)":"none"}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:isFirst?14:12,color:"#fff"}}>{player.avatar}</span>
+              </div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:player.isUser?"#e8161e":"#333",letterSpacing:"0.04em",textTransform:"uppercase",maxWidth:80,textAlign:"center",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{player.name}</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,color:"#888",fontWeight:700}}>{val}</div>
+              <div style={{width:isFirst?80:65,height:h,background:isFirst?"#111":"#e0ddd8",display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:8}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:isFirst?28:22,color:isFirst?"#fff":"#bbb"}}>#{rank}</span>
+              </div>
+            </div>;
           })}
         </div>
-      </div>
-      {loading&&<div style={{textAlign:"center",padding:40,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.1em"}}>Loading Rankings...</div>}
-      {!loading&&allPlayers.length<2&&<div style={{textAlign:"center",padding:40}}><div style={{fontSize:32,marginBottom:12}}>🏆</div><div style={{fontFamily:"'Oswald',sans-serif",color:"#8899bb",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>You're the first!</div><div style={{fontSize:14,color:"#8899bb"}}>Invite friends to compete</div></div>}
-      {!loading&&allPlayers.length>=2&&<div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:12,marginBottom:28}}>
-        {podiumOrder.map(function(player,pi){
-          var rank=podiumRanks[pi]; var h=podiumHeights[pi]; var col=podiumColors[pi]; var isFirst=rank===1;
-          var val=mode==="yield"?fmt(player.yield)+"/d":fmt(player.power)+" pts";
-          return <div key={player.id||player.name} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-            {isFirst&&<div style={{fontFamily:"'Oswald',sans-serif",fontSize:11,fontWeight:900,color:"#f5c518",letterSpacing:"0.15em",textTransform:"uppercase",background:"rgba(245,197,24,0.1)",border:"1px solid rgba(245,197,24,0.3)",borderRadius:999,padding:"2px 10px",marginBottom:2}}>Dynasty King</div>}
-            {isFirst&&<div style={{fontSize:20}}>👑</div>}
-            <div style={{width:isFirst?52:40,height:isFirst?52:40,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"66)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 0 10px "+player.color+"55"}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?14:11,color:"#fff"}}>{player.avatar}</span></div>
-            <div style={{fontSize:12,fontWeight:700,color:player.isUser?"#f5c518":"#ccc",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",maxWidth:80,textAlign:"center",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{player.name}</div>
-            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:col,fontWeight:700}}>{val}</div>
-            <div style={{width:isFirst?90:75,height:h,borderRadius:"8px 8px 0 0",background:"linear-gradient(180deg,"+col+"33,"+col+"11)",border:"1px solid "+col+"55",borderBottom:"none",display:"flex",alignItems:"flex-start",justifyContent:"center",paddingTop:8}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:isFirst?28:22,color:col+"88"}}>#{rank}</span></div>
-          </div>;
-        })}
-      </div>}
+      )}
+      {/* Rest of list */}
       <div style={{display:"flex",flexDirection:"column",gap:4}}>
         {rest.map(function(player,i){
-          var rank=i+4; var isUser=player.isUser; var isHov=hovered===rank;
-          var hc=getColors(player.favTeam||"")[0]||"#b8c8e0";
+          var rank=i+4; var isUser=player.isUser;
           var val=mode==="yield"?fmt(player.yield)+"/day":fmt(player.power)+" pts";
-          return <div key={player.id||player.name} onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:10,background:isHov?hc+"18":isUser?"rgba(245,197,24,0.06)":i%2===0?"rgba(20,20,36,0.95)":"rgba(14,14,28,0.95)",border:isUser?"1px solid rgba(245,197,24,0.3)":isHov?"1px solid "+hc+"44":"1px solid transparent",transition:"all 0.15s"}}>
-            <div style={{width:28,textAlign:"center",fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#f5c518":"#8899bb",flexShrink:0}}>#{rank}</div>
-            <div style={{width:34,height:34,borderRadius:"50%",background:"linear-gradient(135deg,"+player.color+"cc,"+player.color+"55)",border:"2px solid "+player.color,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{player.avatar}</span></div>
+          return <div key={player.id||player.name}
+            onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}}
+            style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",background:"#fff",border:"1px solid "+(isUser?"#e8161e":"#e0ddd8"),borderLeft:"3px solid "+(isUser?"#e8161e":"transparent"),transition:"all 0.12s",cursor:"pointer"}}
+            onClick={function(){if(!isUser&&onViewVault)onViewVault(player.name);}}>
+            <div style={{width:28,textAlign:"center",fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#e8161e":"#aaa",flexShrink:0}}>#{rank}</div>
+            <div style={{width:32,height:32,background:player.color||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{player.avatar}</span>
+            </div>
             <div style={{flex:1,minWidth:0}}>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <span onClick={function(){if(!isUser&&onViewVault)onViewVault(player.name);}} style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:isUser?"#f5c518":"#ddd",textTransform:"uppercase",cursor:!isUser?"pointer":"default"}}>{player.name}</span>
-                {isUser&&<span style={{fontSize:10,fontWeight:900,background:"#f5c518",color:"#000",padding:"1px 6px",borderRadius:999,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>You</span>}
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:15,letterSpacing:"0.04em",textTransform:"uppercase",color:isUser?"#e8161e":"#111"}}>{player.name}</span>
+                {isUser&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:900,background:"#e8161e",color:"#fff",padding:"1px 6px",letterSpacing:"0.06em",textTransform:"uppercase"}}>You</span>}
               </div>
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
-              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#f5c518":"#ccd"}}>{val}</div>
-              <div style={{fontSize:11,color:"#8899bb",textTransform:"uppercase"}}>{mode==="yield"?"yield":"power"}</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#e8161e":"#333"}}>{val}</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#aaa"}}>{mode==="yield"?"yield":"power"}</div>
             </div>
           </div>;
         })}
       </div>
-      <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:100,background:"rgba(4,4,10,0.97)",backdropFilter:"blur(16px)",borderTop:"1px solid rgba(245,197,24,0.25)",padding:"10px 20px",display:"flex",alignItems:"center",gap:12,justifyContent:"space-between"}}>
+      {/* My standing footer */}
+      <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:100,background:"#fff",borderTop:"3px solid #e8161e",padding:"10px 20px",display:"flex",alignItems:"center",gap:12,justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:36,height:36,borderRadius:"50%",background:"linear-gradient(135deg,"+userColor+","+userColor+"88)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:14,color:"#000"}}>{userInitials}</span></div>
-          <div><div style={{fontSize:12,color:"#aabbdd",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>Your Standing</div><div style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,color:"#f5c518"}}>Rank #{userRank} of {allPlayers.length}</div></div>
+          <div style={{width:32,height:32,background:userColor,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{userInitials}</span>
+          </div>
+          <div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#888",letterSpacing:"0.15em",textTransform:"uppercase"}}>Your Standing</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:14,color:"#e8161e",letterSpacing:"0.04em",textTransform:"uppercase"}}>Rank #{userRank} of {allPlayers.length}</div>
+          </div>
         </div>
         <div style={{textAlign:"right"}}>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fbbf24"}}>🪙 {fmt(userYield)}/day</div>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,color:"#aabbdd"}}>⚡ {fmt(userPower)} pts</div>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#c8a800"}}>{fmt(userYield)}/day</div>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#7733cc"}}>{fmt(userPower)} pts</div>
         </div>
       </div>
     </div>
@@ -2686,62 +2769,32 @@ function OracleBar(props) {
     var g=p.game;
     var leader=g.homeScore>g.awayScore?g.home:g.awayScore>g.homeScore?g.away:null;
     return (
-      <span style={{display:"inline-flex",alignItems:"center",gap:6,marginRight:48,flexShrink:0}}>
-        <span style={{fontSize:12,opacity:0.6}}>{si[g.sport]}</span>
-        <span
-          onClick={function(){if(onClickTeam)onClickTeam(g.away);}}
-          style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,
-            color:leader===g.away?"#f5c518":"#ccc",
-            cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase",
-            transition:"color 0.15s"}}
-        >{g.away}</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:900,fontSize:14,
-          color:leader===g.away?"#f5c518":"#fff"}}>{g.awayScore}</span>
-        <span style={{color:"#8899bb",fontSize:12,fontWeight:700}}>–</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:900,fontSize:14,
-          color:leader===g.home?"#f5c518":"#fff"}}>{g.homeScore}</span>
-        <span
-          onClick={function(){if(onClickTeam)onClickTeam(g.home);}}
-          style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:13,
-            color:leader===g.home?"#f5c518":"#ccc",
-            cursor:"pointer",letterSpacing:"0.05em",textTransform:"uppercase"}}
-        >{g.home}</span>
-        <span style={{fontFamily:"'Oswald',sans-serif",fontSize:11,color:"#00ff50",fontWeight:700}}>
+      <span style={{display:"inline-flex",alignItems:"center",gap:6,marginRight:32,flexShrink:0}}>
+        <span style={{fontSize:11,opacity:0.7}}>{si[g.sport]}</span>
+        <span onClick={function(){if(onClickTeam)onClickTeam(g.away);}}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,fontSize:12,color:leader===g.away?"#f5c518":"rgba(255,255,255,0.9)",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>{g.away}</span>
+        <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,fontSize:13,color:leader===g.away?"#f5c518":"#fff"}}>{g.awayScore}</span>
+        <span style={{color:"rgba(255,255,255,0.4)",fontSize:11,fontWeight:700}}>–</span>
+        <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,fontSize:13,color:leader===g.home?"#f5c518":"#fff"}}>{g.homeScore}</span>
+        <span onClick={function(){if(onClickTeam)onClickTeam(g.home);}}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:700,fontSize:12,color:leader===g.home?"#f5c518":"rgba(255,255,255,0.9)",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>{g.home}</span>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"rgba(255,255,255,0.5)",fontWeight:600,letterSpacing:"0.06em"}}>
           {g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q")}{g.quarter} {g.timeLeft}
         </span>
-        <span style={{color:"#252540",fontSize:14,marginLeft:8}}>·</span>
+        <span style={{color:"rgba(255,255,255,0.2)",fontSize:12,marginLeft:4}}>◆</span>
       </span>
     );
   }
   var items=live.concat(live);
-  var dur=Math.max(18, live.length*6);
+  var dur=Math.max(18,live.length*6);
   return (
-    <div style={{
-      position:"sticky",top:0,zIndex:200,
-      background:"rgba(0,0,0,0.97)",
-      borderBottom:"1px solid rgba(0,255,80,0.3)",
-      height:26,overflow:"hidden",
-      display:"flex",alignItems:"center",
-    }}>
-      {/* Left label */}
-      <div style={{
-        flexShrink:0,display:"flex",alignItems:"center",gap:5,
-        padding:"0 10px",borderRight:"1px solid rgba(0,255,80,0.2)",
-        height:"100%",background:"rgba(0,20,0,0.9)",
-      }}>
-        <div style={{width:6,height:6,borderRadius:"50%",background:"#00ff50",
-          animation:"pulse 1s ease-in-out infinite",boxShadow:"0 0 6px #00ff50"}}/>
-        <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:12,
-          color:"#00ff50",letterSpacing:"0.2em"}}>ORACLE</span>
+    <div style={{background:"#e8161e",height:28,overflow:"hidden",display:"flex",alignItems:"center",position:"sticky",top:0,zIndex:200}}>
+      <div style={{flexShrink:0,display:"flex",alignItems:"center",gap:5,padding:"0 10px",borderRight:"1px solid rgba(255,255,255,0.2)",height:"100%",background:"rgba(0,0,0,0.25)"}}>
+        <div style={{width:6,height:6,borderRadius:"50%",background:"#fff",animation:"pulse 1s ease-in-out infinite"}}/>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:11,color:"#fff",letterSpacing:"0.22em"}}>LIVE</span>
       </div>
-      {/* Scrolling strip */}
       <div style={{flex:1,overflow:"hidden",position:"relative"}}>
-        <div style={{
-          display:"inline-flex",alignItems:"center",
-          whiteSpace:"nowrap",
-          animation:"oracleTicker "+dur+"s linear infinite",
-          paddingLeft:20,
-        }}>
+        <div style={{display:"inline-flex",alignItems:"center",whiteSpace:"nowrap",animation:"oracleTicker "+dur+"s linear infinite",paddingLeft:16}}>
           {items.map(function(g,i){return <TickerItem key={g.id+"_"+i} game={g}/>;}) }
         </div>
       </div>
@@ -3206,101 +3259,108 @@ function LiveGamesTab(props){
     var hOwned=myTeams.has(g.home); var aOwned=myTeams.has(g.away);
     var hWin=isFinal&&g.homeScore>g.awayScore; var aWin=isFinal&&g.awayScore>g.homeScore;
     var hCol=getColors(g.home)[0]; var aCol=getColors(g.away)[0];
+    var sportAcc={NFL:"#1144cc",NBA:"#cc1133",MLB:"#1155bb",MLS:"#228833",College:"#cc6600"}[g.sport]||"#e8161e";
     return (
-      <div style={{background:isLive?"rgba(0,20,0,0.9)":"rgba(14,14,28,0.95)",border:"1px solid "+(isLive?"rgba(0,255,80,0.3)":isFinal?"rgba(80,80,80,0.3)":"rgba(255,255,255,0.08)"),borderRadius:14,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
-        {isLive&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00ff50,transparent)",animation:"shimmerSweep 2s ease-in-out infinite"}}/>}
+      <div style={{background:"#fff",border:"1px solid #e0ddd8",borderTop:"3px solid "+(isLive?"#22cc55":isFinal?"#aaa":sportAcc),position:"relative",overflow:"hidden",padding:"12px 14px"}}>
+        {isLive&&<div style={{position:"absolute",top:0,left:0,right:0,height:3,background:"#22cc55",animation:"shimmerSweep 2s ease-in-out infinite"}}/>}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-          <span style={{fontSize:12,fontWeight:700,color:sc2[g.sport]||"#aaa",textTransform:"uppercase",letterSpacing:"0.1em",fontFamily:"'Oswald',sans-serif"}}>{si[g.sport]} {g.sport}</span>
-          {isLive&&<div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:13,fontWeight:900,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>LIVE {periodLabel(g.sport,g.quarter)} {g.timeLeft}</span></div>}
-          {g.status==="pre"&&<span style={{fontSize:12,color:"#99aacc",fontFamily:"'JetBrains Mono',monospace"}}>in {g.kickoffMins}m</span>}
-          {isFinal&&<span style={{fontSize:12,color:"#99aacc",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Final</span>}
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:sportAcc,textTransform:"uppercase",letterSpacing:"0.1em"}}>{si[g.sport]} {g.sport}</span>
+          {isLive&&<div style={{display:"flex",alignItems:"center",gap:5}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:"#22cc55",animation:"pulse 1s ease-in-out infinite"}}/>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#22aa44",letterSpacing:"0.06em",textTransform:"uppercase"}}>LIVE {periodLabel(g.sport,g.quarter)} {g.timeLeft}</span>
+          </div>}
+          {g.status==="pre"&&<span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#888"}}>in {g.kickoffMins}m</span>}
+          {isFinal&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#888",textTransform:"uppercase",letterSpacing:"0.08em"}}>Final</span>}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{flex:1,textAlign:"center"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:5,marginBottom:3}}>
-              <div style={{width:9,height:9,borderRadius:"50%",background:aCol}}/>
-              <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:14,color:aWin?"#f5c518":aOwned?"#34d399":"#ccc",textTransform:"uppercase"}}>{g.away}</span>
-              {aOwned&&<span style={{fontSize:10,background:"#34d399",color:"#000",padding:"1px 5px",borderRadius:999,fontWeight:900}}>OWNED</span>}
+              <div style={{width:8,height:8,background:aCol,flexShrink:0}}/>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:14,color:aWin?"#e8161e":aOwned?"#22aa44":"#333",textTransform:"uppercase",letterSpacing:"0.04em"}}>{g.away}</span>
+              {aOwned&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:800,background:"#22aa44",color:"#fff",padding:"1px 4px",letterSpacing:"0.06em"}}>OWNED</span>}
             </div>
-            {(isLive||isFinal)&&<div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:24,fontWeight:700,color:aWin?"#f5c518":"#fff"}}>{g.awayScore}</div>}
+            {(isLive||isFinal)&&<div style={{fontFamily:"'Roboto Mono',monospace",fontSize:26,fontWeight:700,color:aWin?"#e8161e":"#111"}}>{g.awayScore}</div>}
           </div>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,color:"#8899bb",fontWeight:700,flexShrink:0}}>VS</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,color:"#ccc",fontWeight:700,flexShrink:0}}>VS</div>
           <div style={{flex:1,textAlign:"center"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:5,marginBottom:3}}>
-              {hOwned&&<span style={{fontSize:10,background:"#34d399",color:"#000",padding:"1px 5px",borderRadius:999,fontWeight:900}}>OWNED</span>}
-              <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:700,fontSize:14,color:hWin?"#f5c518":hOwned?"#34d399":"#ccc",textTransform:"uppercase"}}>{g.home}</span>
-              <div style={{width:9,height:9,borderRadius:"50%",background:hCol}}/>
+              {hOwned&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:800,background:"#22aa44",color:"#fff",padding:"1px 4px",letterSpacing:"0.06em"}}>OWNED</span>}
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:14,color:hWin?"#e8161e":hOwned?"#22aa44":"#333",textTransform:"uppercase",letterSpacing:"0.04em"}}>{g.home}</span>
+              <div style={{width:8,height:8,background:hCol,flexShrink:0}}/>
             </div>
-            {(isLive||isFinal)&&<div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:24,fontWeight:700,color:hWin?"#f5c518":"#fff"}}>{g.homeScore}</div>}
+            {(isLive||isFinal)&&<div style={{fontFamily:"'Roboto Mono',monospace",fontSize:26,fontWeight:700,color:hWin?"#e8161e":"#111"}}>{g.homeScore}</div>}
           </div>
         </div>
-        {isLive&&(hOwned||aOwned)&&<div style={{marginTop:8,background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.2)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:12,color:"#f5c518",fontFamily:"'Oswald',sans-serif",fontWeight:700}}>YOUR CARD IS LIVE - 1.5x YIELD</div>}
-        {isLive&&(redZoneTeams.has(g.home)||redZoneTeams.has(g.away))&&isRedZoneGame(g)&&<div style={{marginTop:4,background:"rgba(255,48,48,0.1)",border:"1px solid rgba(255,48,48,0.4)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:12,color:"#ff6060",fontFamily:"'Oswald',sans-serif",fontWeight:900,animation:"pulse 0.8s ease-in-out infinite"}}>🔴 {g.sport==="MLB"?"LATE GAME — CLUTCH MOMENT":g.sport==="MLS"?"FINAL MINUTES":"RED ZONE — CRITICAL MOMENT"}</div>}
-        {isFinal&&((hWin&&hOwned)||(aWin&&aOwned))&&<div style={{marginTop:8,background:"rgba(52,211,153,0.1)",border:"1px solid rgba(52,211,153,0.3)",borderRadius:8,padding:"4px 10px",textAlign:"center",fontSize:12,color:"#34d399",fontFamily:"'Oswald',sans-serif",fontWeight:900}}>VICTORY! WIN BONUS COLLECTED</div>}
+        {isLive&&(hOwned||aOwned)&&<div style={{marginTop:8,background:"#fffbeb",border:"1px solid #f5e0a0",padding:"4px 10px",textAlign:"center",fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#c8a800",letterSpacing:"0.08em",textTransform:"uppercase"}}>YOUR CARD IS LIVE — 1.5× YIELD</div>}
+        {isLive&&(redZoneTeams.has(g.home)||redZoneTeams.has(g.away))&&isRedZoneGame(g)&&<div style={{marginTop:4,background:"#fff0f0",border:"1px solid #f5c0c0",padding:"4px 10px",textAlign:"center",fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:800,color:"#e8161e",letterSpacing:"0.08em",textTransform:"uppercase",animation:"pulse 0.8s ease-in-out infinite"}}>🔴 {g.sport==="MLB"?"LATE GAME — CLUTCH MOMENT":g.sport==="MLS"?"FINAL MINUTES":"RED ZONE — CRITICAL MOMENT"}</div>}
+        {isFinal&&((hWin&&hOwned)||(aWin&&aOwned))&&<div style={{marginTop:8,background:"#e8f5ec",border:"1px solid #c8e8d0",padding:"4px 10px",textAlign:"center",fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:800,color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase"}}>VICTORY! WIN BONUS COLLECTED</div>}
       </div>
     );
   }
   return (
-    <div style={{maxWidth:720,margin:"0 auto",padding:"16px 16px 40px"}}>
-      <div style={{background:"rgba(0,0,0,0.95)",border:"1px solid rgba(0,255,80,0.2)",borderRadius:14,padding:"12px 16px",marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+    <div style={{maxWidth:760,margin:"0 auto",padding:"16px 16px 40px"}}>
+      {/* Status bar */}
+      <div style={{background:"#fff",border:"1px solid #e0ddd8",borderLeft:"3px solid #22cc55",padding:"12px 16px",marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:10,height:10,borderRadius:"50%",background:loading?"#f5c518":"#00ff50",animation:"pulse 1s ease-in-out infinite",boxShadow:"0 0 8px "+(loading?"#f5c518":"#00ff50")}}/>
-          <span style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:900,color:"#00ff50",letterSpacing:"0.2em"}}>LIVE ORACLE</span>
-          <span style={{fontFamily:"'Oswald',sans-serif",fontSize:13,color:"#8899bb"}}>{by.live.length} LIVE · {by.pre.length} UPCOMING · {by.final.length} FINAL</span>
+          <div style={{width:9,height:9,borderRadius:"50%",background:loading?"#f5c518":"#22cc55",animation:"pulse 1s ease-in-out infinite"}}/>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,color:"#22aa44",letterSpacing:"0.15em",textTransform:"uppercase"}}>Live Oracle</span>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>{by.live.length} live · {by.pre.length} upcoming · {by.final.length} final</span>
           {espnOk?(
-            <span style={{fontSize:11,fontWeight:900,padding:"2px 7px",borderRadius:999,background:"rgba(255,80,0,0.12)",color:"#ff6022",border:"1px solid rgba(255,80,0,0.3)",fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em"}}>ESPN LIVE</span>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"2px 7px",background:"rgba(232,22,30,0.08)",color:"#e8161e",border:"1px solid rgba(232,22,30,0.2)",letterSpacing:"0.1em",textTransform:"uppercase"}}>ESPN LIVE</span>
           ):(
-            <span style={{fontSize:11,fontWeight:700,padding:"2px 7px",borderRadius:999,background:"rgba(255,255,255,0.04)",color:"#8899bb",border:"1px solid #1a1a2e",fontFamily:"'Oswald',sans-serif"}}>{loading?"CONNECTING...":"SIMULATED"}</span>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"2px 7px",background:"#f0ede8",color:"#aaa",border:"1px solid #ddd",letterSpacing:"0.1em",textTransform:"uppercase"}}>{loading?"Connecting...":"Simulated"}</span>
           )}
         </div>
         {!forced
-          ?<button onClick={forceStartAll} style={{background:"linear-gradient(90deg,#003d1a,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"6px 16px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Force Start All</button>
-          :<button onClick={resetGames} style={{background:"rgba(255,255,255,0.06)",color:"#aabbdd",fontWeight:700,fontSize:14,padding:"6px 14px",borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Reset</button>
+          ?<button onClick={forceStartAll} className="topps-btn-primary" style={{padding:"6px 16px",fontSize:13}}>Force Start All</button>
+          :<button onClick={resetGames} style={{background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,padding:"6px 14px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Reset</button>
         }
       </div>
-      <div style={{background:"#000",border:"1px solid rgba(0,255,80,0.12)",borderRadius:8,padding:"8px 14px",marginBottom:16,overflowX:"auto"}}>
-        <div style={{display:"flex",gap:0,whiteSpace:"nowrap"}}>
-          {liveGames.map(function(g,i){
-            var col=g.status==="live"?"#00ff50":g.status==="final"?"#99aacc":"#f5c518";
-            return <span key={i} style={{fontSize:13,color:col,fontFamily:"'Oswald',sans-serif",fontWeight:700,marginRight:32}}>{si[g.sport]} {g.away} {g.status==="live"?g.awayScore:""} {g.status!=="pre"?"-":""} {g.status==="live"?g.homeScore:""} {g.home} {g.status==="pre"?"| "+g.kickoffMins+"m":g.status==="live"?"| "+(g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q"))+g.quarter+" "+g.timeLeft:"| FT"}</span>;
-          })}
-        </div>
+      {/* Mini ticker */}
+      <div style={{background:"#111",padding:"7px 14px",marginBottom:16,overflowX:"auto",display:"flex",gap:0,whiteSpace:"nowrap"}}>
+        {liveGames.map(function(g,i){
+          var col=g.status==="live"?"#22cc55":g.status==="final"?"#888":"#c8a800";
+          return <span key={i} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:col,marginRight:24,letterSpacing:"0.06em",textTransform:"uppercase"}}>{si[g.sport]} {g.away} {g.status==="live"?g.awayScore:""} {g.status!=="pre"?"-":""} {g.status==="live"?g.homeScore:""} {g.home} {g.status==="pre"?"| "+g.kickoffMins+"m":g.status==="live"?"| "+(g.sport==="MLB"?"Inn":(g.sport==="MLS"?"H":"Q"))+g.quarter+" "+g.timeLeft:"| FT"}</span>;
+        })}
       </div>
-      {by.live.length>0&&<div style={{marginBottom:16}}><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#00ff50",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8,display:"flex",alignItems:"center",gap:6}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/>Live Now</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.live.map(function(g){return <GCard key={g.id} game={g}/>;})}</div></div>}
-      {/* Offseason sports — show status cards for inactive leagues */}
+      {by.live.length>0&&<div style={{marginBottom:16}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#22aa44",marginBottom:8,display:"flex",alignItems:"center",gap:6}}>
+          <div style={{width:7,height:7,borderRadius:"50%",background:"#22cc55",animation:"pulse 1s ease-in-out infinite"}}/>Live Now
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.live.map(function(g){return <GCard key={g.id} game={g}/>;})}</div>
+      </div>}
+      {/* Offseason sports */}
       {Object.keys(SEASON_CALENDAR).some(function(s){return !SEASON_CALENDAR[s].active;})&&(
         <div style={{marginBottom:16}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Offseason</div>
-          <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#888",marginBottom:8}}>Offseason</div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
             {Object.keys(SEASON_CALENDAR).filter(function(s){return !SEASON_CALENDAR[s].active;}).map(function(sport){
               var cal=SEASON_CALENDAR[sport];
               var isSpecial=cal.isDraft||cal.isFinalFour;
-              var specialColor=cal.isDraft?"#4488ff":cal.isFinalFour?"#ffaa22":"#8899bb";
+              var specialColor=cal.isDraft?"#1144cc":cal.isFinalFour?"#c8a800":"#888";
               return (
-                <div key={sport} style={{background:isSpecial?"rgba(8,12,30,0.95)":"rgba(8,8,18,0.7)",border:"1px solid "+(isSpecial?specialColor+"44":"rgba(255,255,255,0.06)"),borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:12,minWidth:200,position:"relative",overflow:"hidden"}}>
-         {isSpecial&&<div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,"+specialColor+"08,transparent)",pointerEvents:"none"}}/>}
-         <span style={{fontSize:20,flexShrink:0}}>{cal.icon||"🏅"}</span>
-         <div style={{flex:1,minWidth:0}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:isSpecial?specialColor:(cal.color||"#aaa"),textTransform:"uppercase",letterSpacing:"0.08em"}}>{sport}</div>
-          <div style={{fontSize:13,color:isSpecial?"#b8c8e0":"#8899bb",marginTop:1}}>{cal.reason}</div>
-          {isSpecial&&<div style={{fontSize:12,fontWeight:700,color:specialColor,marginTop:3,letterSpacing:"0.05em"}}>{cal.note}</div>}
-         </div>
-         <div style={{flexShrink:0,textAlign:"right"}}>
-          {isSpecial?(
-           <div style={{fontSize:12,fontWeight:900,padding:"4px 10px",borderRadius:999,background:specialColor+"18",color:specialColor,border:"1px solid "+specialColor+"44",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",whiteSpace:"nowrap"}}>{cal.isDraft?"📅 DRAFT":cal.isFinalFour?"🏆 FINAL FOUR":""}</div>
-          ):(
-           <div style={{fontSize:12,fontWeight:700,padding:"3px 8px",borderRadius:999,background:"rgba(255,255,255,0.04)",color:"#2a2a2a",border:"1px solid #1a1a2e",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif"}}>No Games</div>
-          )}
-          {!isSpecial&&<div style={{fontSize:11,color:"#8899bb",marginTop:3,textAlign:"right"}}>{cal.note}</div>}
-         </div>
+                <div key={sport} style={{background:"#fff",border:"1px solid "+(isSpecial?specialColor+"44":"#e0ddd8"),borderLeft:"3px solid "+(isSpecial?specialColor:"#ddd"),padding:"10px 14px",display:"flex",alignItems:"center",gap:10,minWidth:180,flex:"1 1 180px"}}>
+                  <span style={{fontSize:18,flexShrink:0}}>{cal.icon||"🏅"}</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,color:isSpecial?specialColor:"#555",textTransform:"uppercase",letterSpacing:"0.06em"}}>{sport}</div>
+                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginTop:1}}>{cal.reason}</div>
+                    {isSpecial&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:specialColor,marginTop:2,letterSpacing:"0.06em",textTransform:"uppercase"}}>{cal.note}</div>}
+                  </div>
+                  {isSpecial&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,padding:"3px 8px",background:specialColor+"11",color:specialColor,border:"1px solid "+specialColor+"33",letterSpacing:"0.08em",textTransform:"uppercase",flexShrink:0,whiteSpace:"nowrap"}}>{cal.isDraft?"📅 Draft":cal.isFinalFour?"🏆 Final Four":""}</span>}
                 </div>
               );
             })}
           </div>
         </div>
       )}
-      {by.pre.length>0&&<div style={{marginBottom:16}}><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#f5c518",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Upcoming</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.pre.map(function(g){return <GCard key={g.id} game={g}/>;})}</div></div>}
-      {by.final.length>0&&<div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:"#8899bb",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:8}}>Final</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.final.map(function(g){return <GCard key={g.id} game={g}/>;})}</div></div>}
+      {by.pre.length>0&&<div style={{marginBottom:16}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#c8a800",marginBottom:8}}>Upcoming</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.pre.map(function(g){return <GCard key={g.id} game={g}/>;})}</div>
+      </div>}
+      {by.final.length>0&&<div>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.22em",textTransform:"uppercase",color:"#aaa",marginBottom:8}}>Final</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>{by.final.map(function(g){return <GCard key={g.id} game={g}/>;})}</div>
+      </div>}
     </div>
   );
 }
@@ -3382,111 +3442,158 @@ function ProfileView(props) {
   }
   function unpin(i) {var ids=profile.pinnedIds.slice();ids.splice(i,1);onSaveProfile(Object.assign({},profile,{pinnedIds:ids}));}
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#04020e,#07070f)",paddingBottom:60,color:"#fff"}}>
+    <div style={{minHeight:"100vh",background:"#f0ede8",paddingBottom:60}}>
+      {/* Edit Profile Modal */}
       {showEdit&&(
-        <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.88)",backdropFilter:"blur(16px)",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-          <div style={{background:"rgba(10,8,22,0.97)",border:"1px solid rgba(245,197,24,0.25)",borderRadius:24,padding:"28px 26px",maxWidth:380,width:"100%",animation:"editModalIn 0.3s ease-out both"}}>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:18,fontWeight:700,color:"#fff",textTransform:"uppercase",marginBottom:20}}>Edit Profile</div>
+        <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.6)",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"28px 26px",maxWidth:380,width:"100%",boxShadow:"0 16px 48px rgba(0,0,0,0.15)"}}>
+            <div style={{borderBottom:"3px solid #e8161e",paddingBottom:12,marginBottom:20}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>Edit Profile</div>
+            </div>
             <div style={{display:"flex",justifyContent:"center",marginBottom:20}}>
-              <div style={{width:72,height:72,borderRadius:"50%",background:"linear-gradient(135deg,"+editColor+"cc,"+editColor+"55)",border:"3px solid "+editColor,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:22,color:"#fff"}}>{(editInitials||"ME").slice(0,2).toUpperCase()}</span>
+              <div style={{width:64,height:64,background:editColor,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:22,color:"#fff"}}>{(editInitials||"ME").slice(0,2).toUpperCase()}</span>
               </div>
             </div>
-            <div style={{marginBottom:12}}><div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:5,fontFamily:"'Oswald',sans-serif"}}>Initials</div><input maxLength={2} value={editInitials} onChange={function(e){setEditInitials(e.target.value.toUpperCase().slice(0,2));}} style={{width:"100%",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:8,padding:"9px 12px",color:"#fff",fontSize:14,fontWeight:700,outline:"none",fontFamily:"'Oswald',sans-serif"}}/></div>
-            <div style={{marginBottom:12}}><div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:5,fontFamily:"'Oswald',sans-serif"}}>Username</div><input value={editName} onChange={function(e){setEditName(e.target.value);}} style={{width:"100%",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:8,padding:"9px 12px",color:"#fff",fontSize:14,fontWeight:700,outline:"none"}}/></div>
-            <div style={{marginBottom:12}}><div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:5,fontFamily:"'Oswald',sans-serif"}}>Bio</div><textarea value={editBio} onChange={function(e){setEditBio(e.target.value);}} rows={2} style={{width:"100%",background:"rgba(0,0,0,0.5)",border:"1px solid #1e1e2e",borderRadius:8,padding:"9px 12px",color:"#fff",fontSize:14,outline:"none",resize:"none"}}/></div>
-            <div style={{marginBottom:22}}><div style={{fontSize:13,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:8,fontFamily:"'Oswald',sans-serif"}}>Avatar Color</div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{AVATAR_COLORS.map(function(col){return <button key={col} onClick={function(){setEditColor(col);}} style={{width:28,height:28,borderRadius:"50%",background:col,border:editColor===col?"3px solid #fff":"2px solid rgba(255,255,255,0.15)",cursor:"pointer",flexShrink:0}}/>;})}</div></div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={handleSave} style={{flex:2,background:justSaved?"linear-gradient(90deg,#004422,#00aa55)":"linear-gradient(135deg,#7a5500,#f5c518,#b8860b)",color:"#000",fontWeight:900,fontSize:13,padding:"12px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{justSaved?"Saved!":"Save Changes"}</button>
-              <button onClick={function(){setShowEdit(false);}} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#99aacc",fontWeight:700,fontSize:14,padding:"12px",borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer"}}>Cancel</button>
+            <div style={{marginBottom:12}}><label className="topps-label">Initials</label><input className="topps-input" maxLength={2} value={editInitials} onChange={function(e){setEditInitials(e.target.value.toUpperCase().slice(0,2));}}/></div>
+            <div style={{marginBottom:12}}><label className="topps-label">Username</label><input className="topps-input" value={editName} onChange={function(e){setEditName(e.target.value);}}/></div>
+            <div style={{marginBottom:12}}><label className="topps-label">Bio</label><textarea className="topps-input" value={editBio} onChange={function(e){setEditBio(e.target.value);}} rows={2} style={{resize:"none"}}/></div>
+            <div style={{marginBottom:20}}>
+              <label className="topps-label">Avatar Color</label>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                {AVATAR_COLORS.map(function(col){return <button key={col} onClick={function(){setEditColor(col);}} style={{width:28,height:28,background:col,border:editColor===col?"3px solid #111":"2px solid transparent",cursor:"pointer",flexShrink:0}}/>;}) }
+              </div>
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={handleSave} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0}}>{justSaved?"Saved!":"Save Changes"}</button>
+              <button onClick={function(){setShowEdit(false);}} style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"12px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Cancel</button>
             </div>
           </div>
         </div>
       )}
+      {/* Card picker overlay */}
       {pickingSlot!==false&&(
-        <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.9)",backdropFilter:"blur(12px)",display:"flex",flexDirection:"column",alignItems:"center",padding:"20px 16px",overflowY:"auto"}} onClick={function(){setPickingSlot(false);}}>
+        <div style={{position:"fixed",inset:0,zIndex:2000,background:"rgba(0,0,0,0.7)",display:"flex",flexDirection:"column",alignItems:"center",padding:"20px 16px",overflowY:"auto"}} onClick={function(){setPickingSlot(false);}}>
           <div onClick={function(e){e.stopPropagation();}} style={{width:"100%",maxWidth:720}}>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:16,fontWeight:700,color:"#f5c518",textTransform:"uppercase",marginBottom:16,textAlign:"center"}}>Pick Card for Slot {pickingSlot+1}</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,color:"#fff",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:16,textAlign:"center"}}>Pick Card for Slot {pickingSlot+1}</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:14}}>
               {sortedInv.map(function(c){return <div key={c.id} onClick={function(){pinCard(c);}} style={{cursor:"pointer"}}><FlipCard card={c} autoFlip={true}/></div>;})}
             </div>
           </div>
         </div>
       )}
-      <div style={{background:"rgba(4,2,14,0.97)",backdropFilter:"blur(16px)",borderBottom:"1px solid rgba(245,197,24,0.12)",padding:"14px 20px",display:"flex",alignItems:"center",gap:12,position:"sticky",top:0,zIndex:100}}>
-        <button onClick={onBack} style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:999,padding:"7px 16px",color:"#b8c8e0",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Back</button>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:17,fontWeight:700,color:"#fff",letterSpacing:"0.12em",textTransform:"uppercase",flex:1}}>My Dynasty ID</div>
-        <button onClick={function(){setShowEdit(true);setEditName(profile.username);setEditBio(profile.bio);setEditColor(profile.avatarColor);setEditInitials(profile.avatarInitials);}} style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.25)",borderRadius:999,padding:"7px 16px",color:"#f5c518",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Edit Profile</button>
+      {/* Profile header */}
+      <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"12px 20px",display:"flex",alignItems:"center",gap:12,position:"sticky",top:104,zIndex:40}}>
+        <button onClick={onBack} className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>← Back</button>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",flex:1}}>My Profile</div>
+        <button onClick={function(){setShowEdit(true);setEditName(profile.username);setEditBio(profile.bio);setEditColor(profile.avatarColor);setEditInitials(profile.avatarInitials);}}
+          className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>Edit Profile</button>
       </div>
-      <div style={{maxWidth:720,margin:"0 auto",padding:"24px 16px"}}>
-        <div style={{display:"flex",alignItems:"flex-start",gap:20,marginBottom:28,flexWrap:"wrap"}}>
-          <div style={{position:"relative",flexShrink:0}}>
-            <div style={{width:88,height:88,borderRadius:"50%",background:"linear-gradient(135deg,"+profile.avatarColor+"dd,"+profile.avatarColor+"66)",border:"3px solid "+profile.avatarColor,display:"flex",alignItems:"center",justifyContent:"center",animation:isTop100?"avatarGlow 2.5s ease-in-out infinite":"none",boxShadow:"0 0 "+(isTop100?"24":"12")+"px "+profile.avatarColor+(isTop100?"88":"44")}}>
-              <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:28,color:"#fff"}}>{profile.avatarInitials}</span>
-            </div>
-            {isTop100&&<div style={{position:"absolute",top:-6,right:-6,width:26,height:26,borderRadius:"50%",background:"linear-gradient(135deg,#f5c518,#b8860b)",display:"flex",alignItems:"center",justifyContent:"center",border:"2px solid #07070f"}}><span style={{fontSize:14}}>crown</span></div>}
-          </div>
-          <div style={{flex:1,minWidth:180}}>
-            <div style={{fontFamily:"'Oswald',sans-serif",fontSize:24,fontWeight:900,color:"#fff",textTransform:"uppercase",lineHeight:1,marginBottom:6}}>{profile.username}</div>
-            <div style={{fontSize:14,color:"rgba(255,255,255,0.72)",lineHeight:1.5,marginBottom:8,maxWidth:340}}>{profile.bio}</div>
-            <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
-              <span style={{fontSize:13,color:"#99aacc"}}>Streak: <span style={{color:"#fb923c",fontWeight:700}}>{streakData.currentStreak||0}d</span></span>
-              <span style={{fontSize:13,color:"#99aacc"}}>Since <span style={{color:"#b8c8e0",fontWeight:700}}>{joinLabel}</span></span>
-              <span style={{fontSize:13,color:"#99aacc"}}>Packs: <span style={{color:"#60a5fa",fontWeight:700}}>{packsOpened}</span></span>
+
+      <div style={{maxWidth:760,margin:"0 auto",padding:"24px 16px"}}>
+        {/* Identity card */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",marginBottom:20,display:"flex",gap:0,overflow:"hidden"}}>
+          <div style={{width:8,background:"#e8161e",flexShrink:0}}/>
+          <div style={{padding:"20px 20px",flex:1}}>
+            <div style={{display:"flex",alignItems:"flex-start",gap:16,flexWrap:"wrap"}}>
+              <div style={{width:64,height:64,background:profile.avatarColor||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:24,color:"#fff"}}>{profile.avatarInitials}</span>
+              </div>
+              <div style={{flex:1,minWidth:160}}>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111",lineHeight:1,marginBottom:4}}>{profile.username}</div>
+                <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#666",lineHeight:1.5,marginBottom:8}}>{profile.bio}</div>
+                <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>Streak: <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#e8161e"}}>{streakData.currentStreak||0}d</span></span>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>Since <span style={{fontWeight:600,color:"#333"}}>{joinLabel}</span></span>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#888"}}>Packs: <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#333"}}>{packsOpened}</span></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(154px,1fr))",gap:12,marginBottom:28}}>
-          {[{label:"Net Worth",val:fmt(netWorth),sub:"coin card value",color:"#f5c518",border:"rgba(245,197,24,0.2)",bg:"rgba(10,8,2,0.9)"},{label:"Daily Yield",val:fmt(dailyYield),sub:"coins per day",color:"#34d399",border:"rgba(52,211,153,0.18)",bg:"rgba(2,12,8,0.9)"},{label:"Legendaries",val:legendaryCount,sub:"owned",color:"#e879f9",border:"rgba(232,121,249,0.18)",bg:"rgba(10,2,18,0.9)"},{label:"Rank",val:"#"+myRank,sub:"leaderboard",color:"#fb923c",border:"rgba(251,146,60,0.18)",bg:"rgba(16,8,2,0.9)"}].map(function(s,i){
-            return <div key={i} style={{background:s.bg,border:"1px solid "+s.border,borderRadius:16,padding:"16px 14px"}}><div style={{fontSize:12,color:"#99aacc",letterSpacing:"0.2em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:8}}>{s.label}</div><div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:20,fontWeight:700,color:s.color,lineHeight:1,marginBottom:2}}>{s.val}</div><div style={{fontSize:12,color:"#8899bb"}}>{s.sub}</div></div>;
+
+        {/* Stats grid */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:8,marginBottom:20}}>
+          {[
+            {label:"Net Worth",val:fmt(netWorth),sub:"coin value",color:"#c8a800"},
+            {label:"Daily Yield",val:fmt(dailyYield),sub:"coins/day",color:"#22aa44"},
+            {label:"Legendaries",val:legendaryCount,sub:"owned",color:"#7733cc"},
+            {label:"Packs Opened",val:packsOpened,sub:"total",color:"#e8161e"},
+          ].map(function(s,i){
+            return <div key={i} style={{background:"#fff",border:"1px solid #e0ddd8",borderTop:"3px solid "+s.color,padding:"14px 14px"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:6}}>{s.label}</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:22,fontWeight:700,color:s.color,lineHeight:1,marginBottom:2}}>{s.val}</div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#aaa"}}>{s.sub}</div>
+            </div>;
           })}
-          <div style={{background:"rgba(6,8,22,0.9)",border:"1px solid rgba(96,165,250,0.18)",borderRadius:16,padding:"16px 14px",display:"flex",alignItems:"center",gap:12}}>
-            <div style={{position:"relative",flexShrink:0}}><RingProgress pct={collectionPct} size={60} stroke={5} color="#60a5fa"/><div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:14,fontWeight:700,color:"#60a5fa"}}>{collectionPct}%</span></div></div>
-            <div><div style={{fontSize:12,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:4}}>Collection</div><div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:15,fontWeight:700,color:"#93c5fd"}}>{inventory.length}<span style={{fontSize:13,color:"#8899bb"}}>/90</span></div></div>
+          {/* Collection progress */}
+          <div style={{background:"#fff",border:"1px solid #e0ddd8",borderTop:"3px solid #1155bb",padding:"14px 14px",display:"flex",alignItems:"center",gap:10}}>
+            <div style={{position:"relative",flexShrink:0}}>
+              <RingProgress pct={collectionPct} size={52} stroke={4} color="#1155bb"/>
+              <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,color:"#1155bb"}}>{collectionPct}%</span>
+              </div>
+            </div>
+            <div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:3}}>Collection</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:16,fontWeight:700,color:"#1155bb"}}>{inventory.length}<span style={{fontSize:12,color:"#aaa"}}>/90</span></div>
+            </div>
           </div>
-          {rarestCard&&<div style={{background:"rgba(8,4,20,0.9)",border:"1px solid "+(RCOLORS[rarestCard.rarity]||"#aaa")+"33",borderRadius:16,padding:"16px 14px",display:"flex",alignItems:"center",gap:10}}><div style={{flexShrink:0}}><MiniCard card={rarestCard}/></div><div><div style={{fontSize:12,color:"#99aacc",letterSpacing:"0.15em",textTransform:"uppercase",fontFamily:"'Oswald',sans-serif",marginBottom:4}}>Rarest Pull</div><div style={{fontFamily:"'Oswald',sans-serif",fontSize:13,fontWeight:700,color:RCOLORS[rarestCard.rarity]||"#fff",textTransform:"uppercase"}}>{rarestCard.rarity}</div><div style={{fontSize:13,color:"#8899bb"}}>{rarestCard.team}</div></div></div>}
+          {rarestCard&&<div style={{background:"#fff",border:"1px solid "+(RCOLORS[rarestCard.rarity]||"#ddd")+"66",borderTop:"3px solid "+(RCOLORS[rarestCard.rarity]||"#ddd"),padding:"14px 12px",display:"flex",alignItems:"center",gap:8}}>
+            <div style={{flexShrink:0}}><MiniCard card={rarestCard}/></div>
+            <div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:3}}>Rarest Pull</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:RCOLORS[rarestCard.rarity]||"#333"}}>{rarestCard.rarity}</div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>{rarestCard.team}</div>
+            </div>
+          </div>}
         </div>
-        <div style={{marginBottom:28}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:15,fontWeight:700,color:"#fff",textTransform:"uppercase",marginBottom:14}}>Showcase Shelf</div>
-          <div style={{display:"flex",gap:20,flexWrap:"wrap",justifyContent:"center"}}>
+
+        {/* Showcase Shelf */}
+        <div style={{marginBottom:24}}>
+          <div className="topps-section-title">Showcase Shelf</div>
+          <div style={{display:"flex",gap:24,flexWrap:"wrap",justifyContent:"center",background:"#111",padding:"24px 20px"}}>
             {pinnedCards.map(function(card,i){
               return <div key={i} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
                 {card?(
                   <div style={{position:"relative",animation:"showcaseFloat 4s ease-in-out infinite",animationDelay:(i*0.6)+"s"}}>
-                    <div style={{position:"absolute",left:"50%",top:"50%",transform:"translate(-50%,-50%)",width:200,height:200,background:"radial-gradient(ellipse,"+getColors(card.team)[0]+"55 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
-                    <div style={{transform:"scale(1.1)",transformOrigin:"top center",zIndex:1,position:"relative"}}>
-                      {card.graded&&card.grade
-                        ?<AcrylicSlab card={card} gradeTier={GRADE_TIERS.find(function(t){return t.grade===card.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={false}/>
-                        :<FlipCard card={card} autoFlip={true}/>}
-                    </div>
-                    <button onClick={function(){unpin(i);}} style={{position:"absolute",top:-8,right:-8,width:22,height:22,borderRadius:"50%",background:"rgba(0,0,0,0.85)",border:"1px solid rgba(255,255,255,0.15)",color:"#99aacc",fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:30}}>x</button>
+                    {card.graded&&card.grade
+                      ?<AcrylicSlab card={card} gradeTier={GRADE_TIERS.find(function(t){return t.grade===card.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={false}/>
+                      :<div style={{transform:"scale(1.05)",transformOrigin:"top center"}}><FlipCard card={card} autoFlip={true}/></div>}
+                    <button onClick={function(){unpin(i);}} style={{position:"absolute",top:-8,right:-8,width:20,height:20,background:"#e8161e",border:"none",color:"#fff",fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,zIndex:30}}>✕</button>
                   </div>
                 ):(
-                  <button onClick={function(){setPickingSlot(i);}} style={{width:170,height:240,borderRadius:14,border:"2px dashed rgba(245,197,24,0.2)",background:"rgba(245,197,24,0.03)",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
-                    <span style={{fontSize:28,opacity:0.4}}>+</span>
-                    <span style={{fontSize:13,color:"rgba(245,197,24,0.4)",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Pin Card</span>
+                  <button onClick={function(){setPickingSlot(i);}} style={{width:160,height:220,border:"2px dashed rgba(255,255,255,0.15)",background:"rgba(255,255,255,0.03)",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8}}>
+                    <span style={{fontSize:28,opacity:0.3,color:"#fff"}}>+</span>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"rgba(255,255,255,0.3)",textTransform:"uppercase",letterSpacing:"0.1em"}}>Pin Card</span>
                   </button>
                 )}
-                <div style={{fontSize:12,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",marginTop:card?24:0}}>Slot {i+1}</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(255,255,255,0.4)"}}>Slot {i+1}</div>
               </div>;
             })}
           </div>
         </div>
-        <div style={{marginBottom:28}}>
-          <div style={{fontFamily:"'Oswald',sans-serif",fontSize:15,fontWeight:700,color:"#fff",textTransform:"uppercase",marginBottom:4}}>Achievements</div>
-          <div style={{fontSize:13,color:"#8899bb",marginBottom:14}}>{BADGES.filter(function(b){return b.unlocked;}).length} / {BADGES.length} unlocked</div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10}}>
-            {BADGES.map(function(badge,i){
-              return <div key={badge.id} style={{background:badge.unlocked?"rgba(12,10,2,0.95)":"rgba(8,8,16,0.7)",border:"1px solid "+(badge.unlocked?"rgba(245,197,24,0.35)":"rgba(255,255,255,0.05)"),borderRadius:14,padding:"14px 12px",opacity:badge.unlocked?1:0.45,position:"relative",overflow:"hidden"}}>
-                <div style={{fontSize:24,marginBottom:8,filter:badge.unlocked?"drop-shadow(0 0 8px rgba(245,197,24,0.6))":"grayscale(1) opacity(0.4)"}}>{badge.icon}</div>
-                <div style={{fontFamily:"'Oswald',sans-serif",fontSize:14,fontWeight:700,color:badge.unlocked?"#f5c518":"#8899bb",textTransform:"uppercase",marginBottom:2}}>{badge.label}</div>
-                <div style={{fontSize:12,color:badge.unlocked?"#b8c8e0":"#555",marginBottom:6}}>{badge.desc}</div>
+
+        {/* Achievements */}
+        <div style={{marginBottom:24}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+            <div className="topps-section-title" style={{marginBottom:0}}>Achievements</div>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.1em",color:"#888",textTransform:"uppercase"}}>{BADGES.filter(function(b){return b.unlocked;}).length} / {BADGES.length}</span>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:8}}>
+            {BADGES.map(function(badge){
+              return <div key={badge.id} style={{background:badge.unlocked?"#fff":"#f5f3f0",border:"1px solid "+(badge.unlocked?"#e8161e":"#e0ddd8"),borderTop:"3px solid "+(badge.unlocked?"#e8161e":"#e0ddd8"),padding:"14px 12px",opacity:badge.unlocked?1:0.55,position:"relative"}}>
+                <div style={{fontSize:22,marginBottom:6,filter:badge.unlocked?"none":"grayscale(1) opacity(0.4)"}}>{badge.icon}</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:badge.unlocked?"#111":"#aaa",marginBottom:2}}>{badge.label}</div>
+                <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:badge.unlocked?"#666":"#bbb",marginBottom:6}}>{badge.desc}</div>
                 <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:8}}>
-                  <span style={{fontSize:11,color:badge.unlocked?"#34d399":"#555",fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>🪙 +{fmt(badge.reward)}</span>
-                  {badge.unlocked&&<span style={{fontSize:10,color:"#34d399",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.08em"}}>claimed</span>}
+                  <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,color:badge.unlocked?"#22aa44":"#aaa"}}>+{fmt(badge.reward)} coins</span>
+                  {badge.unlocked&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,background:"#e8f5ec",color:"#22aa44",border:"1px solid #c8e8d0",padding:"1px 6px",textTransform:"uppercase",letterSpacing:"0.06em"}}>Claimed</span>}
                 </div>
-                <div style={{background:"rgba(255,255,255,0.05)",borderRadius:999,height:3,overflow:"hidden"}}><div style={{height:"100%",borderRadius:999,background:badge.unlocked?"linear-gradient(90deg,#f5c518,#ffe066)":"rgba(255,255,255,0.75)",width:badge.progress+"%",transition:"width 1s ease-out"}}/></div>
-                {badge.unlocked&&<div style={{position:"absolute",top:8,right:10,fontSize:11,fontWeight:900,color:"#34d399",fontFamily:"'Oswald',sans-serif"}}>✓</div>}
+                <div style={{background:"#e8e8e8",height:3,overflow:"hidden"}}>
+                  <div style={{height:"100%",background:badge.unlocked?"#e8161e":"#ddd",width:badge.progress+"%",transition:"width 1s ease-out"}}/>
+                </div>
+                {badge.unlocked&&<div style={{position:"absolute",top:8,right:8,fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#22aa44"}}>✓</div>}
               </div>;
             })}
           </div>
@@ -4008,17 +4115,17 @@ export default function App() {
   var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
-    <div style={{background:"#07070f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
+    <div style={{background:"#fff",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
       <style>{CSS}</style>
       <div style={{textAlign:"center"}}>
-        <div className="gold-logo" style={{fontSize:28,fontWeight:900,letterSpacing:3,marginBottom:16}}>CARD DYNASTY</div>
-        <div style={{width:32,height:32,border:"3px solid rgba(245,197,24,0.2)",borderTop:"3px solid #f5c518",borderRadius:"50%",animation:"spin 0.8s linear infinite",margin:"0 auto"}}/>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:32,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:16}}>CARD <em style={{color:"#e8161e",fontStyle:"normal"}}>DYNASTY</em></div>
+        <div style={{width:32,height:32,border:"3px solid #e0ddd8",borderTop:"3px solid #e8161e",borderRadius:"50%",animation:"spin 0.8s linear infinite",margin:"0 auto"}}/>
       </div>
     </div>
   );
 
   if(showOnboarding) return (
-    <div style={{background:"#04040a",minHeight:"100vh"}}>
+    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
       <style>{CSS}</style>
       <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser} userId={userId} onSavePrefs={function(prefs){
         if(!prefs) return;
@@ -4034,91 +4141,106 @@ export default function App() {
     </div>
   );
   return (
-    <div style={{background:"#07070f",minHeight:"100vh",color:"#fff",fontFamily:"'Inter',system-ui,sans-serif"}}>
+    <div style={{background:"#f0ede8",minHeight:"100vh",color:"#111",fontFamily:"'Barlow',sans-serif"}}>
       <style>{CSS}</style>
       <Notifications notifs={notifs}/>
       {showHowToPlay&&<HowToPlayModal onClose={function(){setShowHowToPlay(false);}}/>}
       {showLoginModal&&<DailyLoginModal streakData={streakData} onClaim={handleClaim} onClose={function(){setShowLoginModal(false);}}/>}
       {listModal&&<ListModal card={listModal} onConfirm={function(p){listCard(listModal,p);}} onClose={function(){setListModal(null);}}/>}
-      {/* ── ORACLE BAR — persistent live score ticker ── */}
+      {/* ── ORACLE TICKER ── */}
       <OracleBar liveGames={oracle.liveGames} onClickTeam={handleOracleClick}/>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderBottom:"1px solid #0e0e1e",background:"rgba(4,4,10,0.96)",backdropFilter:"blur(12px)",flexWrap:"wrap",gap:8,position:"sticky",top:0,zIndex:50}}>
-        <div style={{fontFamily:"'Oswald',sans-serif",fontSize:18,fontWeight:700,letterSpacing:"0.15em",textTransform:"uppercase"}}>
-          <span className="bal-shimmer">Card</span><span style={{color:"#fff"}}> Dynasty</span>
+      {/* ── TOPPS HEADER ── */}
+      <div style={{background:"#fff",borderBottom:"3px solid #e8161e",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 16px",height:52,position:"sticky",top:0,zIndex:50,flexWrap:"wrap",gap:6}}>
+        <div style={{display:"flex",flexDirection:"column",lineHeight:1,flexShrink:0}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>CARD <em style={{color:"#e8161e",fontStyle:"normal"}}>DYNASTY</em></div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:9,letterSpacing:"0.28em",color:"#aaa",textTransform:"uppercase"}}>Official Collector Platform</div>
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-          {pity>=7&&<span style={{fontSize:12,color:"#fb923c",fontWeight:700,background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:999,padding:"3px 8px"}}>Pity {pity}/10</span>}
-          {liveTeams.size>0&&<span onClick={function(){setTab("live");}} style={{display:"flex",alignItems:"center",gap:4,background:"rgba(0,255,80,0.08)",border:"1px solid rgba(0,255,80,0.25)",borderRadius:999,padding:"4px 10px",cursor:"pointer"}}><div style={{width:7,height:7,borderRadius:"50%",background:"#00ff50",animation:"pulse 1s ease-in-out infinite"}}/><span style={{fontSize:13,fontWeight:700,color:"#00ff50",fontFamily:"'Oswald',sans-serif"}}>{liveTeams.size} LIVE</span></span>}
-          <div style={{display:"flex",alignItems:"center",gap:0,background:"rgba(10,8,20,0.9)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,overflow:"hidden"}}>
-            {/* Streak — only this section opens the modal */}
-            <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",background:"none",border:"none",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
-              <span style={{fontSize:14}}>🔥</span>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{streakData.currentStreak}d</span>
+        <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+          {pity>=7&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,color:"#e8161e",fontWeight:700,background:"rgba(232,22,30,0.07)",border:"1px solid rgba(232,22,30,0.2)",padding:"3px 8px",letterSpacing:"0.08em",textTransform:"uppercase"}}>Pity {pity}/10</span>}
+          {liveTeams.size>0&&<span onClick={function(){setTab("live");}} style={{display:"flex",alignItems:"center",gap:4,background:"#e8f5ec",border:"1px solid #22cc55",padding:"4px 10px",cursor:"pointer"}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:"#22cc55",animation:"pulse 1s ease-in-out infinite"}}/>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#22aa44",letterSpacing:"0.08em"}}>{liveTeams.size} LIVE</span>
+          </span>}
+          {/* Stats pill */}
+          <div style={{display:"flex",alignItems:"center",gap:0,background:"#f8f5f0",border:"1px solid #ddd",overflow:"hidden"}}>
+            <button onClick={function(){setShowLoginModal(true);}} style={{display:"flex",alignItems:"center",gap:4,padding:"5px 10px",background:"none",border:"none",borderRight:"1px solid #e8e8e8",cursor:"pointer"}}>
+              <span style={{fontSize:13}}>🔥</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#e8161e"}}>{streakData.currentStreak}d</span>
             </button>
-            {/* Rank — taps to rankings tab */}
-            <div onClick={function(){setTab("rankings");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
-              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>Rank</span>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#fb923c"}}>{"#"+(globalRank||"—")}</span>
+            <div onClick={function(){setTab("rankings");}} style={{display:"flex",alignItems:"center",gap:3,padding:"5px 9px",borderRight:"1px solid #e8e8e8",cursor:"pointer"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#aaa",textTransform:"uppercase",letterSpacing:"0.06em"}}>Rank</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#111"}}>{"#"+(globalRank||"—")}</span>
             </div>
-            {/* Daily yield — taps to inventory */}
-            <div onClick={function(){setTab("inventory");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",borderRight:"1px solid rgba(255,255,255,0.08)",cursor:"pointer"}}>
-              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>🪙</span>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#34d399"}}>{fmt(inventory.reduce(function(s,c){return s+c.daily;},0))}/d</span>
+            <div onClick={function(){setTab("inventory");}} style={{display:"flex",alignItems:"center",gap:3,padding:"5px 9px",borderRight:"1px solid #e8e8e8",cursor:"pointer"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#aaa",textTransform:"uppercase",letterSpacing:"0.06em"}}>Yield</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#22aa44"}}>{fmt(inventory.reduce(function(s,c){return s+c.daily;},0))}/d</span>
             </div>
-            {/* Collection power */}
-            <div onClick={function(){setTab("profile");}} style={{display:"flex",alignItems:"center",gap:3,padding:"6px 10px",cursor:"pointer"}}>
-              <span style={{fontSize:11,color:"#8899bb",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase",letterSpacing:"0.05em"}}>⚡</span>
-              <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:700,color:"#a78bfa"}}>{inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50}</span>
+            <div onClick={function(){setTab("profile");}} style={{display:"flex",alignItems:"center",gap:3,padding:"5px 9px",cursor:"pointer"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,color:"#aaa",textTransform:"uppercase",letterSpacing:"0.06em"}}>Power</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#7733cc"}}>{inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50}</span>
             </div>
           </div>
-          <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()} style={{background:(!inventory.length||lastGameDay===new Date().toDateString())?"rgba(255,255,255,0.04)":"linear-gradient(90deg,#003d1a,#00884a)",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#8899bb":"#fff",fontWeight:900,fontSize:14,padding:"6px 14px",borderRadius:999,border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",whiteSpace:"nowrap"}}>{lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}</button>
-          <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",borderRadius:999,padding:"6px 14px",fontWeight:900,fontSize:14}}>
-            <span className="bal-shimmer">{fmt(balance)}</span><span style={{color:"#8899bb",fontSize:13,marginLeft:4}}>coins</span>
+          <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()}
+            style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",padding:"6px 14px",border:"none",cursor:(!inventory.length||lastGameDay===new Date().toDateString())?"not-allowed":"pointer",background:(!inventory.length||lastGameDay===new Date().toDateString())?"#eee":"#e8161e",color:(!inventory.length||lastGameDay===new Date().toDateString())?"#aaa":"#fff",whiteSpace:"nowrap",clipPath:(!inventory.length||lastGameDay===new Date().toDateString())?"none":"polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))"}}>
+            {lastGameDay===new Date().toDateString()?"✓ Collected":"Game Day"}
+          </button>
+          <div style={{background:"#111",padding:"5px 12px",display:"flex",alignItems:"center",gap:5}}>
+            <div style={{width:8,height:8,background:"#f5c518",clipPath:"polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)",flexShrink:0}}/>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,color:"#f5c518",letterSpacing:"0.06em"}}>{fmt(balance)}</span>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#666",letterSpacing:"0.1em",textTransform:"uppercase"}}>coins</span>
           </div>
-          {/* Avatar — taps to profile */}
           <button onClick={function(){setTab("profile");}} title="My Profile"
-            style={{width:34,height:34,borderRadius:"50%",background:"linear-gradient(135deg,"+profile.avatarColor+"cc,"+profile.avatarColor+"55)",border:"2px solid "+profile.avatarColor,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,boxShadow:"0 0 10px "+profile.avatarColor+"44",padding:0}}>
-            <span style={{fontFamily:"'Oswald',sans-serif",fontWeight:900,fontSize:14,color:"#fff"}}>{profile.avatarInitials}</span>
+            style={{width:32,height:32,background:profile.avatarColor||"#e8161e",border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:13,color:"#fff"}}>{profile.avatarInitials}</span>
           </button>
         </div>
       </div>
+      {/* Game day active banner */}
       {winners&&gdResult&&(
-        <div style={{background:"rgba(0,20,10,0.9)",borderBottom:"1px solid rgba(52,211,153,0.2)",padding:"7px 20px",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
-          <span style={{fontSize:13,color:"#34d399",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em"}}>Game Day Active</span>
-          <span style={{fontSize:13,color:"#8899bb"}}>{winners.size} winners</span>
-          <span style={{fontSize:13,color:"#8899bb"}}>Win bonuses: <span style={{color:"#34d399",fontWeight:700}}>+{fmt(gdResult.winTotal)}</span></span>
-          {gdResult.hasLiveBonus&&<span style={{fontSize:12,fontWeight:700,color:"#00ff50",background:"rgba(0,255,80,0.08)",border:"1px solid rgba(0,255,80,0.2)",borderRadius:999,padding:"2px 8px"}}>⚡ 1.5x Live Active</span>}
-          <button onClick={function(){setShowGD(true);}} style={{fontSize:12,fontWeight:700,color:"#f5c518",background:"none",border:"1px solid rgba(245,197,24,0.2)",borderRadius:999,padding:"2px 10px",cursor:"pointer"}}>Summary</button>
+        <div style={{background:"#e8f5ec",borderBottom:"1px solid #c8e8d0",padding:"7px 20px",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:"#22aa44"}}>Game Day Active</span>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#555"}}>{winners.size} winners · Win bonuses: <span style={{color:"#22aa44",fontWeight:700}}>+{fmt(gdResult.winTotal)}</span></span>
+          {gdResult.hasLiveBonus&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#22aa44",background:"#c8f0d4",border:"1px solid #22cc55",padding:"2px 8px",letterSpacing:"0.08em"}}>⚡ 1.5× Live Bonus</span>}
+          <button onClick={function(){setShowGD(true);}} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#e8161e",background:"none",border:"1px solid rgba(232,22,30,0.3)",padding:"2px 10px",cursor:"pointer",marginLeft:"auto",letterSpacing:"0.08em",textTransform:"uppercase"}}>View Summary</button>
         </div>
       )}
+      {/* Game day modal */}
       {showGD&&gdResult&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,backdropFilter:"blur(4px)"}} onClick={function(){setShowGD(false);}}>
-          <div className="popup-anim" onClick={function(e){e.stopPropagation();}} style={{background:"rgba(8,6,2,0.97)",borderRadius:20,padding:"28px 32px",maxWidth:300,width:"90%",textAlign:"center",boxShadow:"0 0 0 1px rgba(245,197,24,0.4),0 0 60px rgba(245,197,24,0.25)"}}>
-            <div style={{fontSize:28,marginBottom:8}}>🏆</div>
-            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:26,fontWeight:700,color:"#f5c518",marginBottom:14}}>+{fmt(gdResult.grandTotal)}</div>
-            <div style={{background:"rgba(255,255,255,0.03)",borderRadius:12,padding:"10px 12px",marginBottom:14,textAlign:"left"}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}><span style={{fontSize:14,color:"#8899bb"}}>Base Daily</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:"#fbbf24"}}>+{fmt(gdResult.baseTotal)}</span></div>
-              <div style={{display:"flex",justifyContent:"space-between",paddingTop:7,borderTop:"1px solid #1a1a2e",marginBottom:gdResult.hasLiveBonus?5:0}}><span style={{fontSize:14,color:"#8899bb"}}>Win Bonuses</span><span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:"#34d399"}}>+{fmt(gdResult.winTotal)}</span></div>
-              {gdResult.hasLiveBonus&&<div style={{fontSize:12,color:"#00ff50",textAlign:"right",fontWeight:700}}>⚡ Includes 1.5x live multiplier</div>}
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000}} onClick={function(){setShowGD(false);}}>
+          <div onClick={function(e){e.stopPropagation();}} style={{background:"#fff",maxWidth:320,width:"90%",border:"1px solid #e0ddd8",boxShadow:"0 16px 48px rgba(0,0,0,0.2)"}}>
+            <div style={{background:"#e8161e",padding:"16px 20px"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>Game Day Results</div>
             </div>
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={function(){
-                var newBal=balance+gdResult.grandTotal;
-                setBalance(function(b){return b+gdResult.grandTotal;});
-                var today=new Date().toDateString();
-                setLastGameDay(today);
-                try{localStorage.setItem("cd_lastgameday",today);}catch(e){}
-                setShowGD(false);
-                setWinners(null);
-                setGdResult(null);
-                if(userId)dbSaveProfile(userId,{coins:newBal});
-              }} style={{flex:1,background:"linear-gradient(90deg,#7a5500,#f5c518)",color:"#000",fontWeight:900,padding:10,borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Collect</button>
-              <button onClick={function(){setShowGD(false);}} style={{flex:1,background:"rgba(255,255,255,0.04)",color:"#8899bb",fontWeight:700,padding:10,borderRadius:999,border:"1px solid #1e1e2e",cursor:"pointer",fontSize:14}}>Close</button>
+            <div style={{padding:"20px"}}>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:32,fontWeight:700,color:"#111",marginBottom:16,letterSpacing:"-0.02em"}}>+{fmt(gdResult.grandTotal)} <span style={{fontSize:16,color:"#888"}}>coins</span></div>
+              <div style={{border:"1px solid #e8e8e8",marginBottom:16}}>
+                <div style={{display:"flex",justifyContent:"space-between",padding:"10px 12px",borderBottom:"1px solid #f0f0f0"}}>
+                  <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,color:"#555",letterSpacing:"0.06em",textTransform:"uppercase"}}>Base Daily</span>
+                  <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#111"}}>+{fmt(gdResult.baseTotal)}</span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",padding:"10px 12px"}}>
+                  <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,color:"#555",letterSpacing:"0.06em",textTransform:"uppercase"}}>Win Bonuses</span>
+                  <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700,color:"#22aa44"}}>+{fmt(gdResult.winTotal)}</span>
+                </div>
+              </div>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={function(){
+                  var newBal=balance+gdResult.grandTotal;
+                  setBalance(function(b){return b+gdResult.grandTotal;});
+                  var today=new Date().toDateString();
+                  setLastGameDay(today);
+                  try{localStorage.setItem("cd_lastgameday",today);}catch(e){}
+                  setShowGD(false);setWinners(null);setGdResult(null);
+                  if(userId)dbSaveProfile(userId,{coins:newBal});
+                }} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0}}>Collect</button>
+                <button onClick={function(){setShowGD(false);}} style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"12px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Close</button>
+              </div>
             </div>
           </div>
         </div>
       )}
-      <div style={{display:"flex",borderBottom:"1px solid #1e1e3a",background:"rgba(4,4,10,0.98)",overflowX:"auto"}}>
+      {/* ── TAB BAR ── */}
+      <div style={{background:"#fff",borderBottom:"1px solid #e0ddd8",display:"flex",overflowX:"auto",position:"sticky",top:52,zIndex:40}}>
         {coreTabs.map(function(t){
           return <button key={t.id} className={"tab-btn"+(tab===t.id?" on":"")} onClick={function(){setTab(t.id);}}>{t.label}</button>;
         })}
@@ -4135,73 +4257,72 @@ export default function App() {
         {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
         {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
         {tab==="inventory"&&(
-          <div style={{padding:16,maxWidth:720,margin:"0 auto"}}>
-            <div style={{display:"flex",gap:8,marginBottom:16}}>
+          <div style={{padding:"16px 20px 80px",maxWidth:760,margin:"0 auto"}}>
+            {/* Sub-tabs */}
+            <div style={{display:"flex",gap:0,marginBottom:16,borderBottom:"2px solid #e0ddd8"}}>
               {["cards","sets"].map(function(s){
-                return <button key={s} onClick={function(){setInvSubTab(s);}} style={{padding:"7px 18px",borderRadius:999,border:"1px solid",fontSize:14,fontWeight:700,cursor:"pointer",background:invSubTab===s?"#f5c518":"rgba(0,0,0,0.5)",color:invSubTab===s?"#000":"#8899bb",borderColor:invSubTab===s?"#f5c518":"#2a2a4a",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>{s==="cards"?"My Cards":"Set Progress"}</button>;
+                var active=invSubTab===s;
+                return <button key={s} onClick={function(){setInvSubTab(s);}}
+                  style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",padding:"8px 20px",background:"none",border:"none",borderBottom:"3px solid "+(active?"#e8161e":"transparent"),color:active?"#e8161e":"#888",cursor:"pointer",marginBottom:-2}}>
+                  {s==="cards"?"My Cards":"Set Progress"}
+                </button>;
               })}
             </div>
             {invSubTab==="cards"&&(
               inventory.length===0
-                ?<div style={{textAlign:"center",padding:60,color:"#8899bb",fontWeight:700,fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>No Cards Yet</div>
+                ?<div style={{textAlign:"center",padding:60,background:"#fff",border:"1px solid #e0ddd8"}}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:6}}>No Cards Yet</div>
+                  <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Open a pack to start your collection</div>
+                </div>
                 :<div>
-         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14}}>
-          {ORDER.filter(function(r){return counts[r];}).map(function(r){
-           return <span key={r} style={{fontSize:13,fontWeight:700,padding:"3px 10px",borderRadius:999,border:"1px solid "+(RCOLORS[r]||"#aaa")+"44",background:"rgba(0,0,0,0.5)",color:RCOLORS[r]||"#aaa",textTransform:"uppercase"}}>{r} <span style={{color:"#f5c518"}}>x{counts[r]}</span></span>;
-          })}
-          {winners&&<span style={{fontSize:13,fontWeight:700,padding:"3px 10px",borderRadius:999,border:"1px solid rgba(52,211,153,0.3)",background:"rgba(52,211,153,0.06)",color:"#34d399"}}>Winners: {inventory.filter(function(c){return winners.has(c.team);}).length}</span>}
-         </div>
-         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:16}}>
-          {sorted.map(function(c,i){
-           var isLiveCard=liveTeams.has(c.team);
-           var isRedZone=redZoneTeams.has(c.team);
-           var isShaking=shakeTeams[c.team];
-           var isHighlighted=highlightedTeam===c.team;
-           var isOffseason=SEASON_CALENDAR[c.sport]&&!SEASON_CALENDAR[c.sport].active;
-           var liveCol=getColors(c.team)[0];
-           var liveFilter=isRedZone
-            ?"drop-shadow(0 0 8px "+liveCol+") drop-shadow(0 0 16px "+liveCol+"cc) drop-shadow(0 0 32px "+liveCol+"88)"
-            :isLiveCard
-            ?"drop-shadow(0 0 6px "+liveCol+"dd) drop-shadow(0 0 18px "+liveCol+"88)"
-            :"none";
-           var offseasonBadge=null;
-           if(isOffseason&&!isLiveCard){
-            var _cal=SEASON_CALENDAR[c.sport];
-            var _isDraft=_cal&&_cal.isDraft;
-            var _isFinalFour=_cal&&_cal.isFinalFour;
-            var _olabel=_isDraft?_draftLabel:_isFinalFour?"🏆 FINAL FOUR":_cal?_cal.note:"Offseason";
-            var _obg=_isDraft?"rgba(20,30,80,0.96)":_isFinalFour?"rgba(30,20,0,0.96)":"rgba(20,20,30,0.95)";
-            var _ocol=_isDraft?"#4488ff":_isFinalFour?"#ffaa22":"#8899bb";
-            var _obdr=_isDraft?"1px solid rgba(68,136,255,0.3)":_isFinalFour?"1px solid rgba(255,170,34,0.3)":"1px solid #1a1a2e";
-            offseasonBadge=<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:_obg,color:_ocol,fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.08em",whiteSpace:"nowrap",border:_obdr}}>{_olabel}</div>;
-           }
-           return (
-            <div key={c.id+i}
-             className={"inv-wrap"+(isRedZone?" redZone":isShaking?" haptic":"")}
-             style={{
-              position:"relative",
-              filter:liveFilter,
-              animation:isHighlighted?"highlightFlash 2s ease-out forwards":"none",
-              borderRadius:14,
-              outline:isHighlighted?"3px solid #00ff50":"none",
-              transition:"filter 0.3s",
-              opacity:isOffseason?0.72:1,
-             }}>
-             {isLiveCard&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:isRedZone?"#ff3030":"#00ff50",color:"#000",fontSize:11,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",filter:isRedZone?"drop-shadow(0 0 6px #ff3030)":"drop-shadow(0 0 6px #00ff50)"}}>{isRedZone?(c.sport==="MLB"?"🔴 CLUTCH":c.sport==="MLS"?"🔴 FINAL MINS":"🔴 RED ZONE"):"LIVE · 1.5x"}</div>}
-             {offseasonBadge}
-             {preTeams[c.team]&&!isLiveCard&&!isOffseason&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:"#f5c518",color:"#000",fontSize:11,fontWeight:900,padding:"2px 8px",borderRadius:999,fontFamily:"'Oswald',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap"}}>IN {preTeams[c.team]}m</div>}
-             {c.graded&&c.grade
-               ?<AcrylicSlab card={c} gradeTier={GRADE_TIERS.find(function(t){return t.grade===c.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={true}/>
-               :<FlipCard card={c} autoFlip={true} winners={winners}/>}
-             <div className="list-ov" onClick={function(){c.graded?setTab("grading"):setListModal(c);}}>
-              {c.graded
-                ?<button style={{background:"linear-gradient(90deg,#4a0010,#cc0022)",color:"#fff",fontWeight:900,fontSize:13,padding:"8px 14px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>Graded ✓</button>
-                :<button style={{background:"linear-gradient(90deg,#004422,#00aa55)",color:"#fff",fontWeight:900,fontSize:14,padding:"8px 16px",borderRadius:999,border:"none",cursor:"pointer",fontFamily:"'Oswald',sans-serif",textTransform:"uppercase"}}>List For Sale</button>}
-             </div>
-            </div>
-           );
-          })}
-         </div>
+                  {/* Rarity filter chips */}
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14}}>
+                    {ORDER.filter(function(r){return counts[r];}).map(function(r){
+                      return <span key={r} className="topps-rarity-pill" style={{borderColor:RCOLORS[r]||"#aaa",color:RCOLORS[r]||"#aaa",background:(RCOLORS[r]||"#aaa")+"11"}}>
+                        {r} <span style={{fontFamily:"'Roboto Mono',monospace",fontWeight:700}}>×{counts[r]}</span>
+                      </span>;
+                    })}
+                    {winners&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"4px 12px",border:"1px solid #c8e8d0",background:"#e8f5ec",color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase"}}>Winners: {inventory.filter(function(c){return winners.has(c.team);}).length}</span>}
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:16}}>
+                    {sorted.map(function(c,i){
+                      var isLiveCard=liveTeams.has(c.team);
+                      var isRedZone=redZoneTeams.has(c.team);
+                      var isShaking=shakeTeams[c.team];
+                      var isHighlighted=highlightedTeam===c.team;
+                      var isOffseason=SEASON_CALENDAR[c.sport]&&!SEASON_CALENDAR[c.sport].active;
+                      var liveCol=getColors(c.team)[0];
+                      var liveFilter=isRedZone
+                        ?"drop-shadow(0 0 8px "+liveCol+") drop-shadow(0 0 16px "+liveCol+"cc)"
+                        :isLiveCard?"drop-shadow(0 0 6px "+liveCol+"dd)":"none";
+                      var offseasonBadge=null;
+                      if(isOffseason&&!isLiveCard){
+                        var _cal=SEASON_CALENDAR[c.sport];
+                        var _isDraft=_cal&&_cal.isDraft; var _isFinalFour=_cal&&_cal.isFinalFour;
+                        var _olabel=_isDraft?_draftLabel:_isFinalFour?"🏆 FINAL FOUR":_cal?_cal.note:"Offseason";
+                        var _obg=_isDraft?"#e8f0ff":_isFinalFour?"#fffbeb":"#f5f5f5";
+                        var _ocol=_isDraft?"#1144cc":_isFinalFour?"#c8a800":"#888";
+                        var _obdr=_isDraft?"1px solid #c8d8ff":_isFinalFour?"1px solid #f5e0a0":"1px solid #e0e0e0";
+                        offseasonBadge=<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:_obg,color:_ocol,fontSize:10,fontWeight:700,padding:"2px 8px",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"0.08em",whiteSpace:"nowrap",border:_obdr,textTransform:"uppercase"}}>{_olabel}</div>;
+                      }
+                      return (
+                        <div key={c.id+i} className={"inv-wrap"+(isRedZone?" redZone":isShaking?" haptic":"")}
+                          style={{position:"relative",filter:liveFilter,animation:isHighlighted?"highlightFlash 2s ease-out forwards":"none",outline:isHighlighted?"3px solid #22cc55":"none",transition:"filter 0.3s",opacity:isOffseason?0.75:1}}>
+                          {isLiveCard&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:isRedZone?"#e8161e":"#22cc55",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 8px",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",textTransform:"uppercase"}}>{isRedZone?(c.sport==="MLB"?"🔴 CLUTCH":c.sport==="MLS"?"🔴 FINAL MINS":"🔴 RED ZONE"):"LIVE · 1.5×"}</div>}
+                          {offseasonBadge}
+                          {preTeams[c.team]&&!isLiveCard&&!isOffseason&&<div style={{position:"absolute",top:-10,left:"50%",transform:"translateX(-50%)",zIndex:30,background:"#c8a800",color:"#fff",fontSize:10,fontWeight:800,padding:"2px 8px",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"0.1em",whiteSpace:"nowrap",textTransform:"uppercase"}}>IN {preTeams[c.team]}m</div>}
+                          {c.graded&&c.grade
+                            ?<AcrylicSlab card={c} gradeTier={GRADE_TIERS.find(function(t){return t.grade===c.grade;})||GRADE_TIERS[GRADE_TIERS.length-1]} compact={true}/>
+                            :<FlipCard card={c} autoFlip={true} winners={winners}/>}
+                          <div className="list-ov" onClick={function(){c.graded?setTab("grading"):setListModal(c);}}>
+                            {c.graded
+                              ?<button style={{background:"#e8161e",color:"#fff",fontWeight:800,fontSize:12,padding:"8px 14px",border:"none",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>Graded ✓</button>
+                              :<button style={{background:"#22aa44",color:"#fff",fontWeight:800,fontSize:13,padding:"8px 16px",border:"none",cursor:"pointer",fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:"0.1em",textTransform:"uppercase"}}>List for Sale</button>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
             )}
             {invSubTab==="sets"&&<SetTracker inventory={inventory}/>}
