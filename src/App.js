@@ -612,7 +612,7 @@ function PremiumCard(props) {
 
         {/* Rarity tag — top right */}
         <div style={{position:"absolute",top:0,right:0,zIndex:8,
-          background:typeof cfg.tagBg==="string"&&cfg.tagBg.startsWith("linear")?cfg.tagBg:cfg.tagBg,
+          background:cfg.tagBg,
           padding:"3px 8px"}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,
             letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{card.rarity.toUpperCase()}</span>
@@ -700,7 +700,7 @@ function CardBack(props) {
         var sx=i%2===0?1:-1; var sy=i<2?1:-1;
         return <svg key={i} width={14} height={14} style={{position:"absolute",left:pt[0]-7,top:pt[1]-7,zIndex:3}}>
           <polyline points={"0,8 0,0 8,0"} fill="none" stroke="rgba(232,22,30,0.5)" strokeWidth="1.5"
-            transform={"scale("+sx+","+sy+") translate("+(sx<0?-14:0)+","+(sy<0?-14:0)+")")}/>
+            transform={"scale("+sx+","+sy+") translate("+(sx<0?-14:0)+","+(sy<0?-14:0)+")"}/>
         </svg>;
       })}
     </div>
@@ -766,7 +766,7 @@ function MiniCard(props) {
           color:cfg.abbvCol,letterSpacing:"0.02em",userSelect:"none"}}>{code}</span>
       </div>
       {/* Rarity tag */}
-      <div style={{position:"absolute",top:0,right:0,background:cfg.tagBg.startsWith?.("linear")?cfg.tagBg:cfg.tagBg,padding:"1px 4px",zIndex:4}}>
+      <div style={{position:"absolute",top:0,right:0,background:cfg.tagBg,padding:"1px 4px",zIndex:4}}>
         <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:5,fontWeight:900,
           color:cfg.tagTxt,letterSpacing:"0.04em",textTransform:"uppercase"}}>{card.rarity.slice(0,3).toUpperCase()}</span>
       </div>
