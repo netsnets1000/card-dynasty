@@ -3541,6 +3541,227 @@ function LiveGamesTab(props){
     </div>
   );
 }
+// ── DYNASTY PATH — Season Pass System ────────────────────────────────────────
+var DYNASTY_TRACK=[
+  {level:1,  xpReq:1000,  icon:"🪙", label:"200 Coins",          type:"coins", value:200,   color:"#c8a800"},
+  {level:2,  xpReq:2000,  icon:"🃏", label:"Rare Pack",           type:"pack",  value:"standard", color:"#1144cc"},
+  {level:3,  xpReq:3000,  icon:"🪙", label:"500 Coins",          type:"coins", value:500,   color:"#c8a800"},
+  {level:4,  xpReq:4000,  icon:"⚡", label:"Elite Badge",         type:"badge", value:"elite_s1", color:"#22aa55"},
+  {level:5,  xpReq:5000,  icon:"🔬", label:"Free Grading",        type:"grade", value:1,     color:"#7733cc"},
+  {level:6,  xpReq:6000,  icon:"🪙", label:"1,000 Coins",        type:"coins", value:1000,  color:"#c8a800"},
+  {level:7,  xpReq:7000,  icon:"📦", label:"Division Jumbo Pack", type:"pack",  value:"jumbo", color:"#7733cc"},
+  {level:8,  xpReq:8000,  icon:"🏆", label:"Prestige Badge",      type:"badge", value:"prestige_s1", color:"#e8161e"},
+  {level:9,  xpReq:9000,  icon:"🪙", label:"2,000 Coins",        type:"coins", value:2000,  color:"#c8a800"},
+  {level:10, xpReq:10000, icon:"🌟", label:"Legendary Pack",      type:"pack",  value:"jumbo", color:"#e8161e"},
+  {level:11, xpReq:11000, icon:"🪙", label:"1,500 Coins",        type:"coins", value:1500,  color:"#c8a800"},
+  {level:12, xpReq:12000, icon:"🔬", label:"2× Free Grading",     type:"grade", value:2,     color:"#7733cc"},
+  {level:13, xpReq:13000, icon:"🪙", label:"3,000 Coins",        type:"coins", value:3000,  color:"#c8a800"},
+  {level:14, xpReq:14000, icon:"💎", label:"Dynasty Badge",       type:"badge", value:"dynasty_s1", color:"#9933ff"},
+  {level:15, xpReq:15000, icon:"📦", label:"Blaster Box",         type:"pack",  value:"blaster", color:"#7733cc"},
+  {level:16, xpReq:16000, icon:"🪙", label:"2,500 Coins",        type:"coins", value:2500,  color:"#c8a800"},
+  {level:17, xpReq:17000, icon:"🔬", label:"3× Free Grading",     type:"grade", value:3,     color:"#7733cc"},
+  {level:18, xpReq:18000, icon:"🪙", label:"5,000 Coins",        type:"coins", value:5000,  color:"#c8a800"},
+  {level:19, xpReq:19000, icon:"⚡", label:"Obsidian Badge",      type:"badge", value:"obsidian_s1", color:"#9933ff"},
+  {level:20, xpReq:20000, icon:"📦", label:"Mega Box",            type:"pack",  value:"megabox", color:"#0088cc"},
+  {level:21, xpReq:21000, icon:"🪙", label:"4,000 Coins",        type:"coins", value:4000,  color:"#c8a800"},
+  {level:22, xpReq:22000, icon:"🔬", label:"5× Free Grading",     type:"grade", value:5,     color:"#7733cc"},
+  {level:23, xpReq:23000, icon:"🪙", label:"7,500 Coins",        type:"coins", value:7500,  color:"#c8a800"},
+  {level:24, xpReq:24000, icon:"👑", label:"King Badge",          type:"badge", value:"king_s1", color:"#e8161e"},
+  {level:25, xpReq:25000, icon:"📦", label:"Hobby Box",           type:"pack",  value:"hobbybox", color:"#cc3300"},
+  {level:26, xpReq:26000, icon:"🪙", label:"10,000 Coins",       type:"coins", value:10000, color:"#c8a800"},
+  {level:27, xpReq:27000, icon:"🔬", label:"10× Free Grading",    type:"grade", value:10,    color:"#7733cc"},
+  {level:28, xpReq:28000, icon:"🪙", label:"15,000 Coins",       type:"coins", value:15000, color:"#c8a800"},
+  {level:29, xpReq:29000, icon:"✨", label:"Immortal Badge",      type:"badge", value:"immortal_s1", color:"#9933ff"},
+  {level:30, xpReq:30000, icon:"🏆", label:"Dynasty Title",       type:"pack",  value:"hobbybox", color:"#f5c518", final:true},
+];
+function xpToLevel(xp){ return Math.min(30,Math.floor((xp||0)/1000)); }
+function levelXpProgress(xp){ return Math.min(999,(xp||0)%1000); }
+
+function LevelUpModal(props) {
+  var reward=props.reward; var onClose=props.onClose;
+  var mountedState=useState(false); var mounted=mountedState[0]; var setMounted=mountedState[1];
+  useEffect(function(){var t=setTimeout(function(){setMounted(true);},30);return function(){clearTimeout(t);};},[]);
+  if(!reward) return null;
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:3000,display:"flex",alignItems:"center",justifyContent:"center",
+      background:"rgba(0,0,0,0.75)"}} onClick={onClose}>
+      <div onClick={function(e){e.stopPropagation();}}
+        style={{background:"#0a0018",border:"2px solid #9933ff",maxWidth:320,width:"92%",
+          boxShadow:"0 0 60px rgba(153,51,255,0.5),0 0 120px rgba(153,51,255,0.2)",
+          transform:mounted?"scale(1) translateY(0)":"scale(0.85) translateY(30px)",
+          opacity:mounted?1:0,transition:"transform 0.35s cubic-bezier(0.34,1.56,0.64,1),opacity 0.25s ease",
+          overflow:"hidden"}}>
+        {/* Top band */}
+        <div style={{background:"linear-gradient(135deg,#5511aa,#9933ff,#5511aa)",padding:"20px 20px 16px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 0%,rgba(255,255,255,0.12),transparent 70%)"}}/>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.5em",
+            textTransform:"uppercase",color:"rgba(255,255,255,0.6)",marginBottom:6,position:"relative"}}>Dynasty Path</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:36,fontWeight:900,letterSpacing:"0.04em",
+            textTransform:"uppercase",color:"#fff",lineHeight:1,position:"relative"}}>Level Up!</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:700,
+            color:"rgba(255,255,255,0.7)",marginTop:4,position:"relative"}}>Level {reward.level} Unlocked</div>
+        </div>
+        {/* Reward */}
+        <div style={{padding:"24px 24px 20px",textAlign:"center"}}>
+          <div style={{fontSize:52,marginBottom:12,
+            filter:"drop-shadow(0 0 20px "+reward.color+"cc)",
+            animation:"crownFloat 2s ease-in-out infinite",display:"inline-block"}}>{reward.icon}</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+            letterSpacing:"0.3em",textTransform:"uppercase",color:"#555",marginBottom:4}}>Reward Unlocked</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:24,fontWeight:900,
+            letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff",marginBottom:20}}>{reward.label}</div>
+          <button onClick={onClose}
+            style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,
+              letterSpacing:"0.15em",textTransform:"uppercase",padding:"13px 0",
+              border:"none",cursor:"pointer",background:"linear-gradient(90deg,#5511aa,#9933ff,#5511aa)",
+              color:"#fff",width:"100%"}}>
+            View on Profile →
+          </button>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#444",marginTop:10}}>
+            Tap your reward node to collect it
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DynastyPath(props) {
+  var xp=props.xp||0;
+  var claimedLevels=props.claimedLevels||[];
+  var onClaim=props.onClaim;
+  var currentLevel=xpToLevel(xp);
+  var progressPct=levelXpProgress(xp)/10;
+  var trackRef=useRef(null);
+  useEffect(function(){
+    if(!trackRef.current) return;
+    var nodeW=92; var gap=10;
+    var targetScroll=Math.max(0,(currentLevel-2))*(nodeW+gap);
+    trackRef.current.scrollLeft=targetScroll;
+  },[currentLevel]);
+
+  return (
+    <div style={{marginBottom:32}}>
+      {/* Section header */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14,flexWrap:"wrap",gap:8}}>
+        <div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:20,fontWeight:900,
+            letterSpacing:"0.06em",textTransform:"uppercase",
+            background:"linear-gradient(90deg,#7733cc,#cc66ff)",
+            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Dynasty Path</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginTop:1}}>Season 1 · 30 Levels</div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:18,fontWeight:700,
+              color:"#9933ff",lineHeight:1}}>{fmt(xp)} <span style={{fontSize:12,color:"#aaa"}}>XP</span></div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+              letterSpacing:"0.1em",textTransform:"uppercase",color:"#aaa"}}>Level {currentLevel}</div>
+          </div>
+          <div style={{width:44,height:44,borderRadius:"50%",
+            background:"linear-gradient(135deg,#5511aa,#9933ff)",
+            display:"flex",alignItems:"center",justifyContent:"center",
+            boxShadow:"0 0 16px rgba(153,51,255,0.55)",flexShrink:0}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:18,color:"#fff"}}>{currentLevel}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* XP bar */}
+      <div style={{background:"#1a0030",height:6,overflow:"hidden",marginBottom:6,position:"relative"}}>
+        <div style={{height:"100%",width:progressPct+"%",
+          background:"linear-gradient(90deg,#5511aa,#cc66ff,#5511aa)",
+          backgroundSize:"200% 100%",animation:"balShimmer 2.5s linear infinite",
+          boxShadow:"0 0 8px rgba(153,51,255,0.8)",transition:"width 1.2s ease-out"}}/>
+      </div>
+      <div style={{display:"flex",justifyContent:"space-between",
+        fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+        letterSpacing:"0.1em",textTransform:"uppercase",color:"#888",marginBottom:16}}>
+        <span>{fmt(levelXpProgress(xp))} / 1,000 XP</span>
+        {currentLevel>=30
+          ?<span style={{color:"#f5c518"}}>✦ MAX LEVEL</span>
+          :<span>→ Level {currentLevel+1}</span>}
+      </div>
+
+      {/* Scrollable node track */}
+      <div ref={trackRef} style={{overflowX:"auto",scrollbarWidth:"none",WebkitOverflowScrolling:"touch",
+        paddingBottom:8,cursor:"grab"}}>
+        <div style={{display:"flex",gap:10,width:"max-content",paddingLeft:4,paddingRight:20,alignItems:"flex-start"}}>
+          {DYNASTY_TRACK.map(function(node,idx){
+            var isUnlocked=currentLevel>=node.level;
+            var isClaimed=claimedLevels.includes(node.level);
+            var isAvailable=isUnlocked&&!isClaimed;
+            var isFinal=node.final;
+            return (
+              <div key={node.level} style={{display:"flex",flexDirection:"column",alignItems:"center",
+                gap:5,width:80,flexShrink:0,position:"relative"}}>
+                {/* Connector line to next */}
+                {idx<DYNASTY_TRACK.length-1&&<div style={{
+                  position:"absolute",top:27,left:"calc(50% + 28px)",
+                  width:22,height:2,
+                  background:isUnlocked?"linear-gradient(90deg,"+node.color+",rgba(153,51,255,0.3))":"#222",
+                  zIndex:0}}/>}
+                {/* Pulse ring */}
+                {isAvailable&&<div style={{position:"absolute",top:-4,width:64,height:64,borderRadius:"50%",
+                  border:"2px solid "+node.color,opacity:0.5,
+                  animation:"pulsarRed 1.6s ease-out infinite"}}/>}
+                {/* Node circle */}
+                <div onClick={isAvailable?function(){onClaim(node);}:undefined}
+                  style={{width:56,height:56,borderRadius:"50%",
+                    background:isClaimed
+                      ?"linear-gradient(135deg,#1a1200,#2a1e00)"
+                      :isUnlocked
+                      ?"linear-gradient(135deg,#1a0030,#2d0055)"
+                      :"linear-gradient(135deg,#181818,#222)",
+                    border:"2px solid "+(isClaimed?"#f5c518":isUnlocked?node.color:"#2a2a2a"),
+                    boxShadow:isAvailable?"0 0 16px "+node.color+"66,0 0 32px "+node.color+"22"
+                      :isClaimed?"0 0 8px rgba(245,197,24,0.3)":"none",
+                    display:"flex",alignItems:"center",justifyContent:"center",
+                    cursor:isAvailable?"pointer":"default",
+                    transition:"box-shadow 0.2s,transform 0.1s",
+                    transform:isAvailable?"scale(1.04)":"scale(1)",
+                    filter:isUnlocked?"none":"grayscale(0.7) brightness(0.45)",
+                    position:"relative",zIndex:1,flexShrink:0}}>
+                  {isClaimed
+                    ?<span style={{fontSize:22,filter:"drop-shadow(0 0 6px rgba(245,197,24,0.9))"}}>✓</span>
+                    :<span style={{fontSize:isUnlocked?20:15,opacity:isUnlocked?0.95:0.35}}>{node.icon}</span>}
+                  {/* Level badge chip */}
+                  <div style={{position:"absolute",bottom:-3,right:-3,width:19,height:19,
+                    borderRadius:"50%",
+                    background:isClaimed?"#f5c518":isUnlocked?node.color:"#333",
+                    display:"flex",alignItems:"center",justifyContent:"center",
+                    border:"1.5px solid #f0ede8",zIndex:2}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+                      color:isClaimed?"#000":"#fff",lineHeight:1}}>{node.level}</span>
+                  </div>
+                </div>
+                {/* Reward label */}
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8.5,fontWeight:700,
+                  letterSpacing:"0.04em",textTransform:"uppercase",
+                  color:isClaimed?"#f5c518":isAvailable?node.color:"#444",
+                  textAlign:"center",lineHeight:1.25,maxWidth:78,minHeight:20,
+                  overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{node.label}</div>
+                {/* CTA */}
+                {isAvailable&&(
+                  <button onClick={function(){onClaim(node);}}
+                    style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+                      letterSpacing:"0.06em",textTransform:"uppercase",
+                      padding:"4px 8px",border:"none",cursor:"pointer",
+                      background:"linear-gradient(90deg,#5511aa,#9933ff)",
+                      color:"#fff",whiteSpace:"nowrap",
+                      animation:"crownFloat 2s ease-in-out infinite"}}>Claim</button>
+                )}
+                {isClaimed&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+                  color:"rgba(245,197,24,0.7)",letterSpacing:"0.06em",textTransform:"uppercase"}}>✓ Done</div>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RingProgress(props) {
   var pct=props.pct; var size=props.size||80; var stroke=props.stroke||7; var color=props.color||"#f5c518";
   var r=(size-stroke*2)/2; var circ=2*Math.PI*r;
@@ -3558,6 +3779,9 @@ function ProfileView(props) {
   var profile=props.profile; var packsOpened=props.packsOpened||0;
   var onSaveProfile=props.onSaveProfile; var onBack=props.onBack;
   var liveTeams=props.liveTeams||new Set();
+  var xp=props.xp||0;
+  var claimedLevels=props.claimedLevels||[];
+  var onClaimPathReward=props.onClaimPathReward||function(){};
   var editState=useState(false); var showEdit=editState[0]; var setShowEdit=editState[1];
   var editNameState=useState(profile.username); var editName=editNameState[0]; var setEditName=editNameState[1];
   var editBioState=useState(profile.bio); var editBio=editBioState[0]; var setEditBio=editBioState[1];
@@ -3751,6 +3975,12 @@ function ProfileView(props) {
           </div>
         </div>
 
+        {/* Dynasty Path */}
+        <div style={{marginBottom:24,background:"#0a0018",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 30% 50%,rgba(153,51,255,0.08),transparent 70%)",pointerEvents:"none"}}/>
+          <DynastyPath xp={xp} claimedLevels={claimedLevels} onClaim={onClaimPathReward}/>
+        </div>
+
         {/* Achievements */}
         <div style={{marginBottom:24}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
@@ -3798,6 +4028,10 @@ export default function App() {
   var userIdState=useState(null); var userId=userIdState[0]; var setUserId=userIdState[1];
   var authReadyState=useState(!supabase); var authReady=authReadyState[0]; var setAuthReady=authReadyState[1];
   var isNewUserState=useState(false); var isNewUser=isNewUserState[0]; var setIsNewUser=isNewUserState[1];
+  var xpState=useState(0); var xp=xpState[0]; var setXp=xpState[1];
+  var claimedLevelsState=useState([]); var claimedLevels=claimedLevelsState[0]; var setClaimedLevels=claimedLevelsState[1];
+  var levelUpRewardState=useState(null); var levelUpReward=levelUpRewardState[0]; var setLevelUpReward=levelUpRewardState[1];
+  var prevLevelRef=useRef(0);
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
@@ -3840,6 +4074,8 @@ export default function App() {
           setProfile(prof); saveProfile(prof);
           setBalance(p.coins||0);
           setPacksOpened(p.packs_opened||0);
+          if(p.xp!=null){ setXp(p.xp||0); prevLevelRef.current=xpToLevel(p.xp||0); }
+          if(p.claimed_levels){ try{setClaimedLevels(JSON.parse(p.claimed_levels)||[]);}catch(e){} }
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
@@ -3916,6 +4152,39 @@ export default function App() {
     } else if(uid){
       dbSaveProfile(uid,{username:updated.username,avatar_color:updated.avatarColor,avatar_initials:updated.avatarInitials,bio:updated.bio,fav_sport:updated.favSport,fav_team:updated.favTeam,pinned_ids:updated.pinnedIds,packs_opened:updated.packsOpened});
     }
+  }
+
+  function addXp(amount) {
+    setXp(function(prev){
+      var next=prev+(amount||0);
+      var prevLv=xpToLevel(prev);
+      var nextLv=xpToLevel(next);
+      if(nextLv>prevLv&&nextLv<=30){
+        var reward=DYNASTY_TRACK.find(function(n){return n.level===nextLv;});
+        if(reward) setLevelUpReward(reward);
+      }
+      if(userId) dbSaveProfile(userId,{xp:next});
+      return next;
+    });
+  }
+
+  function handleClaimPathReward(node) {
+    var already=claimedLevels.includes(node.level);
+    if(already) return;
+    var newClaimed=claimedLevels.concat([node.level]);
+    setClaimedLevels(newClaimed);
+    if(userId) dbSaveProfile(userId,{claimed_levels:JSON.stringify(newClaimed)});
+    if(node.type==="coins"){
+      setBalance(function(b){ var nb=b+node.value; if(userId) dbSaveProfile(userId,{coins:nb}); return nb; });
+      pushNotif("Dynasty Path","+"+(node.value)+" coins claimed!","sale");
+    } else if(node.type==="pack"){
+      pushNotif("Dynasty Path","Free "+node.label+" added to inventory!","sale");
+    } else if(node.type==="grade"){
+      pushNotif("Dynasty Path",node.value+"× free grading voucher earned!","sale");
+    } else if(node.type==="badge"){
+      pushNotif("Dynasty Path",node.label+" badge unlocked!","sale");
+    }
+    setLevelUpReward(null);
   }
   var listingsState=useState([]); var listings=listingsState[0]; var setListings=listingsState[1];
   var myListingsState=useState([]); var myListings=myListingsState[0]; var setMyListings=myListingsState[1];
@@ -4079,6 +4348,7 @@ export default function App() {
     }
     var msg=gradeTier.multiplier>1?"Grade "+gradeTier.grade+" — "+gradeTier.multiplier+"× yield boost applied!":"Grade "+gradeTier.grade+" — "+gradeTier.label;
     pushNotif("Card Graded!",msg,gradeTier.tier==="gem"?"sale":"info");
+    addXp(300);
   }
   function completeOnboarding(cards,coins){
     setInventory(cards);
@@ -4135,6 +4405,7 @@ export default function App() {
     if(reward.pack==="jumbo"){var c2=buildPack(PACK_TYPES[1],false);setInventory(function(inv){newCards=c2.concat(inv);return newCards;});pushNotif("Daily Pack!","Division Jumbo added","info");}
     if(reward.pack==="elite"){var ec=genCard({Elite:60,Legacy:25,Legendary:14,Dynasty:1},null,null);setInventory(function(inv){newCards=[ec].concat(inv);return newCards;});pushNotif("Elite Pull!","Guaranteed Elite+ card added","sale");}
     if(reward.coins>0)pushNotif("Streak Bonus!","+"+fmt(reward.coins)+" coins claimed","sale");
+    addXp(150);
     if(userId){
       dbSaveProfile(userId,{coins:newBalance});
       if(newCards!==inventory) dbSaveCards(userId,newCards);
@@ -4181,6 +4452,7 @@ export default function App() {
     setInventory(function(){return newInv;});
     setListings(function(p){return p.filter(function(l){return l.id!==listing.id;});});
     pushNotif("Purchased!","You bought "+listing.card.team+" "+listing.card.rarity+" for "+fmt(listing.price)+" coins","buy");
+    addXp(50);
     if(["Legacy","Legendary","Dynasty"].includes(listing.card.rarity))
       setGrailFeed(function(p){return [{card:listing.card,msg:"You sniped a "+listing.card.rarity+" "+listing.card.team+" for "+fmt(listing.price)+" coins"}].concat(p).slice(0,3);});
     // Remove the listing from DB and credit the seller
@@ -4205,6 +4477,7 @@ export default function App() {
     setInventory(function(){return newInv;});
     setListModal(null);
     pushNotif("Listed!",card.team+" "+card.rarity+" listed for "+fmt(price)+" coins","info");
+    addXp(25);
     var uid=userId;
     var sellerName=(profile&&profile.username)||"Collector";
     if(supabase&&uid){
@@ -4258,6 +4531,8 @@ export default function App() {
     var newInv=opening?opening.cards.concat(inventory):inventory;
     if(opening) setInventory(function(){return newInv;});
     setOpening(null);setTab("inventory");setInvSubTab("cards");
+    // XP: 100 per card opened
+    if(opening) addXp((opening.cards||[]).length*100);
     var uid=userId;
     if(!uid&&supabase){
       supabase.auth.getSession().then(function(res){
@@ -4286,6 +4561,8 @@ export default function App() {
     setWinners(w);
     setGdResult({winners:w,baseTotal:baseTotal,winTotal:winTotal,grandTotal:baseTotal+winTotal,hasLiveBonus:inventory.some(function(c){return w.has(c.team)&&liveTeams.has(c.team);})});
     setShowGD(true);
+    // XP: 200 for game day + 10 per winner card
+    addXp(200+inventory.filter(function(c){return w.has(c.team);}).length*10);
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
@@ -4321,7 +4598,7 @@ export default function App() {
     <div style={{background:"#f0ede8",minHeight:"100vh",color:"#111",fontFamily:"'Barlow',sans-serif"}}>
       <style>{CSS}</style>
       <Notifications notifs={notifs}/>
-      {showHowToPlay&&<HowToPlayModal onClose={function(){setShowHowToPlay(false);}}/>}
+      {levelUpReward&&<LevelUpModal reward={levelUpReward} onClose={function(){setLevelUpReward(null);}}/>}
       {showLoginModal&&<DailyLoginModal streakData={streakData} onClaim={handleClaim} onClose={function(){setShowLoginModal(false);}}/>}
       {listModal&&<ListModal card={listModal} onConfirm={function(p){listCard(listModal,p);}} onClose={function(){setListModal(null);}}/>}
       {/* ── ORACLE TICKER ── */}
@@ -4450,7 +4727,7 @@ export default function App() {
         {tab==="grading"&&<GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>}
         {tab==="social"&&<Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>}
         {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
-        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}}/>}
+        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward}/>}
         {tab==="inventory"&&(
           <div style={{padding:"16px 20px 80px",maxWidth:760,margin:"0 auto"}}>
             {/* Sub-tabs */}
