@@ -3762,6 +3762,311 @@ function DynastyPath(props) {
   );
 }
 
+// ── CONTEXT TIP BANNER ────────────────────────────────────────────────────────
+// Lightweight dismissible hint shown at top of each tab
+function ContextTip(props) {
+  var id=props.id; var icon=props.icon||"💡"; var tip=props.tip; var color=props.color||"#1144cc";
+  var dismissedState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_tips")||"[]");}catch(e){return [];}});
+  var dismissed=dismissedState[0]; var setDismissed=dismissedState[1];
+  if(dismissed.includes(id)) return null;
+  function dismiss(){
+    var next=dismissed.concat([id]);
+    setDismissed(next);
+    try{localStorage.setItem("cd_tips",JSON.stringify(next));}catch(e){}
+  }
+  return (
+    <div style={{background:color+"11",border:"1px solid "+color+"33",borderLeft:"3px solid "+color,
+      padding:"10px 14px",margin:"0 0 16px 0",display:"flex",alignItems:"flex-start",gap:10,position:"relative"}}>
+      <span style={{fontSize:16,flexShrink:0,marginTop:1}}>{icon}</span>
+      <div style={{flex:1}}>
+        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#444",lineHeight:1.5}}>{tip}</div>
+      </div>
+      <button onClick={dismiss} style={{background:"none",border:"none",cursor:"pointer",
+        fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,color:"#bbb",padding:"0 0 0 8px",
+        flexShrink:0,lineHeight:1}}>✕</button>
+    </div>
+  );
+}
+
+// ── SEASON PASS PAGE ──────────────────────────────────────────────────────────
+var XP_SOURCES=[
+  {icon:"📦",action:"Open a Pack",xp:"100 XP per card",color:"#1144cc",tip:"Opening a 10-card Jumbo pack gives you 1,000 XP — enough for a full level."},
+  {icon:"⚡",action:"Game Day",xp:"200 + 10/winner XP",color:"#e8161e",tip:"Run Game Day every day. Having more cards = more winners = more XP."},
+  {icon:"🔬",action:"Grade a Card",xp:"300 XP",color:"#7733cc",tip:"Grading also boosts your card's daily yield. Double win."},
+  {icon:"🔥",action:"Daily Streak",xp:"150 XP",color:"#ff6600",tip:"Claim your streak every day without missing one to maximize XP gains."},
+  {icon:"🏪",action:"Buy from Exchange",xp:"50 XP",color:"#22aa55",tip:"Every marketplace purchase earns XP. Great way to fill rarity gaps."},
+  {icon:"📋",action:"List a Card",xp:"25 XP",color:"#888",tip:"Even listing cards you don't sell earns you a small XP bump."},
+];
+
+function SeasonPassPage(props) {
+  var xp=props.xp||0;
+  var claimedLevels=props.claimedLevels||[];
+  var onClaim=props.onClaim||function(){};
+  var currentLevel=xpToLevel(xp);
+  var progressPct=levelXpProgress(xp)/10;
+  var nextReward=DYNASTY_TRACK.find(function(n){return !claimedLevels.includes(n.level)&&currentLevel>=n.level;});
+  var nextUnlock=DYNASTY_TRACK.find(function(n){return currentLevel<n.level;});
+  var totalClaimed=claimedLevels.length;
+  var xpToNextLevel=1000-levelXpProgress(xp);
+  var trackRef=useRef(null);
+  useEffect(function(){
+    if(!trackRef.current) return;
+    var nodeW=100; var gap=12;
+    trackRef.current.scrollLeft=Math.max(0,(currentLevel-3))*(nodeW+gap);
+  },[currentLevel]);
+
+  return (
+    <div style={{background:"#f0ede8",minHeight:"100vh",paddingBottom:80}}>
+      {/* Dark hero header */}
+      <div style={{background:"linear-gradient(160deg,#06001a,#0e0028,#14003a)",padding:"28px 20px 24px",position:"relative",overflow:"hidden"}}>
+        {/* Background nebula */}
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 20% 50%,rgba(153,51,255,0.18),transparent 60%)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 80% 30%,rgba(232,22,30,0.1),transparent 55%)",pointerEvents:"none"}}/>
+        {/* Stars */}
+        {[[8,12],[22,45],[15,70],[5,85],[30,25],[28,60],[10,90]].map(function(s,i){
+          return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",opacity:0.4,animation:"twinkle "+(2+i*0.3)+"s ease-in-out infinite "+(i*0.4)+"s"}}/>;
+        })}
+        <div style={{maxWidth:680,margin:"0 auto",position:"relative"}}>
+          {/* Title */}
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.4em",
+            textTransform:"uppercase",color:"rgba(200,150,255,0.7)",marginBottom:6}}>Season 1 · 2025</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:36,fontWeight:900,
+            letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:0.95,marginBottom:4,
+            background:"linear-gradient(90deg,#cc88ff,#fff,#ff88aa)",
+            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Dynasty Path</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,color:"rgba(255,255,255,0.5)",marginBottom:20}}>
+            Earn XP through daily actions. Level up to claim exclusive rewards.
+          </div>
+          {/* Stats row */}
+          <div style={{display:"flex",gap:0,flexWrap:"wrap"}}>
+            {[
+              {label:"Level",val:currentLevel,max:"/30",color:"#cc88ff"},
+              {label:"Total XP",val:fmt(xp),max:"",color:"#f5c518"},
+              {label:"Rewards Claimed",val:totalClaimed,max:"/30",color:"#22cc88"},
+              {label:"XP to Next Level",val:fmt(xpToNextLevel),max:" xp",color:"#ff8866"},
+            ].map(function(s,i){
+              return (
+                <div key={i} style={{flex:"1 1 100px",padding:"12px 16px",
+                  borderRight:i<3?"1px solid rgba(255,255,255,0.08)":"none",
+                  borderBottom:"1px solid rgba(255,255,255,0.08)"}}>
+                  <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:20,fontWeight:700,
+                    color:s.color,lineHeight:1}}>{s.val}<span style={{fontSize:12,color:"rgba(255,255,255,0.3)"}}>{s.max}</span></div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+                    letterSpacing:"0.15em",textTransform:"uppercase",color:"rgba(255,255,255,0.35)",marginTop:3}}>{s.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px"}}>
+
+        {/* XP progress + next reward callout */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"16px 18px",marginBottom:16}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10,flexWrap:"wrap",gap:8}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,
+              letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>
+              Level {currentLevel} → {currentLevel<30?"Level "+(currentLevel+1):"Max Level"}
+            </div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#7733cc"}}>
+              {fmt(levelXpProgress(xp))} / 1,000 XP
+            </div>
+          </div>
+          <div style={{background:"#f0ede8",height:10,overflow:"hidden",borderRadius:2,marginBottom:10}}>
+            <div style={{height:"100%",width:progressPct+"%",
+              background:"linear-gradient(90deg,#5511aa,#cc66ff,#5511aa)",
+              backgroundSize:"200% 100%",animation:"balShimmer 2.5s linear infinite",
+              transition:"width 1.2s ease-out",borderRadius:2,
+              boxShadow:"0 0 8px rgba(153,51,255,0.6)"}}/>
+          </div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>
+            {xpToNextLevel} XP needed to reach level {currentLevel+1}
+            {currentLevel<30&&nextUnlock&&<span style={{color:"#7733cc",fontWeight:600}}> — unlocks {nextUnlock.label}</span>}
+          </div>
+        </div>
+
+        {/* Unclaimed rewards alert */}
+        {nextReward&&(
+          <div style={{background:"linear-gradient(90deg,#1a0030,#2a0050)",border:"1px solid #9933ff",
+            padding:"14px 16px",marginBottom:16,display:"flex",alignItems:"center",
+            justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <span style={{fontSize:26,animation:"crownFloat 2s ease-in-out infinite",
+                filter:"drop-shadow(0 0 8px "+nextReward.color+")"}}>{nextReward.icon}</span>
+              <div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                  letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(200,150,255,0.7)",marginBottom:2}}>Level {nextReward.level} Reward Ready</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+                  textTransform:"uppercase",color:"#fff"}}>{nextReward.label}</div>
+              </div>
+            </div>
+            <button onClick={function(){onClaim(nextReward);}}
+              style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,
+                letterSpacing:"0.12em",textTransform:"uppercase",padding:"10px 20px",
+                border:"none",cursor:"pointer",background:"linear-gradient(90deg,#5511aa,#9933ff)",
+                color:"#fff",whiteSpace:"nowrap",animation:"pulsarRed 1.8s ease-out infinite"}}>
+              Claim Now →
+            </button>
+          </div>
+        )}
+
+        {/* How to earn XP */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"18px 18px 14px",marginBottom:16}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,
+            letterSpacing:"0.08em",textTransform:"uppercase",color:"#111",marginBottom:4}}>How to Earn XP</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginBottom:14}}>
+            Every action you take in Card Dynasty earns XP. Here's the full breakdown:
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:0}}>
+            {XP_SOURCES.map(function(s,i){
+              return (
+                <div key={i} style={{display:"flex",alignItems:"flex-start",gap:12,
+                  padding:"12px 0",borderBottom:i<XP_SOURCES.length-1?"1px solid #f0ede8":"none"}}>
+                  <div style={{width:40,height:40,background:s.color+"11",border:"1px solid "+s.color+"33",
+                    borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",
+                    flexShrink:0,fontSize:18}}>{s.icon}</div>
+                  <div style={{flex:1}}>
+                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:800,
+                        letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{s.action}</div>
+                      <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,
+                        color:s.color,background:s.color+"11",padding:"2px 8px",
+                        border:"1px solid "+s.color+"33"}}>+{s.xp}</div>
+                    </div>
+                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginTop:3,lineHeight:1.5}}>{s.tip}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Full reward track */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"18px 18px 14px",marginBottom:16}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,
+            letterSpacing:"0.08em",textTransform:"uppercase",color:"#111",marginBottom:4}}>All 30 Rewards</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888",marginBottom:16}}>
+            Tap any available reward to claim it. Claimed rewards are yours forever.
+          </div>
+          {/* Horizontal scrolling track */}
+          <div ref={trackRef} style={{overflowX:"auto",scrollbarWidth:"none",WebkitOverflowScrolling:"touch",
+            paddingBottom:8,marginBottom:12}}>
+            <div style={{display:"flex",gap:12,width:"max-content",paddingLeft:2,paddingRight:20,alignItems:"flex-start"}}>
+              {DYNASTY_TRACK.map(function(node,idx){
+                var isUnlocked=currentLevel>=node.level;
+                var isClaimed=claimedLevels.includes(node.level);
+                var isAvailable=isUnlocked&&!isClaimed;
+                return (
+                  <div key={node.level} style={{display:"flex",flexDirection:"column",alignItems:"center",
+                    gap:5,width:88,flexShrink:0,position:"relative"}}>
+                    {idx<DYNASTY_TRACK.length-1&&<div style={{
+                      position:"absolute",top:27,left:"calc(50% + 28px)",width:24,height:2,
+                      background:isUnlocked?"linear-gradient(90deg,"+node.color+",rgba(153,51,255,0.25))":"#e0ddd8",
+                      zIndex:0}}/>}
+                    {isAvailable&&<div style={{position:"absolute",top:-4,width:64,height:64,
+                      borderRadius:"50%",border:"2px solid "+node.color,opacity:0.45,
+                      animation:"pulsarRed 1.6s ease-out infinite"}}/>}
+                    <div onClick={isAvailable?function(){onClaim(node);}:undefined}
+                      style={{width:56,height:56,borderRadius:"50%",
+                        background:isClaimed?"linear-gradient(135deg,#1a1200,#2a1e00)"
+                          :isUnlocked?"linear-gradient(135deg,#1a0030,#2d0055)"
+                          :"linear-gradient(135deg,#f8f6f4,#ede9e4)",
+                        border:"2px solid "+(isClaimed?"#f5c518":isUnlocked?node.color:"#ddd"),
+                        boxShadow:isAvailable?"0 0 14px "+node.color+"55":"none",
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        cursor:isAvailable?"pointer":"default",
+                        transform:isAvailable?"scale(1.06)":"scale(1)",
+                        filter:isUnlocked?"none":"grayscale(0.6) brightness(0.7)",
+                        position:"relative",zIndex:1,flexShrink:0,transition:"transform 0.15s"}}>
+                      {isClaimed
+                        ?<span style={{fontSize:22,filter:"drop-shadow(0 0 6px rgba(245,197,24,0.9))"}}>✓</span>
+                        :<span style={{fontSize:isUnlocked?20:15,opacity:isUnlocked?0.95:0.4}}>{node.icon}</span>}
+                      <div style={{position:"absolute",bottom:-3,right:-3,width:19,height:19,
+                        borderRadius:"50%",background:isClaimed?"#f5c518":isUnlocked?node.color:"#bbb",
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        border:"1.5px solid #f0ede8",zIndex:2}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+                          color:isClaimed?"#000":"#fff"}}>{node.level}</span>
+                      </div>
+                    </div>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+                      letterSpacing:"0.04em",textTransform:"uppercase",textAlign:"center",lineHeight:1.25,
+                      color:isClaimed?"#c8a800":isAvailable?node.color:"#888",
+                      overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",
+                      maxWidth:84,minHeight:18}}>{node.label}</div>
+                    {isAvailable&&<button onClick={function(){onClaim(node);}}
+                      style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+                        padding:"3px 8px",border:"none",cursor:"pointer",
+                        background:"linear-gradient(90deg,#5511aa,#9933ff)",color:"#fff",
+                        letterSpacing:"0.06em",textTransform:"uppercase",whiteSpace:"nowrap"}}>Claim</button>}
+                    {isClaimed&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,
+                      color:"rgba(200,160,0,0.7)",fontWeight:700,textTransform:"uppercase"}}>✓ Done</div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Reward list — full detail */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"18px 18px 8px"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,
+            letterSpacing:"0.08em",textTransform:"uppercase",color:"#111",marginBottom:14}}>Reward Checklist</div>
+          <div style={{display:"flex",flexDirection:"column",gap:0}}>
+            {DYNASTY_TRACK.map(function(node){
+              var isUnlocked=currentLevel>=node.level;
+              var isClaimed=claimedLevels.includes(node.level);
+              var isAvailable=isUnlocked&&!isClaimed;
+              return (
+                <div key={node.level} style={{display:"flex",alignItems:"center",gap:12,
+                  padding:"10px 0",borderBottom:"1px solid #f5f3f0",
+                  opacity:isUnlocked?1:0.45}}>
+                  {/* Status icon */}
+                  <div style={{width:28,height:28,borderRadius:"50%",flexShrink:0,
+                    background:isClaimed?"#f5c518":isAvailable?node.color+"22":"#f0ede8",
+                    border:"2px solid "+(isClaimed?"#f5c518":isAvailable?node.color:"#ddd"),
+                    display:"flex",alignItems:"center",justifyContent:"center",fontSize:12}}>
+                    {isClaimed?"✓":node.icon}
+                  </div>
+                  {/* Level badge */}
+                  <div style={{width:32,flexShrink:0,textAlign:"center"}}>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+                      color:"#aaa",letterSpacing:"0.08em"}}>LV</div>
+                    <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,
+                      color:isUnlocked?"#111":"#bbb"}}>{node.level}</div>
+                  </div>
+                  {/* Label */}
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,
+                      letterSpacing:"0.04em",textTransform:"uppercase",
+                      color:isClaimed?"#c8a800":isUnlocked?"#111":"#aaa"}}>{node.label}</div>
+                    <div style={{fontFamily:"'Barlow',sans-serif",fontSize:11,color:"#aaa",marginTop:1}}>
+                      {node.xpReq.toLocaleString()} XP required
+                    </div>
+                  </div>
+                  {/* Status / claim */}
+                  {isClaimed&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+                    color:"#22aa44",background:"#e8f5ec",border:"1px solid #c8e8d0",
+                    padding:"2px 8px",letterSpacing:"0.06em",textTransform:"uppercase",flexShrink:0}}>Claimed</span>}
+                  {isAvailable&&<button onClick={function(){onClaim(node);}}
+                    style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:900,
+                      padding:"5px 12px",border:"none",cursor:"pointer",
+                      background:"linear-gradient(90deg,#5511aa,#9933ff)",color:"#fff",
+                      letterSpacing:"0.08em",textTransform:"uppercase",flexShrink:0,
+                      animation:"crownFloat 2s ease-in-out infinite"}}>Claim →</button>}
+                  {!isUnlocked&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,
+                    color:"#ccc",letterSpacing:"0.06em",textTransform:"uppercase",flexShrink:0}}>🔒 Locked</span>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RingProgress(props) {
   var pct=props.pct; var size=props.size||80; var stroke=props.stroke||7; var color=props.color||"#f5c518";
   var r=(size-stroke*2)/2; var circ=2*Math.PI*r;
@@ -4566,7 +4871,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"path",label:"👑 Season Pass"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#fff",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -4658,6 +4963,14 @@ export default function App() {
             <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,color:"#7733cc"}}>{inventory.length*10+inventory.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50}</span>
           </div>
           {pity>=7&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,color:"#e8161e",fontWeight:700,padding:"0 10px",borderRight:"1px solid #e8e8e8",height:"100%",display:"flex",alignItems:"center",flexShrink:0,letterSpacing:"0.06em"}}>PITY {pity}/10</div>}
+          {/* XP bar — clickable, goes to season pass */}
+          <div onClick={function(){setTab("path");}} style={{display:"flex",alignItems:"center",gap:5,padding:"0 10px",borderRight:"1px solid #e8e8e8",cursor:"pointer",height:"100%",flexShrink:0}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,color:"#7733cc",textTransform:"uppercase",letterSpacing:"0.06em"}}>LV{xpToLevel(xp)}</span>
+            <div style={{width:44,height:5,background:"#e8e8e8",overflow:"hidden",borderRadius:2}}>
+              <div style={{height:"100%",width:(levelXpProgress(xp)/10)+"%",background:"linear-gradient(90deg,#7733cc,#cc66ff)",transition:"width 0.8s ease-out",borderRadius:2}}/>
+            </div>
+            <span style={{fontSize:10}}>👑</span>
+          </div>
           {/* Game Day — pushed to right */}
           <div style={{marginLeft:"auto",flexShrink:0}}>
             <button onClick={simGameDay} disabled={!inventory.length||lastGameDay===new Date().toDateString()}
@@ -4718,15 +5031,44 @@ export default function App() {
         })}
       </div>
       <div>
-        {tab==="live"&&<LiveGamesTab liveGames={oracle.liveGames} inventory={inventory} forceStartAll={oracle.forceStartAll} resetGames={oracle.resetGames} forced={oracle.forced} redZoneTeams={redZoneTeams} espnOk={oracle.espnOk} loading={oracle.loading}/>}
-        {tab==="shop"&&<Shop balance={balance} onBuy={buyPack} pityCount={pity}/>}
+        {tab==="live"&&<div>
+          <div style={{padding:"12px 16px 0",maxWidth:760,margin:"0 auto"}}>
+            <ContextTip id="live_tip" icon="🔴" color="#e8161e" tip="When your team plays live, your cards earn 1.5× yield automatically. Check this tab during game time — Red Zone events give even bigger boosts."/>
+          </div>
+          <LiveGamesTab liveGames={oracle.liveGames} inventory={inventory} forceStartAll={oracle.forceStartAll} resetGames={oracle.resetGames} forced={oracle.forced} redZoneTeams={redZoneTeams} espnOk={oracle.espnOk} loading={oracle.loading}/>
+        </div>}
+        {tab==="shop"&&<div>
+          <div style={{padding:"12px 20px 0",maxWidth:960,margin:"0 auto"}}>
+            <ContextTip id="shop_tip" icon="📦" color="#1144cc" tip={"Each pack you open earns 100 XP per card. A Hobby Box (60 cards) = 6,000 XP instantly. You're Level "+xpToLevel(xp)+" — need "+(1000-levelXpProgress(xp))+" more XP to reach Level "+(xpToLevel(xp)+1)+". Higher rarity packs also mean better long-term daily yield."}/>
+          </div>
+          <Shop balance={balance} onBuy={buyPack} pityCount={pity}/>
+        </div>}
         {tab==="opening"&&opening&&<OpeningScreen pack={opening.pack} cards={opening.cards} onDone={finishOpening} winners={winners}/>}
-        {/* CHANGE 7: Pass shakeTeams to Marketplace */}
-        {tab==="market"&&<Marketplace balance={balance} onBuy={buyFromMarket} listings={listings} myListings={myListings} grailFeed={grailFeed} onRefresh={rotateMkt} lastRefresh={lastRefresh} shakeTeams={shakeTeams}/>}
-        {/* CHANGE 8: Pass shakeTeams to Social (threads to PublicVault) */}
-        {tab==="grading"&&<GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>}
-        {tab==="social"&&<Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>}
-        {tab==="rankings"&&<Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>}
+        {tab==="market"&&<div>
+          <div style={{padding:"12px 20px 0",maxWidth:900,margin:"0 auto"}}>
+            <ContextTip id="market_tip" icon="🏪" color="#22aa55" tip="Every buy on the Exchange earns +50 XP. Listing a card earns +25 XP even if it doesn't sell. Buying higher-rarity cards improves your daily yield and Power score."/>
+          </div>
+          <Marketplace balance={balance} onBuy={buyFromMarket} listings={listings} myListings={myListings} grailFeed={grailFeed} onRefresh={rotateMkt} lastRefresh={lastRefresh} shakeTeams={shakeTeams}/>
+        </div>}
+        {tab==="grading"&&<div>
+          <div style={{padding:"12px 20px 0",maxWidth:760,margin:"0 auto"}}>
+            <ContextTip id="grade_tip" icon="🔬" color="#7733cc" tip="Grading a card earns +300 XP and permanently boosts its daily yield. A Gem Mint (10) gives 3× yield. Grade your highest-rarity cards first for the biggest return on investment."/>
+          </div>
+          <GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>
+        </div>}
+        {tab==="path"&&<SeasonPassPage xp={xp} claimedLevels={claimedLevels} onClaim={handleClaimPathReward}/>}
+        {tab==="social"&&<div>
+          <div style={{padding:"12px 20px 0",maxWidth:760,margin:"0 auto"}}>
+            <ContextTip id="social_tip" icon="👥" color="#888" tip="Browse other collectors' vaults to see what Dynasty and Legendary cards look like. Public vaults also show up on the leaderboard — build yours on the Profile tab."/>
+          </div>
+          <Social inventory={inventory} initialVault={socialVault} onClearVault={function(){setSocialVault(null);}} shakeTeams={shakeTeams}/>
+        </div>}
+        {tab==="rankings"&&<div>
+          <div style={{padding:"12px 20px 0",maxWidth:760,margin:"0 auto"}}>
+            <ContextTip id="rank_tip" icon="📈" color="#c8a800" tip="Your rank is based on total daily yield from all your cards. Grading cards and pulling higher rarities from packs are the fastest ways to climb. Check the Dynasty Path — some rewards directly boost your yield."/>
+          </div>
+          <Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>
+        </div>}
         {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward}/>}
         {tab==="inventory"&&(
           <div style={{padding:"16px 20px 80px",maxWidth:760,margin:"0 auto"}}>
