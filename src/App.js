@@ -4067,6 +4067,495 @@ function SeasonPassPage(props) {
   );
 }
 
+// ── HIGH / LOW MINI-GAME ──────────────────────────────────────────────────────
+var HIGHLO_WAGER = 50;
+var HIGHLO_RATES = {Base:38,Rare:28,Elite:16,Legacy:9,Legendary:6,Dynasty:3};
+// NHL Finale live games — April 15 2026
+var HIGHLO_LIVE_GAMES = ["Rangers vs. Lightning","Stars vs. Sabres"];
+var HIGHLO_BONUS_START = 19; // 7 PM ET
+var HIGHLO_BONUS_END   = 22; // 10 PM ET
+
+function isGameNightBonus() {
+  // Use ET offset: UTC-4 (EDT in April)
+  var now = new Date();
+  var etH = (now.getUTCHours() - 4 + 24) % 24;
+  return etH >= HIGHLO_BONUS_START && etH < HIGHLO_BONUS_END;
+}
+
+function HighLoCard(props) {
+  // Renders a single playing card in casino style
+  var card = props.card; var revealed = props.revealed; var size = props.size||"full";
+  var cfg = RARITY_CFG[card.rarity] || RARITY_CFG.Base;
+  var col = getColors(card.team); var c1 = col[0];
+  var code = teamCode(card.team);
+  var isDyn = card.rarity === "Dynasty";
+  var isLeg = card.rarity === "Legendary";
+  var isLegacy = card.rarity === "Legacy";
+  var abbvColor = card.rarity==="Base" ? ("rgba("+hexToRgb(c1)+",0.55)") : cfg.abbvFn();
+  var stripeStyle = isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+    :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+    :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+    :cfg.stripe;
+  var W = size==="small" ? 110 : 148; var H = size==="small" ? 156 : 210;
+  if (!revealed) {
+    // Back face
+    return (
+      <div style={{width:W,height:H,borderRadius:6,overflow:"hidden",
+        background:"linear-gradient(145deg,#0e0014,#18002a)",
+        border:"1.5px solid rgba(153,51,255,0.3)",
+        boxShadow:"0 8px 32px rgba(0,0,0,0.7)",flexShrink:0,position:"relative"}}>
+        <svg width={W} height={H} style={{position:"absolute",inset:0,opacity:0.12}} viewBox={"0 0 "+W+" "+H}>
+          {Array.from({length:Math.ceil(H/14)},function(_,row){
+            return Array.from({length:Math.ceil(W/14)},function(_,col){
+              return <rect key={row+"-"+col} x={col*14+3} y={row*14+3} width={7} height={7} rx={1.5} fill="rgba(200,100,255,0.6)"/>;
+            });
+          })}
+        </svg>
+        <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",
+          alignItems:"center",justifyContent:"center",gap:6,zIndex:2}}>
+          <div style={{background:"rgba(153,51,255,0.85)",padding:"5px 14px"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,
+              letterSpacing:"0.08em",color:"#fff"}}>CARD <em style={{color:"#f5c518",fontStyle:"normal"}}>DYNASTY</em></span>
+          </div>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+            color:"rgba(255,255,255,0.25)",letterSpacing:"0.3em",textTransform:"uppercase"}}>?</span>
+        </div>
+        {[[5,5],[W-5,5],[5,H-5],[W-5,H-5]].map(function(pt,i){
+          var sx=i%2===0?1:-1; var sy=i<2?1:-1;
+          return <svg key={i} width={12} height={12} style={{position:"absolute",left:pt[0]-6,top:pt[1]-6,zIndex:3}}>
+            <polyline points="0,7 0,0 7,0" fill="none" stroke="rgba(153,51,255,0.5)" strokeWidth="1.5"
+              transform={"scale("+sx+","+sy+") translate("+(sx<0?-12:0)+","+(sy<0?-12:0)+")"}/>
+          </svg>;
+        })}
+      </div>
+    );
+  }
+  // Front face
+  return (
+    <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:6,overflow:"hidden",
+      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.6)",
+      border:isDyn?"2px solid transparent":"1.5px solid rgba(0,0,0,0.2)"}}>
+      {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:8,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+      {isDyn&&<div style={{position:"absolute",inset:0,background:cfg.photoBot,borderRadius:6,zIndex:1}}/>}
+      {/* Stripe */}
+      <div style={{position:"absolute",left:0,top:0,bottom:0,width:18,background:stripeStyle,zIndex:6,
+        display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:900,
+          letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.9)",
+          writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap"}}>{card.team.toUpperCase()}</span>
+      </div>
+      {/* Photo area */}
+      <div style={{position:"absolute",left:18,top:0,right:0,bottom:34,
+        background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",zIndex:3}}/>
+        {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.18) 0deg,transparent 60deg,rgba(232,22,30,0.1) 120deg,transparent 180deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
+        {(isLeg||isDyn)&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3,height:3,background:isDyn?"#cc66ff":"#ff6040",borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.5)+"s",zIndex:8}}/>;}) }
+        <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",
+          textAlign:"center",zIndex:5,paddingLeft:4}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:code.length<=2?W*0.42:code.length<=3?W*0.32:W*0.24,
+            fontWeight:900,color:abbvColor,lineHeight:1,userSelect:"none",
+            textShadow:cfg.abbvShadow}}>{code}</span>
+        </div>
+        <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px 6px"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+            letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{card.rarity.toUpperCase()}</span>
+        </div>
+      </div>
+      {/* Name plate */}
+      <div style={{position:"absolute",bottom:0,left:0,right:0,height:34,
+        background:isDyn?"#0a0020":"#fff",borderTop:"2px solid "+cfg.plateBdr,
+        zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+        paddingLeft:22,paddingRight:6}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+          fontSize:card.team.length>9?10:card.team.length>6?12:14,
+          fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",
+          color:isDyn?"#cc88ff":cfg.nameCol,lineHeight:1,
+          overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>{card.team.toUpperCase()}</div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:2}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+            letterSpacing:"0.05em",color:isDyn?"#9933ff":cfg.rarCol,textTransform:"uppercase"}}>{card.sport}</span>
+          <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:9,fontWeight:700,
+            color:"#c8a800"}}>{fmt(card.daily)}/d</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HighLoGame(props) {
+  var balance=props.balance; var onBalanceChange=props.onBalanceChange;
+  var userId=props.userId; var onAddXp=props.onAddXp; var onNotif=props.onNotif;
+  var dbSave=props.dbSave;
+
+  // Game state machine: idle → betting → guessing → revealing → result → cashedout
+  var phaseState=useState("idle"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var cardAState=useState(null); var cardA=cardAState[0]; var setCardA=cardAState[1];
+  var cardBState=useState(null); var cardB=cardBState[0]; var setCardB=cardBState[1];
+  var streakState=useState(0); var streak=streakState[0]; var setStreak=streakState[1];
+  var potState=useState(0); var pot=potState[0]; var setPot=potState[1];
+  var resultState=useState(null); var result=resultState[0]; var setResult=resultState[1];
+  // reveal animation
+  var flipState=useState(false); var flipped=flipState[0]; var setFlipped=flipState[1];
+  var mountedState=useState(false); var mounted=mountedState[0]; var setMounted=mountedState[1];
+  var shakeState=useState(false); var shaking=shakeState[0]; var setShaking=shakeState[1];
+
+  useEffect(function(){setTimeout(function(){setMounted(true);},60);},[]);
+
+  var bonus = isGameNightBonus();
+  var highStakes = pot >= 500;
+  var canAfford = balance >= HIGHLO_WAGER;
+
+  function drawCard() {
+    return genCard(HIGHLO_RATES, null, null);
+  }
+
+  function startGame() {
+    if (!canAfford) return;
+    var a = drawCard();
+    setCardA(a); setCardB(null); setFlipped(false);
+    setStreak(0); setPot(HIGHLO_WAGER); setResult(null);
+    onBalanceChange(balance - HIGHLO_WAGER);
+    if (userId) dbSave(userId, {coins: balance - HIGHLO_WAGER});
+    setPhase("guessing");
+    if (onNotif) onNotif("High / Low", "−"+HIGHLO_WAGER+" coins wagered. Good luck!", "info");
+  }
+
+  function guess(dir) {
+    // dir: "higher" | "lower"
+    var b = drawCard();
+    setCardB(b); setFlipped(false);
+    setPhase("revealing");
+    // Slight delay so player sees card back first, then flip
+    setTimeout(function() { setFlipped(true); }, 350);
+    setTimeout(function() { resolveGuess(dir, cardA, b); }, 1100);
+  }
+
+  function resolveGuess(dir, a, b) {
+    var correct = dir==="higher" ? b.daily > a.daily : b.daily < a.daily;
+    // Tie = push (no win no lose, redraw) — treat as correct to avoid frustration
+    if (b.daily === a.daily) correct = true;
+    if (correct) {
+      var newPot = pot * 2;
+      var newStreak = streak + 1;
+      setPot(newPot); setStreak(newStreak);
+      setResult({correct:true, dir, aYield:a.daily, bYield:b.daily, tie:b.daily===a.daily});
+      setCardA(b); setCardB(null); setFlipped(false);
+      if (onAddXp) onAddXp(10);
+      setPhase("guessing");
+    } else {
+      setResult({correct:false, dir, aYield:a.daily, bYield:b.daily});
+      setShaking(true);
+      setTimeout(function(){setShaking(false);},600);
+      setPhase("lost");
+    }
+  }
+
+  function cashOut() {
+    var finalPot = bonus ? pot * 2 : pot;
+    onBalanceChange(balance + finalPot);
+    if (userId) dbSave(userId, {coins: balance + finalPot});
+    if (onAddXp) onAddXp(streak * 5); // bonus XP for cashing out with a streak
+    if (onNotif) onNotif("Cashed Out! 💰", "+"+fmt(finalPot)+" coins"+(bonus?" (2× Game Night Bonus!)":"")+" · Streak: "+streak, "sale");
+    setPhase("cashedout");
+  }
+
+  function reset() {
+    setPhase("idle"); setCardA(null); setCardB(null);
+    setStreak(0); setPot(0); setResult(null); setFlipped(false);
+  }
+
+  // ── RENDER ─────────────────────────────────────────────────────────────────
+  return (
+    <div style={{
+      background:"linear-gradient(160deg,#080010,#0e001a,#060018)",
+      minHeight:480, position:"relative", overflow:"hidden",
+      transform:mounted?"translateY(0)":"translateY(16px)",
+      opacity:mounted?1:0, transition:"all 0.4s ease",
+      animation:shaking?"packShake 0.5s ease":"none",
+    }}>
+      {/* Obsidian felt texture overlay */}
+      <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(rgba(200,170,255,0.03) 1px,transparent 1px)",backgroundSize:"18px 18px",pointerEvents:"none"}}/>
+      {/* Gold corner trim lines */}
+      <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c518,#c8a800,transparent)"}}/>
+      <div style={{position:"absolute",bottom:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#f5c518,#c8a800,transparent)"}}/>
+      <div style={{position:"absolute",top:0,bottom:0,left:0,width:2,background:"linear-gradient(180deg,transparent,#f5c518,transparent)"}}/>
+      <div style={{position:"absolute",top:0,bottom:0,right:0,width:2,background:"linear-gradient(180deg,transparent,#f5c518,transparent)"}}/>
+
+      <div style={{position:"relative",zIndex:2,padding:"20px 16px 28px",maxWidth:520,margin:"0 auto"}}>
+
+        {/* ── HEADER ── */}
+        <div style={{textAlign:"center",marginBottom:16}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+            letterSpacing:"0.5em",textTransform:"uppercase",
+            color:"rgba(200,160,255,0.55)",marginBottom:4}}>Card Dynasty Casino</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:30,fontWeight:900,
+            letterSpacing:"0.06em",textTransform:"uppercase",lineHeight:1,
+            background:"linear-gradient(90deg,#c8a800,#f5e060,#f5c518,#c8a800)",
+            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
+            backgroundSize:"200% auto",animation:"balShimmer 3s linear infinite"}}>High / Low</div>
+        </div>
+
+        {/* ── GAME NIGHT BONUS BANNER ── */}
+        {bonus&&<div style={{
+          background:"linear-gradient(90deg,rgba(232,22,30,0.15),rgba(245,197,24,0.12),rgba(232,22,30,0.15))",
+          border:"1px solid rgba(245,197,24,0.35)",padding:"8px 14px",marginBottom:12,
+          display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:"#e8161e",
+            animation:"pulse 1s ease-in-out infinite",flexShrink:0}}/>
+          <div style={{flex:1}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,
+              letterSpacing:"0.18em",textTransform:"uppercase",color:"#f5c518"}}>🏒 Game Night Bonus Active</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:1}}>
+              {HIGHLO_LIVE_GAMES.join(" · ")} — All payouts doubled tonight
+            </div>
+          </div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+            color:"#f5c518",letterSpacing:"0.06em"}}>2×</div>
+        </div>}
+
+        {/* ── STATS BAR ── */}
+        <div style={{display:"flex",gap:0,marginBottom:16,border:"1px solid rgba(245,197,24,0.18)",overflow:"hidden"}}>
+          {[
+            {label:"Wager",val:fmt(HIGHLO_WAGER)+"🪙",color:"#888"},
+            {label:"Pot",val:fmt(bonus&&phase!=="idle"?pot*2:pot)+"🪙",color:highStakes?"#f5c518":"#fff"},
+            {label:"Streak",val:"×"+streak,color:streak>=3?"#f5c518":streak>=1?"#ff8844":"#555"},
+          ].map(function(s,i){
+            return <div key={i} style={{flex:1,padding:"8px 10px",textAlign:"center",
+              borderRight:i<2?"1px solid rgba(245,197,24,0.15)":"none",
+              background:highStakes&&s.label==="Pot"?"rgba(245,197,24,0.06)":"transparent",
+              boxShadow:highStakes&&s.label==="Pot"?"inset 0 0 20px rgba(245,197,24,0.08)":"none"}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+                letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",marginBottom:2}}>{s.label}</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:s.color,
+                textShadow:highStakes&&s.label==="Pot"?"0 0 12px rgba(245,197,24,0.8)":"none",
+                animation:streak>=3&&s.label==="Streak"?"goldPulse 1s ease-in-out infinite":"none"}}>{s.val}</div>
+            </div>;
+          })}
+        </div>
+
+        {/* ── IDLE ── */}
+        {phase==="idle"&&(
+          <div style={{textAlign:"center",padding:"24px 0"}}>
+            <div style={{fontSize:48,marginBottom:12,animation:"showcaseFloat 3s ease-in-out infinite"}}>🃏</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:700,
+              color:"rgba(255,255,255,0.6)",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:4}}>
+              Guess Higher or Lower
+            </div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,
+              color:"rgba(255,255,255,0.35)",lineHeight:1.6,marginBottom:20,maxWidth:320,margin:"0 auto 20px"}}>
+              A card is drawn. Guess if the next card's daily yield is higher or lower.
+              Correct = pot doubles. Wrong = wager lost.
+              {bonus&&<span style={{color:"#f5c518",display:"block",marginTop:4,fontWeight:600}}>Tonight: all payouts 2× (Game Night Bonus)</span>}
+            </div>
+            <button onClick={startGame} disabled={!canAfford}
+              style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+                letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 40px",
+                border:"none",cursor:canAfford?"pointer":"not-allowed",
+                background:canAfford
+                  ?"linear-gradient(90deg,#7733cc,#9933ff,#7733cc)"
+                  :"#222",
+                color:canAfford?"#fff":"#555",
+                backgroundSize:"200% auto",animation:canAfford?"balShimmer 3s linear infinite":"none",
+                boxShadow:canAfford?"0 0 24px rgba(153,51,255,0.45)":"none"}}>
+              {canAfford?"Play — "+HIGHLO_WAGER+" Coins":"Need "+HIGHLO_WAGER+" Coins"}
+            </button>
+            {!canAfford&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+              color:"rgba(255,255,255,0.3)",marginTop:10}}>Visit the Shop to buy packs and earn coins.</div>}
+          </div>
+        )}
+
+        {/* ── GUESSING / REVEALING ── */}
+        {(phase==="guessing"||phase==="revealing")&&cardA&&(
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:16}}>
+            {/* Last result feedback */}
+            {result&&result.correct&&(
+              <div style={{background:"rgba(34,170,68,0.15)",border:"1px solid rgba(34,170,68,0.4)",
+                padding:"6px 16px",display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:16}}>✅</span>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+                  letterSpacing:"0.1em",textTransform:"uppercase",color:"#22cc55"}}>
+                  {result.tie?"Push (Tie) — no loss!":"Correct! "}
+                  {!result.tie&&<span style={{color:"rgba(255,255,255,0.5)"}}>
+                    {result.aYield}<span style={{color:"#fff",margin:"0 4px"}}>{result.dir==="higher"?"<":">"}</span>{result.bYield} /d
+                  </span>}
+                  <span style={{color:"#f5c518",marginLeft:6}}>+10 XP</span>
+                </div>
+              </div>
+            )}
+
+            {/* Cards arena */}
+            <div style={{display:"flex",alignItems:"center",gap:20,flexWrap:"wrap",justifyContent:"center"}}>
+              {/* Card A — always visible */}
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+                  letterSpacing:"0.25em",textTransform:"uppercase",
+                  color:"rgba(255,255,255,0.35)"}}>Current Card</div>
+                <HighLoCard card={cardA} revealed={true} size="full"/>
+                <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,
+                  color:"#f5c518",letterSpacing:"0.04em"}}>{fmt(cardA.daily)}/d</div>
+              </div>
+
+              {/* VS / arrow */}
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,
+                  color:"rgba(255,255,255,0.15)",letterSpacing:"0.1em"}}>VS</div>
+                <div style={{fontSize:28,animation:"showcaseFloat 2s ease-in-out infinite",opacity:0.6}}>⚡</div>
+              </div>
+
+              {/* Card B — flip reveal */}
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+                  letterSpacing:"0.25em",textTransform:"uppercase",
+                  color:"rgba(255,255,255,0.35)"}}>Next Card</div>
+                <div style={{perspective:800}}>
+                  <div style={{
+                    transformStyle:"preserve-3d",
+                    transition:"transform 0.55s cubic-bezier(0.3,1.2,0.5,1)",
+                    transform:flipped&&cardB?"rotateY(180deg)":"rotateY(0deg)"}}>
+                    <div style={{backfaceVisibility:"hidden",WebkitBackfaceVisibility:"hidden"}}>
+                      <HighLoCard card={cardB||cardA} revealed={false} size="full"/>
+                    </div>
+                    <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",
+                      WebkitBackfaceVisibility:"hidden",transform:"rotateY(180deg)"}}>
+                      {cardB&&<HighLoCard card={cardB} revealed={true} size="full"/>}
+                    </div>
+                  </div>
+                </div>
+                <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,
+                  color:flipped&&cardB?"#f5c518":"rgba(255,255,255,0.2)",letterSpacing:"0.04em"}}>
+                  {flipped&&cardB?fmt(cardB.daily)+"/d":"?"}
+                </div>
+              </div>
+            </div>
+
+            {/* Streak indicator */}
+            {streak>0&&<div style={{display:"flex",alignItems:"center",gap:6}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(255,255,255,0.4)"}}>Streak</span>
+              <div style={{display:"flex",gap:4}}>
+                {Array.from({length:Math.min(streak,8)}).map(function(_,i){
+                  return <div key={i} style={{width:streak>=6?14:12,height:streak>=6?14:12,
+                    borderRadius:"50%",background:"#f5c518",
+                    boxShadow:"0 0 "+(4+i*2)+"px rgba(245,197,24,"+(0.4+i*0.08)+")",
+                    animation:"goldPulse "+(1.2-i*0.05)+"s ease-in-out infinite "+(i*0.1)+"s"}}/>;
+                })}
+                {streak>8&&<span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,
+                  fontWeight:700,color:"#f5c518"}}>+{streak-8}</span>}
+              </div>
+            </div>}
+
+            {/* Guess buttons — only active during guessing phase */}
+            {phase==="guessing"&&<div style={{display:"flex",gap:12,marginTop:4,flexWrap:"wrap",justifyContent:"center"}}>
+              <button onClick={function(){guess("higher");}}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+                  letterSpacing:"0.14em",textTransform:"uppercase",padding:"13px 28px",
+                  border:highStakes?"2px solid #f5c518":"2px solid rgba(255,255,255,0.08)",
+                  cursor:"pointer",background:"linear-gradient(135deg,#0a3020,#0e4828)",color:"#22cc55",
+                  boxShadow:highStakes?"0 0 20px rgba(245,197,24,0.4),0 0 40px rgba(34,200,80,0.2)":"0 0 12px rgba(34,180,80,0.15)",
+                  transition:"all 0.15s"}}>
+                ↑ Higher
+              </button>
+              <button onClick={cashOut} disabled={streak===0}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,
+                  letterSpacing:"0.1em",textTransform:"uppercase",padding:"13px 20px",
+                  border:"1px solid rgba(245,197,24,0.25)",cursor:streak>0?"pointer":"not-allowed",
+                  background:"rgba(245,197,24,0.08)",color:streak>0?"#f5c518":"#444",
+                  transition:"all 0.15s"}}>
+                💰 Cash Out<br/>
+                <span style={{fontSize:11,opacity:0.8}}>{fmt(bonus?pot*2:pot)} coins{bonus?" (2×)":""}</span>
+              </button>
+              <button onClick={function(){guess("lower");}}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+                  letterSpacing:"0.14em",textTransform:"uppercase",padding:"13px 28px",
+                  border:highStakes?"2px solid #f5c518":"2px solid rgba(255,255,255,0.08)",
+                  cursor:"pointer",background:"linear-gradient(135deg,#2a0808,#3a0c0c)",color:"#ff5544",
+                  boxShadow:highStakes?"0 0 20px rgba(245,197,24,0.4),0 0 40px rgba(232,22,30,0.2)":"0 0 12px rgba(232,22,30,0.15)",
+                  transition:"all 0.15s"}}>
+                ↓ Lower
+              </button>
+            </div>}
+            {phase==="revealing"&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",
+              fontSize:14,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",
+              color:"rgba(255,255,255,0.4)",animation:"pulse 0.6s ease-in-out infinite"}}>Revealing...</div>}
+          </div>
+        )}
+
+        {/* ── LOST ── */}
+        {phase==="lost"&&result&&(
+          <div style={{textAlign:"center",padding:"20px 0"}}>
+            <div style={{fontSize:48,marginBottom:8,animation:"packShake 0.5s ease"}}>❌</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,
+              letterSpacing:"0.06em",textTransform:"uppercase",color:"#e8161e",marginBottom:6}}>Wrong Guess</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,
+              color:"rgba(255,255,255,0.45)",marginBottom:4}}>
+              You guessed <strong style={{color:"#fff"}}>{result.dir}</strong> —
+              card had <strong style={{color:"#f5c518"}}>{fmt(result.bYield)}/d</strong> (card A was <strong style={{color:"rgba(255,255,255,0.6)"}}>{fmt(result.aYield)}/d</strong>)
+            </div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,
+              color:"rgba(255,255,255,0.3)",marginBottom:20}}>
+              Streak was ×{streak} · Pot of {fmt(pot)} coins lost
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+              <button onClick={startGame} disabled={!canAfford}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,
+                  letterSpacing:"0.12em",textTransform:"uppercase",padding:"12px 28px",
+                  border:"none",cursor:canAfford?"pointer":"not-allowed",
+                  background:canAfford?"linear-gradient(90deg,#7733cc,#9933ff)":"#222",
+                  color:canAfford?"#fff":"#555",boxShadow:canAfford?"0 0 16px rgba(153,51,255,0.4)":"none"}}>
+                Try Again — {HIGHLO_WAGER}🪙
+              </button>
+              <button onClick={reset}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,
+                  letterSpacing:"0.1em",textTransform:"uppercase",padding:"12px 20px",
+                  border:"1px solid rgba(255,255,255,0.12)",cursor:"pointer",
+                  background:"transparent",color:"rgba(255,255,255,0.4)"}}>Back</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── CASHED OUT ── */}
+        {phase==="cashedout"&&(
+          <div style={{textAlign:"center",padding:"20px 0"}}>
+            <div style={{fontSize:52,marginBottom:8,animation:"crownFloat 2s ease-in-out infinite"}}>💰</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+              letterSpacing:"0.4em",textTransform:"uppercase",color:"rgba(200,160,255,0.55)",marginBottom:4}}>Cashed Out</div>
+            <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:36,fontWeight:700,
+              color:"#f5c518",marginBottom:4,
+              textShadow:"0 0 20px rgba(245,197,24,0.6)",
+              animation:"goldPulse 1.5s ease-in-out infinite"}}>+{fmt(bonus?pot:pot)}</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,
+              letterSpacing:"0.08em",textTransform:"uppercase",color:"rgba(255,255,255,0.4)",marginBottom:6}}>coins earned</div>
+            {bonus&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+              color:"#f5c518",letterSpacing:"0.12em",textTransform:"uppercase",
+              background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.25)",
+              padding:"4px 14px",display:"inline-block",marginBottom:10}}>🏒 2× Game Night Bonus Included</div>}
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+              color:"rgba(255,255,255,0.3)",marginBottom:20}}>
+              Streak ×{streak} · {streak*5} bonus XP earned
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+              <button onClick={startGame} disabled={!canAfford}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,
+                  letterSpacing:"0.12em",textTransform:"uppercase",padding:"12px 28px",
+                  border:"none",cursor:canAfford?"pointer":"not-allowed",
+                  background:canAfford?"linear-gradient(90deg,#7733cc,#9933ff)":"#222",
+                  color:canAfford?"#fff":"#555",boxShadow:canAfford?"0 0 16px rgba(153,51,255,0.4)":"none"}}>
+                Play Again — {HIGHLO_WAGER}🪙
+              </button>
+              <button onClick={reset}
+                style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,
+                  letterSpacing:"0.1em",textTransform:"uppercase",padding:"12px 20px",
+                  border:"1px solid rgba(255,255,255,0.12)",cursor:"pointer",
+                  background:"transparent",color:"rgba(255,255,255,0.4)"}}>Exit</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function RingProgress(props) {
   var pct=props.pct; var size=props.size||80; var stroke=props.stroke||7; var color=props.color||"#f5c518";
   var r=(size-stroke*2)/2; var circ=2*Math.PI*r;
@@ -4871,7 +5360,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"path",label:"👑 Season Pass"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"highlo",label:"🃏 High/Low"},{id:"path",label:"👑 Season Pass"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#fff",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -5055,6 +5544,15 @@ export default function App() {
             <ContextTip id="grade_tip" icon="🔬" color="#7733cc" tip="Grading a card earns +300 XP and permanently boosts its daily yield. A Gem Mint (10) gives 3× yield. Grade your highest-rarity cards first for the biggest return on investment."/>
           </div>
           <GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>
+        </div>}
+        {tab==="highlo"&&<div style={{maxWidth:560,margin:"0 auto"}}>
+          <div style={{padding:"12px 16px 0"}}>
+            <ContextTip id="highlo_tip" icon="🃏" color="#7733cc" tip={"Bet "+HIGHLO_WAGER+" coins per round. Guess if the next card's daily yield is higher or lower. Every correct guess doubles the pot. Cash out before you miss!"+( isGameNightBonus()?" 🏒 Game Night Bonus is LIVE — payouts doubled tonight!":"")}/>
+          </div>
+          <HighLoGame balance={balance} onBalanceChange={setBalance}
+            userId={userId} onAddXp={addXp}
+            onNotif={function(t,m,type){pushNotif(t,m,type);}}
+            dbSave={dbSaveProfile}/>
         </div>}
         {tab==="path"&&<SeasonPassPage xp={xp} claimedLevels={claimedLevels} onClaim={handleClaimPathReward}/>}
         {tab==="social"&&<div>
