@@ -4556,6 +4556,243 @@ function HighLoGame(props) {
   );
 }
 
+// ── REFERRAL HUB ─────────────────────────────────────────────────────────────
+var REFERRAL_APP_URL = "https://card-dynasty.vercel.app";
+var REFERRAL_MILESTONES = [
+  {count:1, label:"First Recruit",    reward:"500 Coins + 100 XP",    icon:"🎯"},
+  {count:3, label:"Obsidian Founder", reward:"Exclusive Card Skin",    icon:"💎"},
+  {count:5, label:"Dynasty Builder",  reward:"Legendary Pack + 1K XP", icon:"👑"},
+  {count:10,label:"The Godfather",    reward:"2,500 Coins + Hobby Box", icon:"🏆"},
+];
+
+// Deterministic code from userId or username — DYNASTY + last 3 chars of id uppercase
+function makeReferralCode(userId, username) {
+  if (userId) {
+    var clean = userId.replace(/[^a-zA-Z0-9]/g,"").toUpperCase();
+    return "DYNASTY-" + clean.slice(-4);
+  }
+  if (username && username.length >= 2) {
+    return "DYNASTY-" + username.replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(0,4).padEnd(4,"0");
+  }
+  return "DYNASTY-XXXX";
+}
+
+function ReferralHub(props) {
+  var userId = props.userId;
+  var username = props.username || "";
+  var referralCount = props.referralCount || 0;
+  var onClose = props.onClose;
+  var onCopyNotif = props.onCopyNotif || function(){};
+
+  var code = makeReferralCode(userId, username);
+  var shareUrl = REFERRAL_APP_URL + "?ref=" + code;
+  var shareMsg = "I'm building my sports card vault on Card Dynasty. Use my code " + code + " to get 1,000 bonus coins before the NBA Play-In tips off tonight! 🏀 " + shareUrl;
+
+  var copiedState = useState(false); var copied = copiedState[0]; var setCopied = copiedState[1];
+  var mountedState = useState(false); var mounted = mountedState[0]; var setMounted = mountedState[1];
+  useEffect(function(){var t=setTimeout(function(){setMounted(true);},40);return function(){clearTimeout(t);};},[]);
+
+  var nextMilestone = REFERRAL_MILESTONES.find(function(m){return referralCount < m.count;}) || REFERRAL_MILESTONES[REFERRAL_MILESTONES.length-1];
+  var prevMilestoneCount = (function(){
+    var idx = REFERRAL_MILESTONES.indexOf(nextMilestone);
+    return idx > 0 ? REFERRAL_MILESTONES[idx-1].count : 0;
+  })();
+  var milestonePct = nextMilestone
+    ? Math.min(100, Math.round(((referralCount - prevMilestoneCount) / (nextMilestone.count - prevMilestoneCount)) * 100))
+    : 100;
+
+  function copyCode() {
+    try { navigator.clipboard.writeText(code); } catch(e) {}
+    setCopied(true);
+    onCopyNotif("Code Copied!", code + " is on your clipboard", "sale");
+    setTimeout(function(){setCopied(false);}, 2200);
+  }
+
+  function shareLink() {
+    if (navigator.share) {
+      navigator.share({ title:"Card Dynasty", text:shareMsg, url:shareUrl })
+        .catch(function(){});
+    } else {
+      // Fallback: copy full message
+      try { navigator.clipboard.writeText(shareMsg); } catch(e) {}
+      onCopyNotif("Link Copied!", "Share message copied to clipboard", "sale");
+    }
+  }
+
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:3100,display:"flex",alignItems:"center",
+      justifyContent:"center",padding:"16px",background:"rgba(0,0,0,0.78)"}}
+      onClick={onClose}>
+      <div onClick={function(e){e.stopPropagation();}}
+        style={{
+          width:"100%",maxWidth:420,
+          background:"linear-gradient(160deg,#080010,#0e001c,#0a0016)",
+          border:"1px solid rgba(245,197,24,0.3)",
+          boxShadow:"0 0 60px rgba(245,197,24,0.12),0 0 120px rgba(153,51,255,0.1),0 24px 80px rgba(0,0,0,0.7)",
+          overflow:"hidden",
+          transform:mounted?"scale(1) translateY(0)":"scale(0.92) translateY(20px)",
+          opacity:mounted?1:0,
+          transition:"transform 0.32s cubic-bezier(0.34,1.56,0.64,1),opacity 0.22s ease",
+        }}>
+
+        {/* Gold top border */}
+        <div style={{height:2,background:"linear-gradient(90deg,transparent,#c8a800,#f5e060,#c8a800,transparent)"}}/>
+
+        {/* Header */}
+        <div style={{padding:"20px 22px 16px",borderBottom:"1px solid rgba(245,197,24,0.1)",
+          display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12}}>
+          <div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+              letterSpacing:"0.5em",textTransform:"uppercase",
+              color:"rgba(200,160,80,0.6)",marginBottom:5}}>Card Dynasty</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:900,
+              letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
+              background:"linear-gradient(90deg,#c8a800,#f5e060,#f5c518,#c8a800)",
+              backgroundSize:"200% auto",animation:"balShimmer 3s linear infinite",
+              WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Recruit a Friend</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+              color:"rgba(255,255,255,0.4)",marginTop:5}}>
+              You get 500 coins + 100 XP. They get 1,000 coins + a Genesis Pack.
+            </div>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:"1px solid rgba(255,255,255,0.1)",
+            color:"rgba(255,255,255,0.4)",cursor:"pointer",width:28,height:28,
+            display:"flex",alignItems:"center",justifyContent:"center",
+            fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,flexShrink:0}}>✕</button>
+        </div>
+
+        <div style={{padding:"18px 22px 22px"}}>
+
+          {/* Referral code display */}
+          <div style={{marginBottom:16}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+              letterSpacing:"0.35em",textTransform:"uppercase",
+              color:"rgba(200,160,80,0.55)",marginBottom:8}}>Your Referral Code</div>
+            <div style={{background:"#000",border:"1px solid rgba(245,197,24,0.35)",
+              padding:"14px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",
+              gap:12,cursor:"pointer",position:"relative",overflow:"hidden"}}
+              onClick={copyCode}>
+              {/* Scanline shimmer */}
+              <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(245,197,24,0.03) 3px,rgba(245,197,24,0.03) 4px)",pointerEvents:"none"}}/>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:22,fontWeight:700,
+                letterSpacing:"0.12em",color:"#f5c518",
+                textShadow:"0 0 12px rgba(245,197,24,0.7),0 0 24px rgba(245,197,24,0.3)",
+                userSelect:"all",position:"relative"}}>{code}</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                letterSpacing:"0.1em",textTransform:"uppercase",
+                color:copied?"#22cc55":"rgba(245,197,24,0.6)",
+                position:"relative",flexShrink:0,transition:"color 0.2s"}}>
+                {copied?"✓ Copied":"Tap to Copy"}
+              </div>
+            </div>
+          </div>
+
+          {/* Progress toward next milestone */}
+          <div style={{marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+                letterSpacing:"0.35em",textTransform:"uppercase",color:"rgba(200,160,80,0.55)"}}>Referral Progress</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,
+                color:"#f5c518"}}>{referralCount} / {nextMilestone.count}</div>
+            </div>
+            {/* Bar */}
+            <div style={{background:"rgba(255,255,255,0.06)",height:8,overflow:"hidden",marginBottom:10,position:"relative"}}>
+              <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.03) 20px,rgba(255,255,255,0.03) 21px)"}}/>
+              <div style={{height:"100%",width:milestonePct+"%",
+                background:"linear-gradient(90deg,#7a5200,#f5c518,#ffe566,#c8a800)",
+                backgroundSize:"200% auto",animation:"balShimmer 2.5s linear infinite",
+                transition:"width 1.2s ease-out",
+                boxShadow:"0 0 8px rgba(245,197,24,0.6)"}}/>
+            </div>
+            {/* Next milestone callout */}
+            <div style={{background:"rgba(245,197,24,0.06)",border:"1px solid rgba(245,197,24,0.15)",
+              padding:"10px 12px",display:"flex",alignItems:"center",gap:10}}>
+              <span style={{fontSize:20,animation:"crownFloat 2s ease-in-out infinite",flexShrink:0}}>{nextMilestone.icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,
+                  letterSpacing:"0.06em",textTransform:"uppercase",color:"#f5c518",marginBottom:1}}>{nextMilestone.label}</div>
+                <div style={{fontFamily:"'Barlow',sans-serif",fontSize:11,color:"rgba(255,255,255,0.4)"}}>
+                  {nextMilestone.count - referralCount === 1
+                    ? "1 more friend"
+                    : (nextMilestone.count - referralCount)+" more friends"} to unlock: <span style={{color:"rgba(255,255,255,0.65)"}}>{nextMilestone.reward}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* All milestones strip */}
+          <div style={{display:"flex",gap:0,marginBottom:18,border:"1px solid rgba(245,197,24,0.1)",overflow:"hidden"}}>
+            {REFERRAL_MILESTONES.map(function(m,i){
+              var done = referralCount >= m.count;
+              return (
+                <div key={i} style={{flex:1,padding:"8px 4px",textAlign:"center",
+                  borderRight:i<REFERRAL_MILESTONES.length-1?"1px solid rgba(245,197,24,0.08)":"none",
+                  background:done?"rgba(245,197,24,0.07)":"transparent"}}>
+                  <div style={{fontSize:14,marginBottom:2,filter:done?"none":"grayscale(1) opacity(0.3)"}}>{m.icon}</div>
+                  <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:10,fontWeight:700,
+                    color:done?"#f5c518":"rgba(255,255,255,0.2)"}}>{m.count}</div>
+                  {done&&<div style={{width:6,height:6,borderRadius:"50%",background:"#f5c518",
+                    margin:"2px auto 0",boxShadow:"0 0 4px rgba(245,197,24,0.8)"}}/>}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Action buttons */}
+          <div style={{display:"flex",gap:10,marginBottom:14}}>
+            <button onClick={shareLink}
+              style={{flex:2,fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:900,
+                letterSpacing:"0.14em",textTransform:"uppercase",padding:"13px 0",
+                border:"none",cursor:"pointer",
+                background:"linear-gradient(90deg,#7a5200,#c8a800,#f5c518,#c8a800,#7a5200)",
+                backgroundSize:"200% auto",animation:"balShimmer 3s linear infinite",
+                color:"#000",
+                boxShadow:"0 0 20px rgba(245,197,24,0.35),0 0 40px rgba(245,197,24,0.12)"}}>
+              📤 Share Link
+            </button>
+            <button onClick={copyCode}
+              style={{flex:1,fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,
+                letterSpacing:"0.1em",textTransform:"uppercase",padding:"13px 0",
+                border:"1px solid rgba(245,197,24,0.3)",cursor:"pointer",
+                background:"rgba(245,197,24,0.06)",color:copied?"#22cc55":"rgba(245,197,24,0.7)",
+                transition:"color 0.2s"}}>
+              {copied?"✓ Copied":"Copy Code"}
+            </button>
+          </div>
+
+          {/* Reward breakdown */}
+          <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.06)",
+            padding:"12px 14px"}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+              letterSpacing:"0.3em",textTransform:"uppercase",color:"rgba(255,255,255,0.25)",marginBottom:10}}>How It Works</div>
+            <div style={{display:"flex",flexDirection:"column",gap:7}}>
+              {[
+                {who:"You (Referrer)",reward:"500 🪙 + 100 XP per sign-up",color:"#f5c518",icon:"👤"},
+                {who:"Your Friend",reward:"1,000 🪙 + Genesis Pack (5 cards)",color:"#22cc88",icon:"🧑"},
+                {who:"At 3 Referrals",reward:"Obsidian Founder skin unlocked",color:"#cc88ff",icon:"💎"},
+              ].map(function(r,i){
+                return (
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:14,flexShrink:0}}>{r.icon}</span>
+                    <div style={{flex:1}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                        letterSpacing:"0.06em",textTransform:"uppercase",color:"rgba(255,255,255,0.4)"}}>{r.who}: </span>
+                      <span style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:r.color}}>{r.reward}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Gold bottom border */}
+        <div style={{height:2,background:"linear-gradient(90deg,transparent,#c8a800,#f5e060,#c8a800,transparent)"}}/>
+      </div>
+    </div>
+  );
+}
+
 function RingProgress(props) {
   var pct=props.pct; var size=props.size||80; var stroke=props.stroke||7; var color=props.color||"#f5c518";
   var r=(size-stroke*2)/2; var circ=2*Math.PI*r;
@@ -4576,6 +4813,9 @@ function ProfileView(props) {
   var xp=props.xp||0;
   var claimedLevels=props.claimedLevels||[];
   var onClaimPathReward=props.onClaimPathReward||function(){};
+  var userId=props.userId||null;
+  var referralCount=props.referralCount||0;
+  var onRecruit=props.onRecruit||function(){};
   var editState=useState(false); var showEdit=editState[0]; var setShowEdit=editState[1];
   var editNameState=useState(profile.username); var editName=editNameState[0]; var setEditName=editNameState[1];
   var editBioState=useState(profile.bio); var editBio=editBioState[0]; var setEditBio=editBioState[1];
@@ -4683,6 +4923,14 @@ function ProfileView(props) {
         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",flex:1}}>My Profile</div>
         <button onClick={function(){setShowEdit(true);setEditName(profile.username);setEditBio(profile.bio);setEditColor(profile.avatarColor);setEditInitials(profile.avatarInitials);}}
           className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>Edit Profile</button>
+        <button onClick={onRecruit}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,
+            letterSpacing:"0.1em",textTransform:"uppercase",padding:"6px 14px",
+            border:"none",cursor:"pointer",flexShrink:0,
+            background:"linear-gradient(90deg,#7a5200,#c8a800,#f5c518,#c8a800,#7a5200)",
+            backgroundSize:"200% auto",animation:"balShimmer 3s linear infinite",
+            color:"#000",
+            boxShadow:"0 0 12px rgba(245,197,24,0.45)"}}>👥 Recruit</button>
       </div>
 
       <div style={{maxWidth:760,margin:"0 auto",padding:"24px 16px"}}>
@@ -4704,6 +4952,43 @@ function ProfileView(props) {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Referral recruiting callout */}
+        <div onClick={onRecruit} style={{
+          background:"linear-gradient(135deg,#0a0800,#150e00,#0a0800)",
+          border:"1px solid rgba(245,197,24,0.3)",
+          marginBottom:20,padding:"14px 18px",cursor:"pointer",
+          display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap",
+          boxShadow:"0 0 24px rgba(245,197,24,0.08)",
+          position:"relative",overflow:"hidden"}}>
+          {/* Gold shimmer sweep */}
+          <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,transparent 40%,rgba(245,197,24,0.04) 50%,transparent 60%)",pointerEvents:"none"}}/>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <span style={{fontSize:28,animation:"crownFloat 2s ease-in-out infinite",filter:"drop-shadow(0 0 8px rgba(245,197,24,0.6))"}}>👥</span>
+            <div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:900,
+                letterSpacing:"0.06em",textTransform:"uppercase",
+                background:"linear-gradient(90deg,#c8a800,#f5c518)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
+                Recruit a Friend
+              </div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"rgba(255,255,255,0.45)",marginTop:1}}>
+                {referralCount} referred · You earn 500🪙 + 100 XP each
+              </div>
+            </div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
+            {/* Mini milestone dots */}
+            {REFERRAL_MILESTONES.slice(0,3).map(function(m,i){
+              var done = referralCount >= m.count;
+              return <div key={i} style={{width:10,height:10,borderRadius:"50%",
+                background:done?"#f5c518":"rgba(245,197,24,0.15)",
+                border:"1px solid rgba(245,197,24,0.3)",
+                boxShadow:done?"0 0 6px rgba(245,197,24,0.7)":"none"}}/>;
+            })}
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+              letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(245,197,24,0.6)",marginLeft:4}}>Open →</span>
           </div>
         </div>
 
@@ -4826,6 +5111,8 @@ export default function App() {
   var claimedLevelsState=useState([]); var claimedLevels=claimedLevelsState[0]; var setClaimedLevels=claimedLevelsState[1];
   var levelUpRewardState=useState(null); var levelUpReward=levelUpRewardState[0]; var setLevelUpReward=levelUpRewardState[1];
   var prevLevelRef=useRef(0);
+  var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
+  var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
@@ -4870,6 +5157,7 @@ export default function App() {
           setPacksOpened(p.packs_opened||0);
           if(p.xp!=null){ setXp(p.xp||0); prevLevelRef.current=xpToLevel(p.xp||0); }
           if(p.claimed_levels){ try{setClaimedLevels(JSON.parse(p.claimed_levels)||[]);}catch(e){} }
+          if(p.referral_count!=null){ setReferralCount(p.referral_count||0); }
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
@@ -5145,38 +5433,75 @@ export default function App() {
     addXp(300);
   }
   function completeOnboarding(cards,coins){
-    setInventory(cards);
-    setBalance(coins);
+    // Check for ?ref= referral code in URL
+    var refCode = null;
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      refCode = urlParams.get("ref");
+      // Clean it from the URL
+      if (refCode) window.history.replaceState(null,"",window.location.pathname);
+    } catch(e) {}
+
+    var bonusCoins = refCode ? 1000 : 0;
+    var finalCoins = coins + bonusCoins;
+    var genesisCards = cards; // 5 cards already included in starter pack
+    setInventory(genesisCards);
+    setBalance(finalCoins);
     setOnboarded(true);
     setIsNewUser(false);
     setTab("shop");
-    // Show the How To Play guide for new users instead of the daily streak modal
+    if (refCode) {
+      pushNotif("Referral Bonus! 🎁", "+1,000 bonus coins from referral code "+refCode, "sale");
+    }
     setTimeout(function(){setShowHowToPlay(true);},600);
-    // Build full profile data — merge any prefs set during profile setup step
     var prefs=pendingPrefsRef.current||loadProfile();
     var profileData={
-      coins:coins,
+      coins:finalCoins,
       packs_opened:0,
       username:prefs.username||"Dynasty Rookie",
       avatar_color:prefs.avatarColor||"#f5c518",
       avatar_initials:prefs.avatarInitials||"ME",
       fav_sport:prefs.favSport||"",
       fav_team:prefs.favTeam||"",
+      referred_by:refCode||null,
     };
     var uid=userId;
+    function saveAndRewardReferrer(freshUid) {
+      dbSaveProfile(freshUid, profileData);
+      dbSaveCards(freshUid, genesisCards);
+      // If referred, look up the referrer and credit them
+      if (refCode && supabase) {
+        supabase.from("profiles").select("id,coins,xp,referral_count").filter("id","neq",freshUid)
+          .then(function(res) {
+            if (!res.data) return;
+            // Find referrer whose makeReferralCode matches refCode
+            var referrer = res.data.find(function(p) {
+              return makeReferralCode(p.id, "") === refCode;
+            });
+            if (!referrer) return;
+            // Guard: make sure this new user hasn't already credited this referrer
+            supabase.from("profiles").select("referred_by").eq("id",freshUid).maybeSingle()
+              .then(function(check) {
+                var alreadyUsed = check&&check.data&&check.data.referred_by;
+                if (alreadyUsed) return;
+                var newRefCoins = (referrer.coins||0) + 500;
+                var newRefXp = (referrer.xp||0) + 100;
+                var newRefCount = (referrer.referral_count||0) + 1;
+                supabase.from("profiles").update({
+                  coins: newRefCoins, xp: newRefXp, referral_count: newRefCount
+                }).eq("id", referrer.id).then(function(){});
+              });
+          });
+      }
+    }
     if(!uid&&supabase){
       supabase.auth.getSession().then(function(res){
         var session=res&&res.data&&res.data.session;
         var freshUid=session&&session.user&&session.user.id;
-        if(freshUid){
-          setUserId(freshUid);
-          dbSaveProfile(freshUid,profileData);
-          dbSaveCards(freshUid,cards);
-        }
+        if(freshUid){ setUserId(freshUid); saveAndRewardReferrer(freshUid); }
       });
     } else if(uid){
-      dbSaveProfile(uid,profileData);
-      dbSaveCards(uid,cards);
+      saveAndRewardReferrer(uid);
     }
     pendingPrefsRef.current=null;
   }
@@ -5393,6 +5718,7 @@ export default function App() {
       <style>{CSS}</style>
       <Notifications notifs={notifs}/>
       {levelUpReward&&<LevelUpModal reward={levelUpReward} onClose={function(){setLevelUpReward(null);}}/>}
+      {showReferral&&<ReferralHub userId={userId} username={profile.username} referralCount={referralCount} onClose={function(){setShowReferral(false);}} onCopyNotif={function(t,m,type){pushNotif(t,m,type);}}/>}
       {showLoginModal&&<DailyLoginModal streakData={streakData} onClaim={handleClaim} onClose={function(){setShowLoginModal(false);}}/>}
       {listModal&&<ListModal card={listModal} onConfirm={function(p){listCard(listModal,p);}} onClose={function(){setListModal(null);}}/>}
       {/* ── ORACLE TICKER ── */}
@@ -5567,7 +5893,7 @@ export default function App() {
           </div>
           <Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>
         </div>}
-        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward}/>}
+        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward} userId={userId} referralCount={referralCount} onRecruit={function(){setShowReferral(true);}}/>}
         {tab==="inventory"&&(
           <div style={{padding:"16px 20px 80px",maxWidth:760,margin:"0 auto"}}>
             {/* Sub-tabs */}
