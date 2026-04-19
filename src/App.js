@@ -461,18 +461,20 @@ var CSS=`
   .screen-shake{animation:shakeScreen 0.4s ease-out}
   /* ── TOPPS DESIGN SYSTEM ───────────────────────────────────────────────── */
   .topps-screen{min-height:100vh;background:#f0ede8;color:#111;font-family:'Barlow',sans-serif}
-  .topps-ticker{background:#e8161e;overflow:hidden;white-space:nowrap;height:32px;display:flex;align-items:center}
-  .topps-ticker-inner{display:inline-flex;gap:0;animation:oracleTicker 28s linear infinite}
-  .topps-ticker-item{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;padding:0 24px;display:inline-flex;align-items:center;gap:8px}
-  .topps-ticker-item::after{content:'◆';font-size:7px;opacity:0.5;margin-left:8px}
-  .topps-header{background:#fff;border-bottom:3px solid #e8161e;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100}
-  .topps-logo-main{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:#111;line-height:1}
+  .topps-ticker{background:#e8161e;overflow:hidden;white-space:nowrap;height:30px;display:flex;align-items:center;width:100%}
+  .topps-ticker-inner{display:inline-flex;gap:0;animation:oracleTicker 28s linear infinite;will-change:transform}
+  .topps-ticker-item{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;padding:0 20px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0}
+  .topps-ticker-item::after{content:'◆';font-size:6px;opacity:0.5;margin-left:8px}
+  .topps-header{background:#fff;border-bottom:3px solid #e8161e;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:100;gap:12px;overflow:hidden}
+  .topps-logo-main{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;letter-spacing:0.04em;text-transform:uppercase;color:#111;line-height:1;white-space:nowrap;flex-shrink:0}
   .topps-logo-main em{color:#e8161e;font-style:normal}
-  .topps-logo-sub{font-size:9px;letter-spacing:0.3em;color:#888;text-transform:uppercase;font-weight:600;font-family:'Barlow',sans-serif}
-  .topps-nav-link{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#444;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent;transition:all 0.15s;background:none;border-left:none;border-right:none;border-top:none}
+  .topps-logo-sub{font-size:8px;letter-spacing:0.22em;color:#bbb;text-transform:uppercase;font-weight:600;font-family:'Barlow',sans-serif;white-space:nowrap}
+  .topps-nav-links{display:flex;gap:16px;overflow:hidden}
+  @media(max-width:600px){.topps-nav-links{display:none}}
+  .topps-nav-link{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#444;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent;transition:all 0.15s;background:none;border-left:none;border-right:none;border-top:none;white-space:nowrap;flex-shrink:0}
   .topps-nav-link:hover{color:#e8161e;border-bottom-color:#e8161e}
   .topps-nav-link.on{color:#e8161e;border-bottom-color:#e8161e}
-  .topps-hero{background:#111;position:relative;overflow:hidden;padding:48px 20px 44px}
+  .topps-hero{background:#111;position:relative;overflow:hidden;padding:36px 20px 40px}
   .topps-hero-stripes{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);pointer-events:none}
   .topps-section{background:#f0ede8;padding:28px 20px}
   .topps-section-dark{background:#111;padding:28px 20px}
@@ -1912,20 +1914,22 @@ function Onboarding(props) {
           {tickerItems.map(function(t,i){return <span key={i} className="topps-ticker-item">{t}</span>;})}
         </div>
       </div>
-      {/* Header */}
+      {/* Header — single row, no wrapping */}
       <div className="topps-header">
-        <div>
+        {/* Logo — always visible, single line */}
+        <div style={{display:"flex",flexDirection:"column",justifyContent:"center",flexShrink:0}}>
           <div className="topps-logo-main">CARD <em>DYNASTY</em></div>
-          <div className="topps-logo-sub">Official Collector Platform · 2025</div>
+          <div className="topps-logo-sub">Official Collector · 2025</div>
         </div>
-        <div style={{display:"flex",gap:20}}>
+        {/* Nav links — hidden on mobile */}
+        <div className="topps-nav-links">
           {["Shop","Exchange","Collection","Live","Rankings"].map(function(n){
             return <button key={n} className="topps-nav-link">{n}</button>;
           })}
         </div>
-        <div style={{display:"flex",gap:10,alignItems:"center"}}>
-          <button onClick={function(){setPhase("login");}} className="topps-btn-outline" style={{padding:"7px 18px",fontSize:13}}>Sign In</button>
-        </div>
+        {/* Sign In — always visible */}
+        <button onClick={function(){setPhase("login");}} className="topps-btn-outline"
+          style={{padding:"6px 16px",fontSize:12,flexShrink:0,whiteSpace:"nowrap"}}>Sign In</button>
       </div>
     </div>
   );
@@ -1938,7 +1942,7 @@ function Onboarding(props) {
       <div className="topps-hero">
         <div className="topps-hero-stripes"/>
         <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:32,flexWrap:"wrap",position:"relative",zIndex:2}}>
-          <div style={{flex:1,minWidth:260}} className="topps-reveal">
+          <div style={{flex:1,minWidth:240}} className="topps-reveal">
             <div className="topps-eyebrow" style={{marginBottom:12}}>2025 Season · Free to Play</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,8vw,72px)",fontWeight:900,letterSpacing:"0.02em",lineHeight:0.92,textTransform:"uppercase",color:"#fff",marginBottom:16}}>
               Build Your<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Dynasty.</em>
