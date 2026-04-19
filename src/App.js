@@ -5726,23 +5726,7 @@ export default function App() {
     }
   }
 
-  function handleLogout() {
-    if (supabase) {
-      supabase.auth.signOut().then(function() {
-        // onAuthStateChange SIGNED_OUT will handle state reset
-      });
-    } else {
-      // Guest / no Supabase — just reset local state
-      setUserId(null);
-      setOnboarded(false);
-      setIsNewUser(false);
-      setInventory([]);
-      setBalance(0);
-      setXp(0);
-      setClaimedLevels([]);
-      setTab("shop");
-    }
-  }
+  function addXp(amount) {
     setXp(function(prev){
       var next=prev+(amount||0);
       var prevLv=xpToLevel(prev);
@@ -5754,6 +5738,23 @@ export default function App() {
       if(userId) dbSaveProfile(userId,{xp:next});
       return next;
     });
+  }
+
+  function handleLogout() {
+    if (supabase) {
+      supabase.auth.signOut().then(function() {
+        // onAuthStateChange SIGNED_OUT will handle state reset
+      });
+    } else {
+      setUserId(null);
+      setOnboarded(false);
+      setIsNewUser(false);
+      setInventory([]);
+      setBalance(0);
+      setXp(0);
+      setClaimedLevels([]);
+      setTab("shop");
+    }
   }
 
   function handleClaimPathReward(node) {
