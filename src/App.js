@@ -5301,6 +5301,7 @@ function ProfileView(props) {
   var userId=props.userId||null;
   var referralCount=props.referralCount||0;
   var onRecruit=props.onRecruit||function(){};
+  var onLogout=props.onLogout||function(){};
   var editState=useState(false); var showEdit=editState[0]; var setShowEdit=editState[1];
   var editNameState=useState(profile.username); var editName=editNameState[0]; var setEditName=editNameState[1];
   var editBioState=useState(profile.bio); var editBio=editBioState[0]; var setEditBio=editBioState[1];
@@ -5403,19 +5404,23 @@ function ProfileView(props) {
         </div>
       )}
       {/* Profile header */}
-      <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"12px 20px",display:"flex",alignItems:"center",gap:12,position:"sticky",top:82,zIndex:40}}>
-        <button onClick={onBack} className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>← Back</button>
+      <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"12px 16px",display:"flex",alignItems:"center",gap:8,position:"sticky",top:82,zIndex:40,flexWrap:"wrap"}}>
+        <button onClick={onBack} className="topps-btn-outline" style={{padding:"6px 14px",fontSize:13}}>← Back</button>
         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:18,fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",flex:1}}>My Profile</div>
         <button onClick={function(){setShowEdit(true);setEditName(profile.username);setEditBio(profile.bio);setEditColor(profile.avatarColor);setEditInitials(profile.avatarInitials);}}
-          className="topps-btn-outline" style={{padding:"6px 16px",fontSize:13}}>Edit Profile</button>
+          className="topps-btn-outline" style={{padding:"6px 14px",fontSize:13}}>Edit</button>
         <button onClick={onRecruit}
           style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,
             letterSpacing:"0.1em",textTransform:"uppercase",padding:"6px 14px",
             border:"none",cursor:"pointer",flexShrink:0,
             background:"linear-gradient(90deg,#7a5200,#c8a800,#f5c518,#c8a800,#7a5200)",
             backgroundSize:"200% auto",animation:"balShimmer 3s linear infinite",
-            color:"#000",
-            boxShadow:"0 0 12px rgba(245,197,24,0.45)"}}>👥 Recruit</button>
+            color:"#000",boxShadow:"0 0 12px rgba(245,197,24,0.45)"}}>👥 Recruit</button>
+        <button onClick={onLogout}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+            letterSpacing:"0.08em",textTransform:"uppercase",padding:"6px 14px",
+            border:"1px solid #e0ddd8",cursor:"pointer",flexShrink:0,
+            background:"#f0ede8",color:"#888"}}>Sign Out</button>
       </div>
 
       <div style={{maxWidth:760,margin:"0 auto",padding:"24px 16px"}}>
@@ -5721,7 +5726,23 @@ export default function App() {
     }
   }
 
-  function addXp(amount) {
+  function handleLogout() {
+    if (supabase) {
+      supabase.auth.signOut().then(function() {
+        // onAuthStateChange SIGNED_OUT will handle state reset
+      });
+    } else {
+      // Guest / no Supabase — just reset local state
+      setUserId(null);
+      setOnboarded(false);
+      setIsNewUser(false);
+      setInventory([]);
+      setBalance(0);
+      setXp(0);
+      setClaimedLevels([]);
+      setTab("shop");
+    }
+  }
     setXp(function(prev){
       var next=prev+(amount||0);
       var prevLv=xpToLevel(prev);
@@ -6385,7 +6406,7 @@ export default function App() {
           </div>
           <Leaderboard inventory={inventory} balance={balance} profile={profile} onViewVault={function(name){setSocialVault(name);setTab("social");}}/>
         </div>}
-        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward} userId={userId} referralCount={referralCount} onRecruit={function(){setShowReferral(true);}}/>}
+        {tab==="profile"&&<ProfileView inventory={inventory} balance={balance} streakData={streakData} profile={profile} packsOpened={packsOpened} liveTeams={liveTeams} onSaveProfile={saveProfileAndState} onBack={function(){setTab("inventory");}} xp={xp} claimedLevels={claimedLevels} onClaimPathReward={handleClaimPathReward} userId={userId} referralCount={referralCount} onRecruit={function(){setShowReferral(true);}} onLogout={handleLogout}/>}
         {tab==="inventory"&&(
           <div style={{padding:"16px 20px 80px",maxWidth:760,margin:"0 auto"}}>
             {/* Sub-tabs */}
