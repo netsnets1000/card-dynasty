@@ -5648,6 +5648,50 @@ export default function App() {
     upsertBatch(0);
   }
 
+  // One-time compensation: grant replacement cards to accounts that lost
+  // their collection due to the old delete+insert bug.
+  // Triggered when: 0 cards in DB + coins > 1,000,000 + compensation_granted IS NOT set.
+  // Marked permanently in profiles.compensation_granted to prevent double-grant.
+  var COMPENSATION_USERS = ["ClutchRiley_"];
+  function grantCompensation(uid, username, coins) {
+    if(!supabase||!uid) return;
+    // Check flag first — never grant twice
+    supabase.from("profiles").select("compensation_granted").eq("id",uid).maybeSingle()
+      .then(function(res){
+        if(res.data&&res.data.compensation_granted) return; // already done
+        // Build ~150,000 coin value of cards, no Dynasty
+        // 3 Legendary (~35k each = 105k) + 4 Legacy (~10k each = 40k) + 1 Elite (~3k) ≈ 148k
+        var compRates = {Legendary:50,Legacy:30,Elite:15,Rare:5};
+        var compCards = [
+          genCard({Legendary:100},null,null),
+          genCard({Legendary:100},null,null),
+          genCard({Legendary:100},null,null),
+          genCard({Legacy:100},null,null),
+          genCard({Legacy:100},null,null),
+          genCard({Legacy:100},null,null),
+          genCard({Legacy:100},null,null),
+          genCard({Elite:100},null,null),
+        ];
+        // Save cards via upsert
+        var rows = compCards.map(function(c){
+          return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,
+            daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId(),
+            is_slabbed:false,grade:null,yield_multiplier:null};
+        });
+        supabase.from("user_cards").upsert(rows,{onConflict:"card_id"})
+          .then(function(insRes){
+            if(insRes.error){console.error("[CardDynasty] compensation insert error:",insRes.error);return;}
+            // Mark compensation as granted so it never runs again
+            supabase.from("profiles").update({compensation_granted:true}).eq("id",uid).then(function(){});
+            // Update local state so cards appear immediately
+            setInventory(compCards);
+            setOnboarded(true);
+            setIsNewUser(false);
+            console.log("[CardDynasty] Compensation cards granted to",username);
+          });
+      });
+  }
+
   function dbLoadUser(uid) {
     sb(function(db){
       return Promise.all([
@@ -5664,6 +5708,18 @@ export default function App() {
           if(p.xp!=null){ setXp(p.xp||0); prevLevelRef.current=xpToLevel(p.xp||0); }
           if(p.claimed_levels){ try{setClaimedLevels(JSON.parse(p.claimed_levels)||[]);}catch(e){} }
           if(p.referral_count!=null){ setReferralCount(p.referral_count||0); }
+
+          // ── COMPENSATION CHECK ─────────────────────────────────────────────
+          var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
+          var isEligible = !hasCards
+            && (p.coins||0) >= 1000000
+            && COMPENSATION_USERS.includes(p.username)
+            && !p.compensation_granted;
+          if(isEligible){
+            grantCompensation(uid, p.username, p.coins||0);
+            setDbLoaded(true);
+            return; // grantCompensation sets inventory + onboarded
+          }
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
@@ -5675,12 +5731,9 @@ export default function App() {
           setIsNewUser(true);
           setOnboarded(false);
         }
-        setDbLoaded(true); // DB load complete — safe to write now
+        setDbLoaded(true);
       }).catch(function(e){
         console.error("dbLoadUser error:",e);
-        // DB error (timeout, network) — do NOT wipe state or re-onboard.
-        // Just mark auth as ready so the app doesn't hang. User keeps whatever
-        // local state they had — they can retry by refreshing.
         setAuthReady(true);
       });
     });
