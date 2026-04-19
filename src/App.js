@@ -2772,8 +2772,8 @@ function Social(props) {
         var parsed=profileRows.map(function(p){
           var pCards=cardRows.filter(function(c){return c.user_id===p.id;}).map(function(c){return {id:c.card_id||genId(),sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,likes:0};});
           var yld=pCards.reduce(function(s,c){return s+c.daily;},0);
-          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",bio:p.bio||"",yield:yld,inventory:pCards};
-        }).filter(function(p){return p.inventory.length>0;});
+          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",bio:p.bio||"",yield:yld,coins:p.coins||0,inventory:pCards};
+        }).filter(function(p){return p.inventory.length>0||p.coins>0;});
         setPlayers(parsed);
         setLoading(false);
       });
@@ -2832,7 +2832,8 @@ function Leaderboard(props) {
   var userPlayer={id:"__me",name:userName,avatar:userInitials,color:userColor,favTeam:(profile&&profile.favTeam)||"",yield:userYield,power:userPower,isUser:true};
   useEffect(function(){
     if(!supabase){setLoading(false);return;}
-    supabase.from("profiles").select("id,username,avatar_color,avatar_initials,fav_team").limit(50).then(function(res){
+    // Fetch profiles + coins as source of truth — users exist even if user_cards is empty
+    supabase.from("profiles").select("id,username,avatar_color,avatar_initials,fav_team,coins").limit(50).then(function(res){
       if(res.error||!res.data){setLoading(false);return;}
       var ids=res.data.map(function(p){return p.id;});
       if(!ids.length){setLoading(false);return;}
@@ -2842,8 +2843,12 @@ function Leaderboard(props) {
           var pCards=cardRows.filter(function(c){return c.user_id===p.id;});
           var yld=pCards.reduce(function(s,c){return s+(c.daily||0);},0);
           var pwr=pCards.length*10+pCards.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50;
-          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",yield:yld,power:pwr,cardCount:pCards.length};
-        }).filter(function(p){return p.cardCount>0;});
+          // Use coins as tiebreaker / fallback so users with no cards still appear
+          return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",yield:yld,power:pwr,coins:p.coins||0,cardCount:pCards.length};
+        }).filter(function(p){
+          // Include anyone with cards OR coins > 0 — excludes empty ghost accounts
+          return p.cardCount>0 || p.coins>0;
+        });
         setPlayers(parsed);
         setLoading(false);
       });
@@ -5597,6 +5602,8 @@ export default function App() {
   var userIdState=useState(null); var userId=userIdState[0]; var setUserId=userIdState[1];
   var authReadyState=useState(!supabase); var authReady=authReadyState[0]; var setAuthReady=authReadyState[1];
   var isNewUserState=useState(false); var isNewUser=isNewUserState[0]; var setIsNewUser=isNewUserState[1];
+  // Guard: true once dbLoadUser has resolved — prevents premature writes before DB data arrives
+  var dbLoadedState=useState(!supabase); var dbLoaded=dbLoadedState[0]; var setDbLoaded=dbLoadedState[1];
   var xpState=useState(0); var xp=xpState[0]; var setXp=xpState[1];
   var claimedLevelsState=useState([]); var claimedLevels=claimedLevelsState[0]; var setClaimedLevels=claimedLevelsState[1];
   var levelUpRewardState=useState(null); var levelUpReward=levelUpRewardState[0]; var setLevelUpReward=levelUpRewardState[1];
@@ -5616,20 +5623,29 @@ export default function App() {
 
   function dbSaveCards(uid, cards) {
     if(!supabase||!uid) return;
-    // Delete all existing cards for this user first, then insert fresh
-    supabase.from("user_cards").delete().eq("user_id",uid)
-      .then(function(delRes){
-        if(delRes.error){console.error("dbSaveCards delete error:",delRes.error);return;}
-        if(!cards||!cards.length) return;
-        var rows=cards.map(function(c){
-          return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId(),is_slabbed:c.graded||false,grade:c.grade||null,yield_multiplier:c.gradeMultiplier||null};
-        });
-        supabase.from("user_cards").insert(rows)
-          .then(function(insRes){
-            if(insRes.error) console.error("dbSaveCards insert error:",insRes.error);
-            else console.log("[CardDynasty] Saved",rows.length,"cards for user",uid);
-          });
+    if(!cards||!cards.length){
+      // Only wipe if explicitly passing empty — and only after confirming user exists
+      supabase.from("profiles").select("id").eq("id",uid).maybeSingle().then(function(r){
+        if(r&&r.data) supabase.from("user_cards").delete().eq("user_id",uid).then(function(){});
       });
+      return;
+    }
+    // Safe upsert — never deletes first. Uses card_id as conflict key.
+    // This means cards can only grow or update, never silently vanish.
+    var rows=cards.map(function(c){
+      return {user_id:uid,sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,card_id:c.id||genId(),is_slabbed:c.graded||false,grade:c.grade||null,yield_multiplier:c.gradeMultiplier||null};
+    });
+    // Upsert in batches of 50 to stay under Supabase payload limits
+    var batchSize=50;
+    function upsertBatch(i){
+      if(i>=rows.length) return;
+      var batch=rows.slice(i,i+batchSize);
+      supabase.from("user_cards").upsert(batch,{onConflict:"card_id"}).then(function(res){
+        if(res.error) console.error("[CardDynasty] dbSaveCards upsert error:",res.error);
+        else upsertBatch(i+batchSize);
+      });
+    }
+    upsertBatch(0);
   }
 
   function dbLoadUser(uid) {
@@ -5651,21 +5667,21 @@ export default function App() {
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
-          // Returning user — restore cards and go straight to vault
           var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp,graded:r.is_slabbed||false,grade:r.grade||null,gradeMultiplier:r.yield_multiplier||null,gradeTier:r.grade>=10?"gem":r.grade>=9?"mint":r.grade>=8?"good":"base"};});
           setInventory(cards);
           setOnboarded(true);
           setIsNewUser(false);
         } else {
-          // New user — no cards yet, route to profile setup then pack opening
           setIsNewUser(true);
           setOnboarded(false);
         }
+        setDbLoaded(true); // DB load complete — safe to write now
       }).catch(function(e){
         console.error("dbLoadUser error:",e);
-        // On any DB error, treat as new user so they can still onboard
-        setIsNewUser(true);
-        setOnboarded(false);
+        // DB error (timeout, network) — do NOT wipe state or re-onboard.
+        // Just mark auth as ready so the app doesn't hang. User keeps whatever
+        // local state they had — they can retry by refreshing.
+        setAuthReady(true);
       });
     });
   }
@@ -5791,21 +5807,27 @@ export default function App() {
   var claimedBadgesState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_badges")||"[]");}catch(e){return [];}});
   var claimedBadges=claimedBadgesState[0]; var setClaimedBadges=claimedBadgesState[1];
   var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
-  // Load real global rank from Supabase
+  // Load real global rank from Supabase — uses both user_cards yield and profiles.coins as fallback
   useEffect(function(){
     if(!supabase||!userId) return;
     var myYield=inventory.reduce(function(s,c){return s+c.daily;},0);
-    supabase.from("user_cards").select("user_id,daily")
-      .then(function(res){
-        if(res.error||!res.data) return;
-        // Sum daily yield per user
-        var userYields={};
-        res.data.forEach(function(r){userYields[r.user_id]=(userYields[r.user_id]||0)+(r.daily||0);});
-        var yields=Object.values(userYields).sort(function(a,b){return b-a;});
-        // Find my position
-        var rank=yields.findIndex(function(y){return y<=myYield;})+1;
-        setGlobalRank(rank||yields.length+1);
+    Promise.all([
+      supabase.from("user_cards").select("user_id,daily"),
+      supabase.from("profiles").select("id,coins"),
+    ]).then(function(results){
+      var cardRes=results[0]; var profRes=results[1];
+      var userYields={};
+      if(cardRes.data) cardRes.data.forEach(function(r){userYields[r.user_id]=(userYields[r.user_id]||0)+(r.daily||0);});
+      // Include all profiles — use daily yield if available, coins/100 as tiebreaker for users with no cards
+      if(profRes.data) profRes.data.forEach(function(p){
+        if(userYields[p.id]===undefined && (p.coins||0)>0){
+          userYields[p.id]=(p.coins||0)/100;
+        }
       });
+      var yields=Object.values(userYields).sort(function(a,b){return b-a;});
+      var rank=yields.findIndex(function(y){return y<=myYield;})+1;
+      setGlobalRank(rank||yields.length+1);
+    });
   },[userId,inventory.length]);
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
@@ -6157,8 +6179,10 @@ export default function App() {
     var newInv=opening?opening.cards.concat(inventory):inventory;
     if(opening) setInventory(function(){return newInv;});
     setOpening(null);setTab("inventory");setInvSubTab("cards");
-    // XP: 100 per card opened
     if(opening) addXp((opening.cards||[]).length*100);
+    // Guard: only write to DB after the user's existing cards have been loaded
+    // Prevents overwriting a returning user's collection on a new device
+    if(!dbLoaded) return;
     var uid=userId;
     if(!uid&&supabase){
       supabase.auth.getSession().then(function(res){
