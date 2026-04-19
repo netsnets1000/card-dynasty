@@ -4793,6 +4793,462 @@ function ReferralHub(props) {
   );
 }
 
+// ── PLAYOFF PREDICTOR ────────────────────────────────────────────────────────
+var PREDICTION_DATE = "April 19, 2025";
+var PREDICTION_REWARD_XP = 2000;
+var PREDICTION_REWARD_COINS = 500;
+
+var MATCHUPS = [
+  {
+    id:"cel_phi",
+    time:"1:00 PM ET",
+    sport:"NBA",
+    series:"NBA Playoffs · First Round",
+    home:"Celtics",   homeCode:"BOS", homeColor:"#007A33", homeRecord:"3-0",
+    away:"76ers",     awayCode:"PHI", awayColor:"#006BB6", awayRecord:"0-3",
+    seed:[1,8],
+  },
+  {
+    id:"okc_phx",
+    time:"3:30 PM ET",
+    sport:"NBA",
+    series:"NBA Playoffs · First Round",
+    home:"Thunder",   homeCode:"OKC", homeColor:"#007AC1", homeRecord:"2-1",
+    away:"Suns",      awayCode:"PHX", awayColor:"#E56020", awayRecord:"1-2",
+    seed:[1,8],
+  },
+  {
+    id:"det_orl",
+    time:"6:30 PM ET",
+    sport:"NBA",
+    series:"NBA Playoffs · First Round",
+    home:"Pistons",   homeCode:"DET", homeColor:"#C8102E", homeRecord:"1-2",
+    away:"Magic",     awayCode:"ORL", awayColor:"#0077C0", awayRecord:"2-1",
+    seed:[5,4],
+  },
+  {
+    id:"sas_por",
+    time:"9:00 PM ET",
+    sport:"NBA",
+    series:"NBA Playoffs · First Round",
+    home:"Spurs",     homeCode:"SAS", homeColor:"#C4CED4", homeRecord:"0-3",
+    away:"Blazers",   awayCode:"POR", awayColor:"#E03A3E", awayRecord:"3-0",
+    seed:[8,1],
+  },
+];
+
+// Deterministic-ish seeded community picks so the bar feels live
+// Real % would come from Supabase; we seed plausible numbers here as baseline
+var COMMUNITY_SEED = {
+  cel_phi:  {Celtics:82, "76ers":18},
+  okc_phx:  {Thunder:71, Suns:29},
+  det_orl:  {Pistons:48, Magic:52},
+  sas_por:  {Spurs:22,   Blazers:78},
+};
+
+function PlayoffPredictor(props) {
+  var userId        = props.userId;
+  var balance       = props.balance;
+  var onAddXp       = props.onAddXp || function(){};
+  var onBalChange   = props.onBalChange || function(){};
+  var onNotif       = props.onNotif || function(){};
+  var dbSave        = props.dbSave || function(){};
+
+  // predictions: {matchup_id: teamName}
+  var predsState  = useState(function(){
+    try{ return JSON.parse(localStorage.getItem("cd_predictions_apr19")||"{}"); }catch(e){return {};}
+  });
+  var preds = predsState[0]; var setPreds = predsState[1];
+
+  // results: {matchup_id: teamName} — null until "Reveal" (demo mode)
+  var resultsState = useState(null); var results = resultsState[0]; var setResults = resultsState[1];
+  var claimedState = useState(function(){
+    try{ return JSON.parse(localStorage.getItem("cd_pred_claimed_apr19")||"[]"); }catch(e){return [];}
+  });
+  var claimed = claimedState[0]; var setClaimed = claimedState[1];
+
+  // community votes — loaded from Supabase predictions table, seeded locally as fallback
+  var communityState = useState(COMMUNITY_SEED);
+  var community = communityState[0]; var setCommunity = communityState[1];
+
+  var mountedState = useState(false); var setMounted = mountedState[1];
+  useEffect(function(){
+    var t = setTimeout(function(){setMounted(true);},40);
+    // Load community picks from Supabase if available
+    if(window.supabase_client || (typeof supabase !== "undefined" && supabase)){
+      var db = (typeof supabase !== "undefined" && supabase);
+      if(db){
+        db.from("predictions")
+          .select("matchup_id,pick")
+          .eq("date","2025-04-19")
+          .then(function(res){
+            if(!res||!res.data||!res.data.length) return;
+            var tally = {};
+            res.data.forEach(function(r){
+              if(!tally[r.matchup_id]) tally[r.matchup_id] = {};
+              tally[r.matchup_id][r.pick] = (tally[r.matchup_id][r.pick]||0)+1;
+            });
+            // Convert counts to percentages
+            var pcts = {};
+            Object.keys(tally).forEach(function(mid){
+              var total = Object.values(tally[mid]).reduce(function(a,b){return a+b;},0);
+              pcts[mid] = {};
+              Object.keys(tally[mid]).forEach(function(team){
+                pcts[mid][team] = Math.round(tally[mid][team]/total*100);
+              });
+            });
+            setCommunity(Object.assign({},COMMUNITY_SEED,pcts));
+          }).catch(function(){});
+      }
+    }
+    return function(){clearTimeout(t);};
+  },[]);
+
+  function savePredLocal(newPreds){
+    try{ localStorage.setItem("cd_predictions_apr19", JSON.stringify(newPreds)); }catch(e){}
+  }
+
+  function pickTeam(matchupId, team){
+    if(results) return; // locked after reveal
+    var newPreds = Object.assign({},preds);
+    newPreds[matchupId] = newPreds[matchupId]===team ? undefined : team;
+    if(!newPreds[matchupId]) delete newPreds[matchupId];
+    setPreds(newPreds);
+    savePredLocal(newPreds);
+    // Persist to Supabase predictions table
+    if(userId && typeof supabase !== "undefined" && supabase){
+      supabase.from("predictions")
+        .upsert({user_id:userId, matchup_id:matchupId, pick:team, date:"2025-04-19"},
+          {onConflict:"user_id,matchup_id"})
+        .then(function(){})
+        .catch(function(){});
+    }
+    // Nudge community pct locally for immediate feedback
+    setCommunity(function(prev){
+      var updated = Object.assign({},prev);
+      var m = MATCHUPS.find(function(x){return x.id===matchupId;});
+      if(!m) return prev;
+      var cur = Object.assign({},prev[matchupId]||{});
+      var other = team===m.home ? m.away : m.home;
+      cur[team]   = Math.min(99,Math.max(1,(cur[team]||50)+2));
+      cur[other]  = 100 - cur[team];
+      updated[matchupId] = cur;
+      return updated;
+    });
+  }
+
+  // DEMO: "simulate" results — cycle through plausible outcomes
+  var DEMO_RESULTS = {
+    cel_phi:"Celtics", okc_phx:"Thunder", det_orl:"Magic", sas_por:"Blazers"
+  };
+  function revealResults(){
+    setResults(DEMO_RESULTS);
+  }
+
+  function claimReward(matchupId){
+    if(claimed.includes(matchupId)) return;
+    var winner = results&&results[matchupId];
+    if(!winner) return;
+    var myPick = preds[matchupId];
+    if(myPick !== winner) return;
+    var newClaimed = claimed.concat([matchupId]);
+    setClaimed(newClaimed);
+    try{localStorage.setItem("cd_pred_claimed_apr19",JSON.stringify(newClaimed));}catch(e){}
+    onAddXp(PREDICTION_REWARD_XP);
+    onBalChange(balance + PREDICTION_REWARD_COINS);
+    if(userId) dbSave(userId,{coins: balance + PREDICTION_REWARD_COINS});
+    onNotif("Correct Prediction! 🎯","+"+PREDICTION_REWARD_COINS+"🪙 and +"+PREDICTION_REWARD_XP+" XP","sale");
+  }
+
+  var predCount = Object.keys(preds).length;
+  var allPicked = predCount === MATCHUPS.length;
+
+  return (
+    <div style={{background:"#f0ede8",minHeight:"100vh",paddingBottom:80}}>
+
+      {/* Hero header */}
+      <div style={{background:"linear-gradient(160deg,#060818,#0a0e20,#0c1028)",
+        padding:"22px 20px 20px",position:"relative",overflow:"hidden"}}>
+        {/* Stars */}
+        {[[6,10],[18,55],[8,80],[28,30],[24,70],[14,92],[30,48]].map(function(s,i){
+          return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,
+            background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",
+            opacity:0.35,animation:"twinkle "+(2+i*0.3)+"s ease-in-out infinite "+(i*0.4)+"s"}}/>;
+        })}
+        <div style={{maxWidth:680,margin:"0 auto",position:"relative"}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+            letterSpacing:"0.45em",textTransform:"uppercase",
+            color:"rgba(100,150,255,0.65)",marginBottom:5}}>Card Dynasty · Predictions</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:32,fontWeight:900,
+            letterSpacing:"0.03em",textTransform:"uppercase",lineHeight:0.95,color:"#fff",
+            marginBottom:6}}>Playoff<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Predictor</em></div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,
+            color:"rgba(255,255,255,0.45)",marginBottom:16,lineHeight:1.5}}>
+            Pick tonight's winners. Get it right: <span style={{color:"#f5c518",fontWeight:700}}>+{PREDICTION_REWARD_COINS.toLocaleString()} coins</span> and <span style={{color:"#cc88ff",fontWeight:700}}>+{PREDICTION_REWARD_XP.toLocaleString()} XP</span> per game.
+          </div>
+          {/* Progress chips */}
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+            <div style={{display:"flex",gap:4}}>
+              {MATCHUPS.map(function(m,i){
+                var picked = !!preds[m.id];
+                return <div key={i} style={{width:10,height:10,borderRadius:"50%",
+                  background:picked?"#f5c518":"rgba(255,255,255,0.12)",
+                  border:"1px solid rgba(255,255,255,0.2)",
+                  boxShadow:picked?"0 0 6px rgba(245,197,24,0.7)":"none",
+                  transition:"all 0.2s"}}/>;
+              })}
+            </div>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+              letterSpacing:"0.15em",textTransform:"uppercase",
+              color:allPicked?"#f5c518":"rgba(255,255,255,0.35)"}}>
+              {predCount}/{MATCHUPS.length} picked{allPicked?" · All in!":""}
+            </span>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,
+              color:"rgba(255,255,255,0.25)",letterSpacing:"0.1em",textTransform:"uppercase"}}>
+              {PREDICTION_DATE}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{maxWidth:680,margin:"0 auto",padding:"16px 16px 20px"}}>
+
+        {/* Results revealed banner */}
+        {results&&<div style={{background:"linear-gradient(90deg,rgba(34,170,68,0.15),rgba(34,200,80,0.08))",
+          border:"1px solid rgba(34,170,68,0.35)",padding:"12px 16px",marginBottom:16,
+          display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+          <span style={{fontSize:20}}>📋</span>
+          <div style={{flex:1}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,
+              letterSpacing:"0.12em",textTransform:"uppercase",color:"#22cc55"}}>Results In — Check Your Picks!</div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"rgba(255,255,255,0.5)",marginTop:1}}>
+              Correct picks earn {PREDICTION_REWARD_COINS} coins + {PREDICTION_REWARD_XP} XP. Tap Claim on your winners.
+            </div>
+          </div>
+        </div>}
+
+        {/* Matchup cards */}
+        <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:16}}>
+          {MATCHUPS.map(function(m){
+            var myPick   = preds[m.id];
+            var winner   = results && results[m.id];
+            var isCorrect= myPick && winner && myPick === winner;
+            var isWrong  = myPick && winner && myPick !== winner;
+            var alrClaimed = claimed.includes(m.id);
+            var comm     = community[m.id] || {};
+            var homePct  = comm[m.home] || 50;
+            var awayPct  = comm[m.away] || 50;
+            // How many (simulated) total voters — add 10 community base
+            var totalVoters = 10 + (myPick ? 1 : 0);
+
+            return (
+              <div key={m.id} style={{background:"#fff",border:"1px solid #e0ddd8",
+                borderTop:"3px solid "+(isCorrect?"#22aa55":isWrong?"#e8161e":myPick?"#4488ff":"#e0ddd8"),
+                overflow:"hidden",
+                boxShadow:isCorrect?"0 0 16px rgba(34,170,68,0.12)":isWrong?"0 0 16px rgba(232,22,30,0.08)":"none",
+                transition:"border-color 0.2s,box-shadow 0.2s"}}>
+
+                {/* Game info strip */}
+                <div style={{background:"#f8f6f2",borderBottom:"1px solid #ede9e4",
+                  padding:"8px 14px",display:"flex",alignItems:"center",
+                  justifyContent:"space-between",gap:8,flexWrap:"wrap"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <div style={{width:7,height:7,borderRadius:"50%",background:"#e8161e",
+                      animation:"pulse 1s ease-in-out infinite"}}/>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                      letterSpacing:"0.12em",textTransform:"uppercase",color:"#888"}}>{m.series}</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,fontWeight:700,
+                      color:"#333"}}>{m.time}</span>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,
+                      fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",
+                      color:"#aaa"}}>{totalVoters} picking</span>
+                  </div>
+                </div>
+
+                {/* Team buttons */}
+                <div style={{display:"flex",padding:"14px 14px 10px",gap:8,alignItems:"stretch"}}>
+                  {[
+                    {team:m.home, code:m.homeCode, color:m.homeColor, record:m.homeRecord},
+                    {team:m.away, code:m.awayCode, color:m.awayColor, record:m.awayRecord},
+                  ].map(function(t){
+                    var isPicked  = myPick === t.team;
+                    var isWinner  = winner === t.team;
+                    var isLoser   = winner && winner !== t.team;
+                    var pct = t.team===m.home ? homePct : awayPct;
+                    return (
+                      <button key={t.team}
+                        onClick={function(){pickTeam(m.id, t.team);}}
+                        disabled={!!results}
+                        style={{
+                          flex:1,padding:"12px 10px",border:"none",cursor:results?"default":"pointer",
+                          background:isWinner?"linear-gradient(135deg,rgba(34,170,68,0.12),rgba(34,200,80,0.06))"
+                            :isLoser?"rgba(0,0,0,0.03)"
+                            :isPicked?(t.color+"18"):"#faf8f5",
+                          borderRadius:2,
+                          outline:"2.5px solid "+(isWinner?"#22aa55":isLoser?"#eee":isPicked?t.color:"#e8e4e0"),
+                          transition:"all 0.18s",
+                          transform:isPicked&&!results?"scale(1.01)":"scale(1)",
+                          opacity:isLoser?0.5:1,
+                          position:"relative",overflow:"hidden",
+                        }}>
+                        {/* Winner/loser badge */}
+                        {isWinner&&<div style={{position:"absolute",top:0,right:0,
+                          background:"#22aa55",padding:"2px 7px"}}>
+                          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                            fontWeight:900,color:"#fff",letterSpacing:"0.1em"}}>WIN</span>
+                        </div>}
+                        {isLoser&&<div style={{position:"absolute",top:0,right:0,
+                          background:"#e0ddd8",padding:"2px 7px"}}>
+                          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                            fontWeight:900,color:"#aaa",letterSpacing:"0.1em"}}>LOSS</span>
+                        </div>}
+                        {/* Team code big */}
+                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,
+                          letterSpacing:"0.04em",color:isPicked?t.color:"#ccc",lineHeight:1,
+                          marginBottom:3,transition:"color 0.15s"}}>{t.code}</div>
+                        {/* Team name */}
+                        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                          letterSpacing:"0.06em",textTransform:"uppercase",
+                          color:isPicked?"#111":"#888",marginBottom:1}}>{t.team}</div>
+                        {/* Record */}
+                        <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:10,
+                          color:"#aaa",marginBottom:8}}>{t.record}</div>
+                        {/* Your pick badge */}
+                        {isPicked&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                          fontWeight:900,letterSpacing:"0.1em",textTransform:"uppercase",
+                          background:t.color,color:"#fff",padding:"2px 8px",
+                          display:"inline-block",marginBottom:2}}>
+                          {isCorrect?"✓ Correct":isWrong?"✗ Wrong":"Your Pick"}
+                        </div>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Community bar */}
+                <div style={{padding:"0 14px 12px"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+                      letterSpacing:"0.2em",textTransform:"uppercase",color:"#bbb"}}>Community</span>
+                    <div style={{flex:1,height:1,background:"#ede9e4"}}/>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                      color:"#ccc",letterSpacing:"0.1em"}}>{totalVoters} votes</span>
+                  </div>
+                  <div style={{display:"flex",height:24,overflow:"hidden",borderRadius:2,
+                    border:"1px solid #ede9e4"}}>
+                    {/* Home team bar */}
+                    <div style={{width:homePct+"%",background:m.homeColor,
+                      display:"flex",alignItems:"center",justifyContent:homePct>18?"center":"flex-end",
+                      paddingRight:homePct<=18?4:0,
+                      transition:"width 0.8s cubic-bezier(0.4,0,0.2,1)",
+                      position:"relative",overflow:"hidden",flexShrink:0}}>
+                      {/* Subtle shimmer */}
+                      <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(255,255,255,0) 40%,rgba(255,255,255,0.15) 60%,rgba(255,255,255,0) 80%)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
+                      {homePct>12&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:900,
+                        color:"rgba(255,255,255,0.9)",letterSpacing:"0.06em",position:"relative",
+                        textShadow:"0 1px 3px rgba(0,0,0,0.4)"}}>{homePct}%</span>}
+                    </div>
+                    {/* Away team bar */}
+                    <div style={{flex:1,background:m.awayColor,
+                      display:"flex",alignItems:"center",justifyContent:awayPct>18?"center":"flex-start",
+                      paddingLeft:awayPct<=18?4:0,
+                      position:"relative",overflow:"hidden"}}>
+                      <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(255,255,255,0) 40%,rgba(255,255,255,0.15) 60%,rgba(255,255,255,0) 80%)",animation:"shimmerSweep 2.5s ease-in-out infinite 0.5s"}}/>
+                      {awayPct>12&&<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:900,
+                        color:"rgba(255,255,255,0.9)",letterSpacing:"0.06em",position:"relative",
+                        textShadow:"0 1px 3px rgba(0,0,0,0.4)"}}>{awayPct}%</span>}
+                    </div>
+                  </div>
+                  {/* Labels below bar */}
+                  <div style={{display:"flex",justifyContent:"space-between",marginTop:3}}>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                      fontWeight:700,color:m.homeColor,letterSpacing:"0.04em"}}>{m.homeCode} {homePct}%</span>
+                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
+                      fontWeight:700,color:m.awayColor,letterSpacing:"0.04em"}}>{awayPct}% {m.awayCode}</span>
+                  </div>
+                </div>
+
+                {/* Claim reward row */}
+                {results&&myPick&&(
+                  <div style={{borderTop:"1px solid #ede9e4",padding:"10px 14px",
+                    background:isCorrect?"rgba(34,170,68,0.04)":"rgba(0,0,0,0.01)",
+                    display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
+                    {isCorrect?(
+                      <>
+                        <div>
+                          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+                            color:"#22aa55",letterSpacing:"0.06em",textTransform:"uppercase"}}>
+                            🎯 Correct! +{PREDICTION_REWARD_COINS}🪙 +{PREDICTION_REWARD_XP} XP
+                          </span>
+                        </div>
+                        {!alrClaimed
+                          ?<button onClick={function(){claimReward(m.id);}}
+                            style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:900,
+                              letterSpacing:"0.1em",textTransform:"uppercase",padding:"7px 18px",
+                              border:"none",cursor:"pointer",background:"#22aa55",color:"#fff",
+                              animation:"claimPulse 1.5s ease-in-out infinite",flexShrink:0}}>
+                            Claim →
+                          </button>
+                          :<span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,
+                            color:"#22aa55",letterSpacing:"0.06em",textTransform:"uppercase",
+                            background:"#e8f5ec",border:"1px solid #c8e8d0",padding:"4px 10px"}}>
+                            ✓ Claimed
+                          </span>
+                        }
+                      </>
+                    ):(
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+                        color:"#aaa",letterSpacing:"0.06em",textTransform:"uppercase"}}>
+                        ✗ Wrong pick — better luck next game
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Reward info card */}
+        <div style={{background:"#fff",border:"1px solid #e0ddd8",borderTop:"3px solid #7733cc",
+          padding:"16px 18px",marginBottom:14}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,
+            letterSpacing:"0.08em",textTransform:"uppercase",color:"#111",marginBottom:10}}>Reward Per Correct Pick</div>
+          <div style={{display:"flex",gap:0,overflow:"hidden",border:"1px solid #ede9e4"}}>
+            {[
+              {label:"Coins",val:"+"+PREDICTION_REWARD_COINS,color:"#c8a800",icon:"🪙"},
+              {label:"Season XP",val:"+"+PREDICTION_REWARD_XP,color:"#7733cc",icon:"⚡"},
+              {label:"Max (4/4)",val:"+"+(PREDICTION_REWARD_COINS*4)+"🪙",color:"#22aa55",icon:"🏆"},
+            ].map(function(s,i){
+              return <div key={i} style={{flex:1,padding:"10px 8px",textAlign:"center",
+                borderRight:i<2?"1px solid #ede9e4":"none"}}>
+                <div style={{fontSize:16,marginBottom:3}}>{s.icon}</div>
+                <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,
+                  color:s.color,lineHeight:1}}>{s.val}</div>
+                <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+                  letterSpacing:"0.12em",textTransform:"uppercase",color:"#bbb",marginTop:2}}>{s.label}</div>
+              </div>;
+            })}
+          </div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#aaa",marginTop:10,lineHeight:1.5}}>
+            Results are revealed after game time. XP counts toward your Dynasty Path level.
+          </div>
+        </div>
+
+        {/* Dev / demo reveal button — shows in dev, hidden in prod you can remove */}
+        {!results&&<button onClick={revealResults}
+          style={{width:"100%",fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+            letterSpacing:"0.12em",textTransform:"uppercase",padding:"10px",
+            border:"1px dashed #ccc",cursor:"pointer",background:"transparent",color:"#bbb"}}>
+          ◈ Demo: Reveal Results
+        </button>}
+      </div>
+    </div>
+  );
+}
+
 function RingProgress(props) {
   var pct=props.pct; var size=props.size||80; var stroke=props.stroke||7; var color=props.color||"#f5c518";
   var r=(size-stroke*2)/2; var circ=2*Math.PI*r;
@@ -5685,7 +6141,7 @@ export default function App() {
   }
   var sorted=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var counts={};inventory.forEach(function(c){counts[c.rarity]=(counts[c.rarity]||0)+1;});
-  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"highlo",label:"🃏 High/Low"},{id:"path",label:"👑 Season Pass"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
+  var coreTabs=[{id:"live",label:"🔴 Live"},{id:"shop",label:"Shop"},{id:"market",label:"Exchange"},{id:"inventory",label:"Cards ("+inventory.length+")"},{id:"grading",label:"⬡ Slab Lab"},{id:"predict",label:"🎯 Predict"},{id:"highlo",label:"🃏 High/Low"},{id:"path",label:"👑 Season Pass"},{id:"social",label:"Social"},{id:"rankings",label:"Rankings"},{id:"profile",label:"Profile"}];
   if(tab==="opening")coreTabs.splice(2,0,{id:"opening",label:"Opening..."});
   if(!authReady) return (
     <div style={{background:"#fff",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -5871,6 +6327,13 @@ export default function App() {
           </div>
           <GradingLab inventory={inventory} balance={balance} userId={userId} onGrade={handleGradeCard} onBack={function(){setTab("inventory");}}/>
         </div>}
+        {tab==="predict"&&<PlayoffPredictor
+          userId={userId}
+          balance={balance}
+          onAddXp={addXp}
+          onBalChange={setBalance}
+          onNotif={function(t,m,type){pushNotif(t,m,type);}}
+          dbSave={dbSaveProfile}/>}
         {tab==="highlo"&&<div style={{maxWidth:560,margin:"0 auto"}}>
           <div style={{padding:"12px 16px 0"}}>
             <ContextTip id="highlo_tip" icon="🃏" color="#7733cc" tip={"Bet "+HIGHLO_WAGER+" coins per round. Guess if the next card's daily yield is higher or lower. Every correct guess doubles the pot. Cash out before you miss!"+( isGameNightBonus()?" 🏒 Game Night Bonus is LIVE — payouts doubled tonight!":"")}/>
