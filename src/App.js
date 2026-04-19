@@ -2829,7 +2829,7 @@ function Leaderboard(props) {
   var userInitials=(profile&&profile.avatarInitials)||"ME";
   var userColor=(profile&&profile.avatarColor)||"#f5c518";
   var userName=(profile&&profile.username)||"You";
-  var userPlayer={id:"__me",name:userName,avatar:userInitials,color:userColor,favTeam:(profile&&profile.favTeam)||"",yield:userYield,power:userPower,isUser:true};
+  var userPlayer={id:"__me",name:userName,avatar:userInitials,color:userColor,favTeam:(profile&&profile.favTeam)||"",yield:userYield,power:userPower,coins:balance||0,isUser:true};
   useEffect(function(){
     if(!supabase){setLoading(false);return;}
     // Fetch profiles + coins as source of truth — users exist even if user_cards is empty
@@ -2854,7 +2854,9 @@ function Leaderboard(props) {
       });
     });
   },[]);
-  var allPlayers=players.filter(function(p){return p.id!=="__me";}).concat([userPlayer]).sort(function(a,b){return mode==="yield"?b.yield-a.yield:b.power-a.power;});
+  var allPlayers=players.filter(function(p){return p.id!=="__me";}).concat([userPlayer]).sort(function(a,b){
+    return mode==="yield"?b.yield-a.yield:mode==="coins"?b.coins-a.coins:b.power-a.power;
+  });
   var userRank=allPlayers.findIndex(function(p){return p.isUser;})+1;
   var top3=allPlayers.slice(0,3); var rest=allPlayers.slice(3);
   var podiumOrder=[top3[1],top3[0],top3[2]].filter(Boolean);
@@ -2866,8 +2868,8 @@ function Leaderboard(props) {
         <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Live leaderboard · Real players</div>
       </div>
       {/* Mode toggle */}
-      <div style={{display:"flex",gap:6,marginBottom:24}}>
-        {[["yield","🪙 Highest Yield"],["power","⚡ Collection Power"]].map(function(pair){
+      <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"wrap"}}>
+        {[["yield","🪙 Highest Yield"],["coins","💰 Most Coins"],["power","⚡ Collection Power"]].map(function(pair){
           var active=mode===pair[0];
           return <button key={pair[0]} onClick={function(){setMode(pair[0]);}}
             style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase",padding:"7px 18px",border:"1.5px solid "+(active?"#e8161e":"#ddd"),background:active?"#e8161e":"transparent",color:active?"#fff":"#888",cursor:"pointer"}}>
@@ -2885,7 +2887,7 @@ function Leaderboard(props) {
         <div style={{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:8,marginBottom:24}}>
           {podiumOrder.map(function(player,pi){
             var rank=podiumRanks[pi]; var h=podiumHeights[pi]; var col=podiumColors[pi]; var isFirst=rank===1;
-            var val=mode==="yield"?fmt(player.yield)+"/d":fmt(player.power)+" pts";
+            var val=mode==="yield"?fmt(player.yield)+"/d":mode==="coins"?fmt(player.coins)+"🪙":fmt(player.power)+" pts";
             return <div key={player.id||player.name} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
               {isFirst&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:900,color:"#e8161e",letterSpacing:"0.2em",textTransform:"uppercase",background:"rgba(232,22,30,0.08)",border:"1px solid rgba(232,22,30,0.2)",padding:"2px 10px",marginBottom:2}}>Dynasty King</div>}
               <div style={{width:isFirst?44:36,height:isFirst?44:36,background:player.color||"#e8161e",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:isFirst?"0 4px 16px rgba(232,22,30,0.3)":"none"}}>
@@ -2904,7 +2906,8 @@ function Leaderboard(props) {
       <div style={{display:"flex",flexDirection:"column",gap:4}}>
         {rest.map(function(player,i){
           var rank=i+4; var isUser=player.isUser;
-          var val=mode==="yield"?fmt(player.yield)+"/day":fmt(player.power)+" pts";
+          var val=mode==="yield"?fmt(player.yield)+"/day":mode==="coins"?fmt(player.coins)+"🪙":fmt(player.power)+" pts";
+          var valLabel=mode==="yield"?"yield":mode==="coins"?"coins":"power";
           return <div key={player.id||player.name}
             onMouseEnter={function(){setHovered(rank);}} onMouseLeave={function(){setHovered(null);}}
             style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",background:"#fff",border:"1px solid "+(isUser?"#e8161e":"#e0ddd8"),borderLeft:"3px solid "+(isUser?"#e8161e":"transparent"),transition:"all 0.12s",cursor:"pointer"}}
@@ -2921,7 +2924,7 @@ function Leaderboard(props) {
             </div>
             <div style={{textAlign:"right",flexShrink:0}}>
               <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:isUser?"#e8161e":"#333"}}>{val}</div>
-              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#aaa"}}>{mode==="yield"?"yield":"power"}</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#aaa"}}>{valLabel}</div>
             </div>
           </div>;
         })}
@@ -2938,8 +2941,12 @@ function Leaderboard(props) {
           </div>
         </div>
         <div style={{textAlign:"right"}}>
-          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#c8a800"}}>{fmt(userYield)}/day</div>
-          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:12,color:"#7733cc"}}>{fmt(userPower)} pts</div>
+          <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:"#c8a800"}}>
+            {mode==="yield"?fmt(userYield)+"/day":mode==="coins"?fmt(balance||0)+"🪙":fmt(userPower)+" pts"}
+          </div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase",color:"#aaa"}}>
+            {mode==="yield"?"daily yield":mode==="coins"?"coins":"power"}
+          </div>
         </div>
       </div>
     </div>
