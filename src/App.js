@@ -4070,16 +4070,36 @@ function SeasonPassPage(props) {
 // ── HIGH / LOW MINI-GAME ──────────────────────────────────────────────────────
 var HIGHLO_WAGER = 50;
 var HIGHLO_RATES = {Base:38,Rare:28,Elite:16,Legacy:9,Legendary:6,Dynasty:3};
-// NHL Finale live games — April 15 2026
 var HIGHLO_LIVE_GAMES = ["Rangers vs. Lightning","Stars vs. Sabres"];
-var HIGHLO_BONUS_START = 19; // 7 PM ET
-var HIGHLO_BONUS_END   = 22; // 10 PM ET
+var HIGHLO_BONUS_START = 19;
+var HIGHLO_BONUS_END   = 22;
+var HIGHLO_MULTIPLIERS = [2, 2, 1.75, 1.5, 1.5, 1.25, 1.25, 1.25];
+// Narrow jitter — just enough to prevent memorisation, not enough to feel random
+var HIGHLO_JITTER = {Base:8, Rare:10, Elite:14, Legacy:20, Legendary:25, Dynasty:30};
 
 function isGameNightBonus() {
-  // Use ET offset: UTC-4 (EDT in April)
   var now = new Date();
   var etH = (now.getUTCHours() - 4 + 24) % 24;
   return etH >= HIGHLO_BONUS_START && etH < HIGHLO_BONUS_END;
+}
+
+// Draw a card with jitter applied so yield is never a predictable fixed number
+function drawHighLoCard() {
+  var card = genCard(HIGHLO_RATES, null, null);
+  var jitter = HIGHLO_JITTER[card.rarity] || 20;
+  // Add random offset: base ± jitter, always positive
+  card.daily = Math.max(1, card.daily + Math.floor((Math.random() * 2 - 1) * jitter));
+  return card;
+}
+
+// Pot multiplier for current streak index (0-based)
+function getMultiplier(streak) {
+  return HIGHLO_MULTIPLIERS[Math.min(streak, HIGHLO_MULTIPLIERS.length - 1)];
+}
+
+// Apply multiplier to pot, round to nearest 5
+function applyMultiplier(pot, streak) {
+  return Math.round(pot * getMultiplier(streak) / 5) * 5;
 }
 
 function HighLoCard(props) {
@@ -4188,14 +4208,12 @@ function HighLoGame(props) {
   var userId=props.userId; var onAddXp=props.onAddXp; var onNotif=props.onNotif;
   var dbSave=props.dbSave;
 
-  // Game state machine: idle → betting → guessing → revealing → result → cashedout
   var phaseState=useState("idle"); var phase=phaseState[0]; var setPhase=phaseState[1];
   var cardAState=useState(null); var cardA=cardAState[0]; var setCardA=cardAState[1];
   var cardBState=useState(null); var cardB=cardBState[0]; var setCardB=cardBState[1];
   var streakState=useState(0); var streak=streakState[0]; var setStreak=streakState[1];
   var potState=useState(0); var pot=potState[0]; var setPot=potState[1];
   var resultState=useState(null); var result=resultState[0]; var setResult=resultState[1];
-  // reveal animation
   var flipState=useState(false); var flipped=flipState[0]; var setFlipped=flipState[1];
   var mountedState=useState(false); var mounted=mountedState[0]; var setMounted=mountedState[1];
   var shakeState=useState(false); var shaking=shakeState[0]; var setShaking=shakeState[1];
@@ -4205,14 +4223,11 @@ function HighLoGame(props) {
   var bonus = isGameNightBonus();
   var highStakes = pot >= 500;
   var canAfford = balance >= HIGHLO_WAGER;
-
-  function drawCard() {
-    return genCard(HIGHLO_RATES, null, null);
-  }
+  var nextMult = getMultiplier(streak);
 
   function startGame() {
     if (!canAfford) return;
-    var a = drawCard();
+    var a = drawHighLoCard();
     setCardA(a); setCardB(null); setFlipped(false);
     setStreak(0); setPot(HIGHLO_WAGER); setResult(null);
     onBalanceChange(balance - HIGHLO_WAGER);
@@ -4222,29 +4237,27 @@ function HighLoGame(props) {
   }
 
   function guess(dir) {
-    // dir: "higher" | "lower"
-    var b = drawCard();
+    var b = drawHighLoCard();
     setCardB(b); setFlipped(false);
     setPhase("revealing");
-    // Slight delay so player sees card back first, then flip
     setTimeout(function() { setFlipped(true); }, 350);
     setTimeout(function() { resolveGuess(dir, cardA, b); }, 1100);
   }
 
   function resolveGuess(dir, a, b) {
     var correct = dir==="higher" ? b.daily > a.daily : b.daily < a.daily;
-    // Tie = push (no win no lose, redraw) — treat as correct to avoid frustration
-    if (b.daily === a.daily) correct = true;
     if (correct) {
-      var newPot = pot * 2;
       var newStreak = streak + 1;
-      setPot(newPot); setStreak(newStreak);
-      setResult({correct:true, dir, aYield:a.daily, bYield:b.daily, tie:b.daily===a.daily});
+      var newPot = applyMultiplier(pot, streak);
+      setStreak(newStreak); setPot(newPot);
+      setResult({correct:true, dir, aYield:a.daily, bYield:b.daily,
+        mult:getMultiplier(streak), newPot:newPot});
       setCardA(b); setCardB(null); setFlipped(false);
       if (onAddXp) onAddXp(10);
       setPhase("guessing");
     } else {
-      setResult({correct:false, dir, aYield:a.daily, bYield:b.daily});
+      var isTie = b.daily === a.daily;
+      setResult({correct:false, dir, aYield:a.daily, bYield:b.daily, tie:isTie});
       setShaking(true);
       setTimeout(function(){setShaking(false);},600);
       setPhase("lost");
@@ -4252,11 +4265,11 @@ function HighLoGame(props) {
   }
 
   function cashOut() {
-    var finalPot = bonus ? pot * 2 : pot;
+    var finalPot = bonus ? Math.round(pot * 2 / 5) * 5 : pot;
     onBalanceChange(balance + finalPot);
     if (userId) dbSave(userId, {coins: balance + finalPot});
-    if (onAddXp) onAddXp(streak * 5); // bonus XP for cashing out with a streak
-    if (onNotif) onNotif("Cashed Out! 💰", "+"+fmt(finalPot)+" coins"+(bonus?" (2× Game Night Bonus!)":"")+" · Streak: "+streak, "sale");
+    if (onAddXp) onAddXp(streak * 5);
+    if (onNotif) onNotif("Cashed Out! 💰", "+"+fmt(finalPot)+" coins"+(bonus?" (2× Bonus!)":"")+" · Streak: ×"+streak, "sale");
     setPhase("cashedout");
   }
 
@@ -4318,50 +4331,60 @@ function HighLoGame(props) {
         <div style={{display:"flex",gap:0,marginBottom:16,border:"1px solid rgba(245,197,24,0.18)",overflow:"hidden"}}>
           {[
             {label:"Wager",val:fmt(HIGHLO_WAGER)+"🪙",color:"#888"},
-            {label:"Pot",val:fmt(bonus&&phase!=="idle"?pot*2:pot)+"🪙",color:highStakes?"#f5c518":"#fff"},
+            {label:"Pot",val:fmt(bonus&&phase!=="idle"?Math.round(pot*2/5)*5:pot)+"🪙",color:highStakes?"#f5c518":"#fff"},
+            {label:"Next ×",val:nextMult+"×",color:nextMult>=2?"#22cc88":nextMult>=1.5?"#f5c518":"#ff8844"},
             {label:"Streak",val:"×"+streak,color:streak>=3?"#f5c518":streak>=1?"#ff8844":"#555"},
           ].map(function(s,i){
-            return <div key={i} style={{flex:1,padding:"8px 10px",textAlign:"center",
-              borderRight:i<2?"1px solid rgba(245,197,24,0.15)":"none",
+            return <div key={i} style={{flex:1,padding:"8px 6px",textAlign:"center",
+              borderRight:i<3?"1px solid rgba(245,197,24,0.15)":"none",
               background:highStakes&&s.label==="Pot"?"rgba(245,197,24,0.06)":"transparent",
               boxShadow:highStakes&&s.label==="Pot"?"inset 0 0 20px rgba(245,197,24,0.08)":"none"}}>
-              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
-                letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",marginBottom:2}}>{s.label}</div>
-              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:14,fontWeight:700,color:s.color,
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,fontWeight:700,
+                letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",marginBottom:2}}>{s.label}</div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:13,fontWeight:700,color:s.color,
                 textShadow:highStakes&&s.label==="Pot"?"0 0 12px rgba(245,197,24,0.8)":"none",
                 animation:streak>=3&&s.label==="Streak"?"goldPulse 1s ease-in-out infinite":"none"}}>{s.val}</div>
             </div>;
           })}
         </div>
 
-        {/* ── IDLE ── */}
         {phase==="idle"&&(
-          <div style={{textAlign:"center",padding:"24px 0"}}>
-            <div style={{fontSize:48,marginBottom:12,animation:"showcaseFloat 3s ease-in-out infinite"}}>🃏</div>
+          <div style={{textAlign:"center",padding:"20px 0"}}>
+            <div style={{fontSize:44,marginBottom:10,animation:"showcaseFloat 3s ease-in-out infinite"}}>🃏</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:700,
-              color:"rgba(255,255,255,0.6)",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:4}}>
-              Guess Higher or Lower
+              color:"rgba(255,255,255,0.6)",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:12}}>
+              High / Low
             </div>
-            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,
-              color:"rgba(255,255,255,0.35)",lineHeight:1.6,marginBottom:20,maxWidth:320,margin:"0 auto 20px"}}>
-              A card is drawn. Guess if the next card's daily yield is higher or lower.
-              Correct = pot doubles. Wrong = wager lost.
-              {bonus&&<span style={{color:"#f5c518",display:"block",marginTop:4,fontWeight:600}}>Tonight: all payouts 2× (Game Night Bonus)</span>}
+            <div style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",
+              padding:"12px 16px",marginBottom:16,textAlign:"left",maxWidth:340,margin:"0 auto 16px"}}>
+              {[
+                {icon:"🎯",text:"Guess if next card's yield is higher or lower"},
+                {icon:"📈",text:"Pot multiplier slows as streak grows (2× → 1.25×)"},
+                {icon:"⚠️",text:"Ties count as a loss — no free re-roll"},
+                {icon:"💰",text:"Max payout ~800 coins at streak ×8"},
+              ].map(function(r,i){
+                return <div key={i} style={{display:"flex",gap:8,alignItems:"flex-start",
+                  padding:"5px 0",borderBottom:i<3?"1px solid rgba(255,255,255,0.05)":"none"}}>
+                  <span style={{fontSize:13,flexShrink:0,marginTop:1}}>{r.icon}</span>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+                    color:"rgba(255,255,255,0.45)",lineHeight:1.4}}>{r.text}</span>
+                </div>;
+              })}
             </div>
             <button onClick={startGame} disabled={!canAfford}
               style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
                 letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 40px",
                 border:"none",cursor:canAfford?"pointer":"not-allowed",
-                background:canAfford
-                  ?"linear-gradient(90deg,#7733cc,#9933ff,#7733cc)"
-                  :"#222",
+                background:canAfford?"linear-gradient(90deg,#7733cc,#9933ff,#7733cc)":"#222",
                 color:canAfford?"#fff":"#555",
                 backgroundSize:"200% auto",animation:canAfford?"balShimmer 3s linear infinite":"none",
                 boxShadow:canAfford?"0 0 24px rgba(153,51,255,0.45)":"none"}}>
               {canAfford?"Play — "+HIGHLO_WAGER+" Coins":"Need "+HIGHLO_WAGER+" Coins"}
             </button>
+            {bonus&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+              color:"#f5c518",marginTop:10,fontWeight:600}}>🏒 Tonight: all payouts 2× (Game Night Bonus)</div>}
             {!canAfford&&<div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
-              color:"rgba(255,255,255,0.3)",marginTop:10}}>Visit the Shop to buy packs and earn coins.</div>}
+              color:"rgba(255,255,255,0.3)",marginTop:8}}>Visit the Shop to earn more coins.</div>}
           </div>
         )}
 
@@ -4375,11 +4398,12 @@ function HighLoGame(props) {
                 <span style={{fontSize:16}}>✅</span>
                 <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
                   letterSpacing:"0.1em",textTransform:"uppercase",color:"#22cc55"}}>
-                  {result.tie?"Push (Tie) — no loss!":"Correct! "}
-                  {!result.tie&&<span style={{color:"rgba(255,255,255,0.5)"}}>
-                    {result.aYield}<span style={{color:"#fff",margin:"0 4px"}}>{result.dir==="higher"?"<":">"}</span>{result.bYield} /d
-                  </span>}
-                  <span style={{color:"#f5c518",marginLeft:6}}>+10 XP</span>
+                  Correct! {result.aYield}
+                  <span style={{color:"#fff",margin:"0 4px"}}>{result.dir==="higher"?"<":">"}</span>
+                  {result.bYield} /d
+                  <span style={{color:"rgba(255,255,255,0.4)",marginLeft:4}}>× {result.mult} → </span>
+                  <span style={{color:"#f5c518"}}>{fmt(result.newPot)}🪙</span>
+                  <span style={{color:"rgba(200,150,255,0.7)",marginLeft:6}}>+10 XP</span>
                 </div>
               </div>
             )}
@@ -4489,12 +4513,13 @@ function HighLoGame(props) {
               letterSpacing:"0.06em",textTransform:"uppercase",color:"#e8161e",marginBottom:6}}>Wrong Guess</div>
             <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,
               color:"rgba(255,255,255,0.45)",marginBottom:4}}>
-              You guessed <strong style={{color:"#fff"}}>{result.dir}</strong> —
-              card had <strong style={{color:"#f5c518"}}>{fmt(result.bYield)}/d</strong> (card A was <strong style={{color:"rgba(255,255,255,0.6)"}}>{fmt(result.aYield)}/d</strong>)
+              {result.tie
+                ?"Tied at "+fmt(result.bYield)+"/d — ties count as a loss"
+                :<span>You guessed <strong style={{color:"#fff"}}>{result.dir}</strong> — card had <strong style={{color:"#f5c518"}}>{fmt(result.bYield)}/d</strong> (card A was <strong style={{color:"rgba(255,255,255,0.6)"}}>{fmt(result.aYield)}/d</strong>)</span>}
             </div>
             <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,
               color:"rgba(255,255,255,0.3)",marginBottom:20}}>
-              Streak was ×{streak} · Pot of {fmt(pot)} coins lost
+              Streak ×{streak} · {fmt(pot)} coins lost
             </div>
             <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
               <button onClick={startGame} disabled={!canAfford}
