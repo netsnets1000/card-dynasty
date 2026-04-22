@@ -198,7 +198,16 @@ var PACK_TYPES=[
   {id:"hobbybox",name:"Hobby Box",         subtitle:"6 Division Jumbos · 60 cards",    cost:18000,cards:60, sport:null, rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:"Legacy", badge:"HOBBY BOX", bundle:{type:"hobby",count:6,base:"jumbo"}},
 ];
 
-// ── RADIOACTIVE — 10 worldwide, 4× harder than Dynasty ──────────────────────
+// ── COLLECTION CAP ───────────────────────────────────────────────────────────
+var COLLECTION_CAP = 500; // hard limit — trims lowest rarity first when exceeded
+function trimToLimit(cards) {
+  if(cards.length <= COLLECTION_CAP) return cards;
+  // Sort by rarity value (keep best cards) — Radioactive=0 (best), Base=6 (worst)
+  var sorted = cards.slice().sort(function(a,b){
+    return ORDER.indexOf(a.rarity) - ORDER.indexOf(b.rarity);
+  });
+  return sorted.slice(0, COLLECTION_CAP);
+}
 var RADIOACTIVE_MAX = 10;
 var RADIOACTIVE_DAILY = 400; // highest yield in the game
 var RADIOACTIVE_WIN   = 2500;
@@ -2546,6 +2555,8 @@ function Shop(props) {
   },[]);
   var radRemaining=RADIOACTIVE_MAX-radClaimed;
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
+  var atCap=props.cardCount>=COLLECTION_CAP;
+  var nearCap=props.cardCount>=COLLECTION_CAP*0.9;
   var special=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&(p.playoffOnly||p.motorCity||p.sovereign||p.id==="basic");});
   var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic"&&!p.rivalryBox&&!p.allStar&&!p.blackBox&&p.id!=="rookierush";});
   var newSpecial=PACK_TYPES.filter(function(p){return p.rivalryBox||p.allStar||p.blackBox||p.id==="rookierush";});
@@ -2637,6 +2648,27 @@ function Shop(props) {
         <div className="topps-section-title">Wax Wall</div>
         {pityCount>0&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#e8161e",letterSpacing:"0.1em",textTransform:"uppercase",marginTop:4}}>Pity {pityCount}/10 — Elite+ due soon</div>}
       </div>
+
+      {/* ── COLLECTION CAP WARNING ── */}
+      {nearCap&&<div style={{
+        background:atCap?"linear-gradient(90deg,rgba(232,22,30,0.12),rgba(200,10,10,0.08))":"linear-gradient(90deg,rgba(245,197,24,0.1),rgba(200,140,0,0.06))",
+        border:"1px solid "+(atCap?"rgba(232,22,30,0.4)":"rgba(245,197,24,0.35)"),
+        borderLeft:"3px solid "+(atCap?"#e8161e":"#f5c518"),
+        padding:"10px 14px",marginBottom:14,
+        display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        <span style={{fontSize:18,flexShrink:0}}>{atCap?"🚫":"⚠️"}</span>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,
+            letterSpacing:"0.1em",textTransform:"uppercase",
+            color:atCap?"#e8161e":"#c8a800"}}>
+            {atCap?"Collection Full — "+COLLECTION_CAP+"/"+COLLECTION_CAP+" cards":"Approaching Limit — "+props.cardCount+"/"+COLLECTION_CAP+" cards"}
+          </div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"rgba(0,0,0,0.5)",marginTop:1}}>
+            {atCap?"Sell cards on the Exchange or grade them in the Slab Lab before opening more packs."
+              :"You're almost at the "+COLLECTION_CAP+" card limit. Consider selling Base/Rare cards on the Exchange."}
+          </div>
+        </div>
+      </div>}
 
       {/* ── RADIOACTIVE CHASE BANNER ── */}
       <div style={{background:"linear-gradient(135deg,#000e04,#001a08,#000e04)",
@@ -5760,7 +5792,7 @@ function ProfileView(props) {
   var savedState=useState(false); var justSaved=savedState[0]; var setJustSaved=savedState[1];
   var pickingState=useState(false); var pickingSlot=pickingState[0]; var setPickingSlot=pickingState[1];
   var netWorth=inventory.reduce(function(s,c){return s+c.mp;},0);
-  var collectionPct=Math.min(100,Math.round((inventory.length/90)*100));
+  var collectionPct=Math.min(100,Math.round((inventory.length/COLLECTION_CAP)*100));
   var sortedInv=inventory.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);});
   var rarestCard=sortedInv[0]||null;
   var joinDate=new Date(profile.joinDate||Date.now());
@@ -5956,7 +5988,7 @@ function ProfileView(props) {
             </div>
             <div>
               <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginBottom:3}}>Collection</div>
-              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:16,fontWeight:700,color:"#1155bb"}}>{inventory.length}<span style={{fontSize:12,color:"#aaa"}}>/90</span></div>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:16,fontWeight:700,color:"#1155bb"}}>{inventory.length}<span style={{fontSize:12,color:"#aaa"}}>/{COLLECTION_CAP}</span></div>
             </div>
           </div>
           {rarestCard&&<div style={{background:"#fff",border:"1px solid "+(RCOLORS[rarestCard.rarity]||"#ddd")+"66",borderTop:"3px solid "+(RCOLORS[rarestCard.rarity]||"#ddd"),padding:"14px 12px",display:"flex",alignItems:"center",gap:8}}>
@@ -6660,6 +6692,10 @@ export default function App() {
 
   function buyPack(pt){
     if(balance<pt.cost)return;
+    if(inventory.length>=COLLECTION_CAP){
+      pushNotif("Collection Full","Sell or grade cards before opening more packs. Limit: "+COLLECTION_CAP,"info");
+      return;
+    }
     var newBal=balance-pt.cost;
     setBalance(function(b){return b-pt.cost;});
     var pa=pt.id==="standard"&&pity>=10;
@@ -6716,12 +6752,13 @@ export default function App() {
   }
 
   function finishOpening(){
-    var newInv=opening?opening.cards.concat(inventory):inventory;
+    var combined=opening?opening.cards.concat(inventory):inventory;
+    var newInv=trimToLimit(combined);
+    var trimmed=combined.length-newInv.length;
     if(opening) setInventory(function(){return newInv;});
     setOpening(null);setTab("inventory");setInvSubTab("cards");
     if(opening) addXp((opening.cards||[]).length*100);
-    // Guard: only write to DB after the user's existing cards have been loaded
-    // Prevents overwriting a returning user's collection on a new device
+    if(trimmed>0) pushNotif("Collection Cap",""+trimmed+" low-rarity cards removed — collection limit is "+COLLECTION_CAP,"info");
     if(!dbLoaded) return;
     var uid=userId;
     if(!uid&&supabase){
@@ -6927,7 +6964,7 @@ export default function App() {
           <div style={{padding:"12px 20px 0",maxWidth:960,margin:"0 auto"}}>
             <ContextTip id="shop_tip" icon="📦" color="#1144cc" tip={"Each pack you open earns 100 XP per card. A Hobby Box (60 cards) = 6,000 XP instantly. You're Level "+xpToLevel(xp)+" — need "+(1000-levelXpProgress(xp))+" more XP to reach Level "+(xpToLevel(xp)+1)+". Higher rarity packs also mean better long-term daily yield."}/>
           </div>
-          <Shop balance={balance} onBuy={buyPack} pityCount={pity}/>
+          <Shop balance={balance} onBuy={buyPack} pityCount={pity} cardCount={inventory.length}/>
         </div>}
         {tab==="opening"&&opening&&<OpeningScreen pack={opening.pack} cards={opening.cards} onDone={finishOpening} winners={winners}/>}
         {tab==="market"&&<div>
