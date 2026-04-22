@@ -2533,6 +2533,18 @@ function Shop(props) {
   var sportBg={NFL:"linear-gradient(145deg,#0a1628,#162040)",NBA:"linear-gradient(145deg,#1a0608,#2a0c10)",MLB:"linear-gradient(145deg,#08102a,#101840)",MLS:"linear-gradient(145deg,#051408,#0a2010)",College:"linear-gradient(145deg,#1a0c00,#281800)"};
   var sportAccent={NFL:"#3366cc",NBA:"#cc2233",MLB:"#2255bb",MLS:"#228833",College:"#cc6600"};
   var bundleBg={blaster:"linear-gradient(145deg,#12081e,#1e1030)",megabox:"linear-gradient(145deg,#061420,#0c2030)",hobbybox:"linear-gradient(145deg,#1e0800,#2e1000)"};
+  // Radioactive world counter
+  var radCountState=useState(_radioactiveCount||0); var radClaimed=radCountState[0]; var setRadClaimed=radCountState[1];
+  useEffect(function(){
+    if(typeof supabase!=="undefined"&&supabase){
+      supabase.from("radioactive_cards").select("serial_number",{count:"exact"}).then(function(res){
+        var n=(res&&res.count)||0;
+        _radioactiveCount=n;
+        setRadClaimed(n);
+      });
+    }
+  },[]);
+  var radRemaining=RADIOACTIVE_MAX-radClaimed;
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
   var special=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&(p.playoffOnly||p.motorCity||p.sovereign||p.id==="basic");});
   var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic"&&!p.rivalryBox&&!p.allStar&&!p.blackBox&&p.id!=="rookierush";});
@@ -2624,6 +2636,62 @@ function Shop(props) {
       <div style={{marginBottom:24}}>
         <div className="topps-section-title">Wax Wall</div>
         {pityCount>0&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#e8161e",letterSpacing:"0.1em",textTransform:"uppercase",marginTop:4}}>Pity {pityCount}/10 — Elite+ due soon</div>}
+      </div>
+
+      {/* ── RADIOACTIVE CHASE BANNER ── */}
+      <div style={{background:"linear-gradient(135deg,#000e04,#001a08,#000e04)",
+        border:"1px solid rgba(0,255,60,0.3)",marginBottom:20,overflow:"hidden",position:"relative"}}>
+        {/* Animated green pulse border */}
+        <div style={{position:"absolute",inset:0,border:"1px solid rgba(0,255,60,0.15)",animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none"}}/>
+        <div style={{padding:"14px 16px",display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",position:"relative",zIndex:2}}>
+          {/* Icon + glow */}
+          <div style={{fontSize:32,filter:"drop-shadow(0 0 10px rgba(0,255,60,0.9))",flexShrink:0,animation:"slimePulse 2s ease-in-out infinite"}}>☢️</div>
+          <div style={{flex:1,minWidth:200}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:3}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,
+                letterSpacing:"0.08em",textTransform:"uppercase",
+                color:"#00ff44",textShadow:"0 0 10px rgba(0,255,60,0.7)"}}>Radioactive</span>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
+                letterSpacing:"0.15em",textTransform:"uppercase",
+                background:"rgba(0,255,60,0.15)",border:"1px solid rgba(0,255,60,0.4)",
+                color:"#00ff44",padding:"1px 8px"}}>CHASE CARD</span>
+              <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,
+                color:"rgba(0,255,60,0.6)"}}>
+                {radRemaining>0?radClaimed+" / "+RADIOACTIVE_MAX+" found":"ALL "+RADIOACTIVE_MAX+" CLAIMED"}
+              </span>
+            </div>
+            <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,
+              color:"rgba(255,255,255,0.55)",lineHeight:1.5}}>
+              Only <strong style={{color:"#00ff44"}}>{RADIOACTIVE_MAX} exist in the world</strong>. Every pack you open has a <strong style={{color:"#00ff44"}}>~1 in 4,000</strong> chance of pulling one — across all pack types. Highest yield in the game: <strong style={{color:"#00ff44"}}>{RADIOACTIVE_DAILY}/day</strong>.
+            </div>
+          </div>
+          {/* World counter visual */}
+          <div style={{flexShrink:0,textAlign:"center",minWidth:70}}>
+            <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:28,fontWeight:700,
+              color:radRemaining>0?"#00ff44":"rgba(0,255,60,0.3)",lineHeight:1,
+              textShadow:radRemaining>0?"0 0 16px rgba(0,255,60,0.8)":"none"}}>
+              {radRemaining}
+            </div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,
+              letterSpacing:"0.2em",textTransform:"uppercase",
+              color:"rgba(0,255,60,0.5)",marginTop:2}}>
+              {radRemaining===1?"card left":"cards left"}
+            </div>
+            {/* Pip indicators */}
+            <div style={{display:"flex",gap:3,justifyContent:"center",marginTop:6,flexWrap:"wrap",maxWidth:80}}>
+              {Array.from({length:RADIOACTIVE_MAX}).map(function(_,i){
+                var found=i<radClaimed;
+                return <div key={i} style={{width:7,height:7,borderRadius:"50%",
+                  background:found?"rgba(0,255,60,0.2)":"#00ff44",
+                  border:"1px solid rgba(0,255,60,0.4)",
+                  boxShadow:found?"none":"0 0 5px rgba(0,255,60,0.8)",
+                  transition:"all 0.3s"}}/>;
+              })}
+            </div>
+          </div>
+        </div>
+        {/* Slime drip bottom */}
+        <div style={{height:3,background:"linear-gradient(90deg,transparent,rgba(0,255,60,0.5),rgba(0,200,40,0.8),rgba(0,255,60,0.5),transparent)"}}/>
       </div>
       <div style={{marginBottom:28}}>
         <SectionHead label="Single-Sport Passes · 4 Cards"/>
