@@ -2530,9 +2530,13 @@ function Onboarding(props) {
 function Shop(props) {
   var balance=props.balance; var onBuy=props.onBuy; var pityCount=props.pityCount;
   var motorCityBoost = isMotorCityBoostActive();
+  var sportBg={NFL:"linear-gradient(145deg,#0a1628,#162040)",NBA:"linear-gradient(145deg,#1a0608,#2a0c10)",MLB:"linear-gradient(145deg,#08102a,#101840)",MLS:"linear-gradient(145deg,#051408,#0a2010)",College:"linear-gradient(145deg,#1a0c00,#281800)"};
+  var sportAccent={NFL:"#3366cc",NBA:"#cc2233",MLB:"#2255bb",MLS:"#228833",College:"#cc6600"};
+  var bundleBg={blaster:"linear-gradient(145deg,#12081e,#1e1030)",megabox:"linear-gradient(145deg,#061420,#0c2030)",hobbybox:"linear-gradient(145deg,#1e0800,#2e1000)"};
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
   var special=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&(p.playoffOnly||p.motorCity||p.sovereign||p.id==="basic");});
-  var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic";});
+  var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic"&&!p.rivalryBox&&!p.allStar&&!p.blackBox&&p.id!=="rookierush";});
+  var newSpecial=PACK_TYPES.filter(function(p){return p.rivalryBox||p.allStar||p.blackBox||p.id==="rookierush";});
   var bundles=PACK_TYPES.filter(function(p){return p.bundle;});
 
   function PackCard(p){
@@ -2628,6 +2632,10 @@ function Shop(props) {
       <div style={{marginBottom:28}}>
         <SectionHead label="Special Editions · April 19"/>
         <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{special.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
+      </div>
+      <div style={{marginBottom:28}}>
+        <SectionHead label="Premium Collections"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{newSpecial.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
       <div style={{marginBottom:28}}>
         <SectionHead label="Multi-Sport Packs"/>
@@ -6605,7 +6613,7 @@ export default function App() {
             sport:radCard.sport,
           }).then(function(){});
         }
-        if(onNotif) pushNotif("☢️ RADIOACTIVE PULL!","#"+radCard.serialNumber+" / 10 worldwide!","sale");
+        pushNotif("☢️ RADIOACTIVE PULL!","#"+radCard.serialNumber+" / 10 worldwide - you found one!","sale");
       }
       var hasElite=cards.some(function(c){return ["Elite","Legacy","Legendary","Dynasty","Radioactive"].includes(c.rarity);});
       if(pt.id==="standard")setPity(hasElite?0:function(p){return p+1;});
