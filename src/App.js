@@ -2555,7 +2555,7 @@ function Shop(props) {
   },[]);
   var radRemaining=RADIOACTIVE_MAX-radClaimed;
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
-  var atCap=props.cardCount>=COLLECTION_CAP;
+  var atCap=props.cardCount>COLLECTION_CAP;
   var nearCap=props.cardCount>=COLLECTION_CAP*0.9;
   var special=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&(p.playoffOnly||p.motorCity||p.sovereign||p.id==="basic");});
   var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic"&&!p.rivalryBox&&!p.allStar&&!p.blackBox&&p.id!=="rookierush";});
@@ -6699,7 +6699,7 @@ export default function App() {
 
   function buyPack(pt){
     if(balance<pt.cost)return;
-    if(inventory.length>=COLLECTION_CAP){
+    if(inventory.length>COLLECTION_CAP){
       pushNotif("Collection Full","Sell or grade cards before opening more packs. Limit: "+COLLECTION_CAP,"info");
       return;
     }
