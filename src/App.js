@@ -174,31 +174,126 @@ var DIVISIONS={
   "College Ind":{sport:"College",teams:["Notre Dame","Army","BYU"]},
 };
 var PACK_TYPES=[
-  // ── SINGLE-SPORT PACKS (4 cards, budget entry) ─────────────────────────────
-  {id:"nfl",    name:"NFL Field Pass",     subtitle:"4 NFL cards only",          cost:200,  cards:4,  sport:"NFL",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
-  {id:"nba",    name:"NBA Court Pass",     subtitle:"4 NBA cards only",          cost:200,  cards:4,  sport:"NBA",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
-  {id:"mlb",    name:"MLB Diamond Pass",   subtitle:"4 MLB cards only",          cost:200,  cards:4,  sport:"MLB",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
-  {id:"mls",    name:"MLS Pitch Pass",     subtitle:"4 MLS cards only",          cost:175,  cards:4,  sport:"MLS",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
-  {id:"college",name:"College Fanatics",   subtitle:"4 College cards only",      cost:175,  cards:4,  sport:"College", rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  // ── SINGLE-SPORT PACKS ──────────────────────────────────────────────────────
+  {id:"nfl",    name:"NFL Field Pass",     subtitle:"4 NFL cards only",          cost:350,  cards:4,  sport:"NFL",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"nba",    name:"NBA Court Pass",     subtitle:"4 NBA cards only",          cost:350,  cards:4,  sport:"NBA",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"mlb",    name:"MLB Diamond Pass",   subtitle:"4 MLB cards only",          cost:350,  cards:4,  sport:"MLB",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"mls",    name:"MLS Pitch Pass",     subtitle:"4 MLS cards only",          cost:250,  cards:4,  sport:"MLS",     rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"college",name:"College Fanatics",   subtitle:"4 College cards only",      cost:250,  cards:4,  sport:"College", rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
   // ── MULTI-SPORT PACKS ──────────────────────────────────────────────────────
-  {id:"standard",name:"Standard Pro Case", subtitle:"5 cards across all sports", cost:500,  cards:5,  sport:null,      rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
-  {id:"jumbo",   name:"Division Jumbo",    subtitle:"10 cards, better odds",     cost:1500, cards:10, sport:null,      rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:null,     badge:"BEST VALUE", bundle:null},
+  {id:"basic",  name:"Basic Pack",         subtitle:"5 cards, no floor",         cost:750,  cards:5,  sport:null,      rates:{Base:75,Rare:18,Elite:5,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"standard",name:"Standard Pro Case", subtitle:"5 cards across all sports", cost:1000, cards:5,  sport:null,      rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null,     badge:null,        bundle:null},
+  {id:"playoff", name:"Playoff Overdrive", subtitle:"5 cards · today's playoff teams only", cost:3000, cards:5, sport:null, rates:{Base:45,Rare:28,Elite:18,Legacy:6,Legendary:2.5,Dynasty:0.5}, guarantee:null, badge:"PLAYOFF",  bundle:null, playoffOnly:true},
+  {id:"motorcity",name:"Motor City Box",   subtitle:"3 cards · 50% Pistons · 3.0× Live Boost", cost:4000, cards:3, sport:null, rates:{Base:40,Rare:28,Elite:20,Legacy:8,Legendary:3,Dynasty:1}, guarantee:null, badge:"LIVE 3.0×",bundle:null, motorCity:true},
+  {id:"jumbo",   name:"Division Jumbo",    subtitle:"10 cards, better odds",     cost:3500, cards:10, sport:null,      rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:null,     badge:"BEST VALUE", bundle:null},
+  {id:"sovereign",name:"Sovereign Vault",  subtitle:"5 Elite+ cards · Guaranteed Grade 9+", cost:50000, cards:5, sport:null, rates:{Elite:45,Legacy:30,Legendary:20,Dynasty:5}, guarantee:"Elite", badge:"SOVEREIGN", bundle:null, sovereign:true},
+  // ── 4 NEW SPECIAL PACKS ────────────────────────────────────────────────────
+  {id:"rivalrybox",name:"Rivalry Box",     subtitle:"12 cards · 2 rival division matchups", cost:7500, cards:12, sport:null, rates:{Base:40,Rare:25,Elite:20,Legacy:9,Legendary:5,Dynasty:1}, guarantee:"Elite", badge:"RIVALRY",   bundle:null, rivalryBox:true},
+  {id:"rookierush",name:"Rookie Rush",     subtitle:"8 cards · Base+Rare only · huge volume", cost:1200, cards:8, sport:null, rates:{Base:62,Rare:38}, guarantee:null, badge:"ROOKIE",    bundle:null},
+  {id:"allstar",   name:"Emmett Special",  subtitle:"6 NBA cards · Guaranteed Legacy+ · all NBA", cost:50000, cards:6, sport:"NBA",  rates:{Legacy:55,Legendary:35,Dynasty:10}, guarantee:"Legacy", badge:"EMMETT",  bundle:null, allStar:true},
+  {id:"blackbox",  name:"Black Box",       subtitle:"3 mystery cards · unknown rarity until revealed", cost:2500, cards:3, sport:null, rates:{Base:20,Rare:25,Elite:25,Legacy:18,Legendary:9,Dynasty:3}, guarantee:null, badge:"MYSTERY",   bundle:null, blackBox:true},
   // ── BUNDLE BOXES ───────────────────────────────────────────────────────────
-  {id:"blaster", name:"Blaster Box",       subtitle:"3 single-sport packs · 12 cards", cost:525,  cards:12, sport:null, rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"BUNDLE",     bundle:{type:"blaster",count:3,base:"single"}},
-  {id:"megabox", name:"Mega Box",          subtitle:"6 Standard Pro Cases · 30 cards", cost:2600, cards:30, sport:null, rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"MEGA",       bundle:{type:"mega",count:6,base:"standard"}},
-  {id:"hobbybox",name:"Hobby Box",         subtitle:"6 Division Jumbos · 60 cards",    cost:7500, cards:60, sport:null, rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:"Legacy", badge:"HOBBY BOX", bundle:{type:"hobby",count:6,base:"jumbo"}},
+  {id:"blaster", name:"Blaster Box",       subtitle:"3 single-sport packs · 12 cards", cost:1200, cards:12, sport:null, rates:{Base:72,Rare:20,Elite:6,Legacy:1.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"BUNDLE",     bundle:{type:"blaster",count:3,base:"single"}},
+  {id:"megabox", name:"Mega Box",          subtitle:"6 Standard Pro Cases · 30 cards", cost:6000, cards:30, sport:null, rates:{Base:70,Rare:20,Elite:7,Legacy:2.5,Legendary:0.4,Dynasty:0.1}, guarantee:null, badge:"MEGA",       bundle:{type:"mega",count:6,base:"standard"}},
+  {id:"hobbybox",name:"Hobby Box",         subtitle:"6 Division Jumbos · 60 cards",    cost:18000,cards:60, sport:null, rates:{Base:55,Rare:22,Elite:15,Legacy:5,Legendary:2.5,Dynasty:0.5},  guarantee:"Legacy", badge:"HOBBY BOX", bundle:{type:"hobby",count:6,base:"jumbo"}},
 ];
+
+// ── RADIOACTIVE — 10 worldwide, 4× harder than Dynasty ──────────────────────
+var RADIOACTIVE_MAX = 10;
+var RADIOACTIVE_DAILY = 400; // highest yield in the game
+var RADIOACTIVE_WIN   = 2500;
+// Track claimed serials in Supabase. Locally we cache the count.
+var _radioactiveCount = null; // null = not yet loaded
+
+// ── PLAYOFF PACK TEAMS (April 19 matchups) ──────────────────────────────────
+var PLAYOFF_TEAMS = ["Celtics","76ers","Thunder","Suns","Pistons","Magic","Avalanche","Kings"];
+
+// ── MOTOR CITY LIVE BOOST — expires 6:30 PM ET ──────────────────────────────
+function isMotorCityBoostActive() {
+  var now = new Date();
+  var etH = (now.getUTCHours()-4+24)%24;
+  var etM = now.getUTCMinutes();
+  // Active until 6:30 PM ET
+  return etH < 18 || (etH===18 && etM < 30);
+}
+
+// ── WEB AUDIO ENGINE — procedural sounds, no external deps ──────────────────
+var _audioCtx = null;
+function getAudioCtx() {
+  if(!_audioCtx) { try { _audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+  return _audioCtx;
+}
+function playPackRip() {
+  // Obsidian Rip: descending noise burst with metallic tail
+  var ctx = getAudioCtx(); if(!ctx) return;
+  var buf = ctx.createBuffer(1, ctx.sampleRate*0.35, ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for(var i=0;i<data.length;i++){
+    var t=i/ctx.sampleRate;
+    data[i]=(Math.random()*2-1)*Math.exp(-t*9)*(1+Math.sin(t*800-t*t*3000)*0.3);
+  }
+  var src=ctx.createBufferSource(); src.buffer=buf;
+  var gain=ctx.createGain(); gain.gain.setValueAtTime(0.55,ctx.currentTime);
+  var filter=ctx.createBiquadFilter(); filter.type="bandpass"; filter.frequency.value=1200; filter.Q.value=0.8;
+  src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+  src.start();
+}
+function playSovereignBoom() {
+  // Deep cinematic bass-drop: sub rumble + high shimmer
+  var ctx = getAudioCtx(); if(!ctx) return;
+  // Sub bass
+  var osc=ctx.createOscillator(); osc.type="sine";
+  osc.frequency.setValueAtTime(80,ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(30,ctx.currentTime+0.8);
+  var bassGain=ctx.createGain();
+  bassGain.gain.setValueAtTime(0,ctx.currentTime);
+  bassGain.gain.linearRampToValueAtTime(0.9,ctx.currentTime+0.04);
+  bassGain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.4);
+  osc.connect(bassGain); bassGain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+1.5);
+  // Gold shimmer overtone
+  var osc2=ctx.createOscillator(); osc2.type="triangle";
+  osc2.frequency.setValueAtTime(440,ctx.currentTime+0.1);
+  osc2.frequency.exponentialRampToValueAtTime(880,ctx.currentTime+0.6);
+  var shimGain=ctx.createGain();
+  shimGain.gain.setValueAtTime(0,ctx.currentTime+0.1);
+  shimGain.gain.linearRampToValueAtTime(0.4,ctx.currentTime+0.25);
+  shimGain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+  osc2.connect(shimGain); shimGain.connect(ctx.destination); osc2.start(ctx.currentTime+0.1); osc2.stop(ctx.currentTime+1.5);
+  // Noise burst
+  var nbuf=ctx.createBuffer(1,ctx.sampleRate*0.5,ctx.sampleRate);
+  var nd=nbuf.getChannelData(0);
+  for(var i=0;i<nd.length;i++){var t=i/ctx.sampleRate;nd[i]=(Math.random()*2-1)*Math.exp(-t*6)*0.3;}
+  var nsrc=ctx.createBufferSource(); nsrc.buffer=nbuf;
+  var nf=ctx.createBiquadFilter(); nf.type="highpass"; nf.frequency.value=2000;
+  var ng=ctx.createGain(); ng.gain.setValueAtTime(0.5,ctx.currentTime);
+  nsrc.connect(nf); nf.connect(ng); ng.connect(ctx.destination); nsrc.start();
+}
+function playRevealShimmer() {
+  // High-end metallic shimmer for Grade 10
+  var ctx = getAudioCtx(); if(!ctx) return;
+  [880,1320,1760,2200].forEach(function(freq,i){
+    var osc=ctx.createOscillator(); osc.type="sine";
+    osc.frequency.setValueAtTime(freq,ctx.currentTime+i*0.06);
+    var g=ctx.createGain();
+    g.gain.setValueAtTime(0,ctx.currentTime+i*0.06);
+    g.gain.linearRampToValueAtTime(0.18,ctx.currentTime+i*0.06+0.04);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.06+0.5);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(ctx.currentTime+i*0.06); osc.stop(ctx.currentTime+i*0.06+0.6);
+  });
+}
 var RMAP={
-  Base:     {daily:25, win:100, pMin:150,  pMax:500},
-  Rare:     {daily:37, win:175, pMin:600,  pMax:1200},
-  Elite:    {daily:62, win:325, pMin:2500, pMax:3500},
-  Legacy:   {daily:200,win:0,   pMin:8000, pMax:12000},
-  Legendary:{daily:125,win:625, pMin:25000,pMax:45000},
-  Dynasty:  {daily:250,win:1500,pMin:100000,pMax:180000},
+  Base:       {daily:25,  win:100,  pMin:150,   pMax:500},
+  Rare:       {daily:37,  win:175,  pMin:600,   pMax:1200},
+  Elite:      {daily:62,  win:325,  pMin:2500,  pMax:3500},
+  Legacy:     {daily:200, win:0,    pMin:8000,  pMax:12000},
+  Legendary:  {daily:125, win:625,  pMin:25000, pMax:45000},
+  Dynasty:    {daily:250, win:1500, pMin:100000,pMax:180000},
+  Radioactive:{daily:400, win:2500, pMin:500000,pMax:999999},
 };
-var ORDER=["Dynasty","Legendary","Legacy","Elite","Rare","Base"];
+var ORDER=["Radioactive","Dynasty","Legendary","Legacy","Elite","Rare","Base"];
 var SPORT_COLORS={NFL:"#4488ff",NBA:"#ff6622",MLB:"#44cc88",MLS:"#ff4466",College:"#ffaa22"};
-var RCOLORS={Base:"#aab",Rare:"#60a5fa",Elite:"#34d399",Legacy:"#f5c518",Legendary:"#f5c518",Dynasty:"#e879f9"};
+var RCOLORS={Base:"#aab",Rare:"#60a5fa",Elite:"#34d399",Legacy:"#f5c518",Legendary:"#f87171",Dynasty:"#e879f9",Radioactive:"#00ff44"};
 function pickRarity(rates){
   var tot=Object.values(rates).reduce(function(a,b){return a+b;},0);
   var r=Math.random()*tot,cum=0;
@@ -216,41 +311,121 @@ function genCard(rates,forceMin,forceSport){
     var o=ORDER.slice().reverse();
     if(o.indexOf(rarity)<o.indexOf(forceMin))rarity=forceMin;
   }
+  // Radioactive: never rolls from genCard directly — only via tryRollRadioactive
+  if(rarity==="Radioactive") rarity="Dynasty";
   var rm=RMAP[rarity];
   return {id:genId(),sport:sport,team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52};
 }
+// Radioactive roll: 4× harder than Dynasty (~0.025% effective)
+// Checks global Supabase counter. Returns a Radioactive card or null.
+function tryRollRadioactive(existingCount) {
+  // Dynasty rate is ~0.1% in most packs; Radioactive is 4× harder = ~0.025%
+  if(Math.random() > 0.00025) return null;
+  // World limit enforced
+  if(existingCount >= RADIOACTIVE_MAX) return null;
+  var serial = existingCount + 1;
+  var sk=Object.keys(ALL_TEAMS);
+  var sport=sk[Math.floor(Math.random()*sk.length)];
+  var arr=ALL_TEAMS[sport];
+  var team=arr[Math.floor(Math.random()*arr.length)];
+  return {
+    id:genId(),sport:sport,team:team,rarity:"Radioactive",
+    daily:RADIOACTIVE_DAILY,win:RADIOACTIVE_WIN,
+    mp:RADIOACTIVE_DAILY*365+RADIOACTIVE_WIN*52,
+    serialNumber:serial,
+  };
+}
 function buildPack(pt,pity){
-  // Bundle boxes: combine multiple sub-packs
+  // ── SOVEREIGN VAULT ──────────────────────────────────────────────────────────
+  if(pt.sovereign){
+    var cards=[];
+    var eliteFloor=["Elite","Legacy","Legendary","Dynasty","Radioactive"];
+    for(var si=0;si<pt.cards;si++){
+      var card=genCard(pt.rates,null,null);
+      for(var ri=0;ri<5&&!eliteFloor.includes(card.rarity);ri++) card=genCard(pt.rates,null,null);
+      if(!eliteFloor.includes(card.rarity)) card=genCard({Elite:100},null,null);
+      cards.push(card);
+    }
+    return cards;
+  }
+  // ── ALL-STAR WEEKEND: guaranteed Legacy+ NBA only ─────────────────────────────
+  if(pt.allStar){
+    var cards=[];
+    for(var ai=0;ai<pt.cards;ai++){
+      var rarity=pickRarity(pt.rates);
+      var rm=RMAP[rarity];
+      var team=ALL_TEAMS.NBA[Math.floor(Math.random()*ALL_TEAMS.NBA.length)];
+      cards.push({id:genId(),sport:"NBA",team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52});
+    }
+    return cards;
+  }
+  // ── RIVALRY BOX: pulls from two random rival divisions ───────────────────────
+  if(pt.rivalryBox){
+    var cards=[];
+    var divKeys=Object.keys(DIVISIONS);
+    var div1=DIVISIONS[divKeys[Math.floor(Math.random()*divKeys.length)]];
+    // Pick a rival division from same sport
+    var sameSport=divKeys.filter(function(k){return DIVISIONS[k].sport===div1.sport&&k!==divKeys.find(function(d){return DIVISIONS[d]===div1;});});
+    var div2Key=sameSport[Math.floor(Math.random()*sameSport.length)];
+    var div2=DIVISIONS[div2Key]||div1;
+    for(var ri2=0;ri2<pt.cards;ri2++){
+      var div=ri2%2===0?div1:div2;
+      var team=div.teams[Math.floor(Math.random()*div.teams.length)];
+      var rarity=pickRarity(pt.rates);
+      var rm=RMAP[rarity];
+      cards.push({id:genId(),sport:div.sport,team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52});
+    }
+    return cards;
+  }
+  // ── PLAYOFF OVERDRIVE ─────────────────────────────────────────────────────────
+  if(pt.playoffOnly){
+    var cards=[];
+    for(var pi=0;pi<pt.cards;pi++){
+      var team=PLAYOFF_TEAMS[Math.floor(Math.random()*PLAYOFF_TEAMS.length)];
+      var sport=["Avalanche"].includes(team)?"MLB":["Kings","Celtics","76ers","Thunder","Suns","Pistons","Magic"].includes(team)?"NBA":"NBA";
+      var rarity=pickRarity(pt.rates);
+      var rm=RMAP[rarity];
+      cards.push({id:genId(),sport:sport,team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52});
+    }
+    return cards;
+  }
+  // ── MOTOR CITY BOX ────────────────────────────────────────────────────────────
+  if(pt.motorCity){
+    var cards=[];
+    for(var mi=0;mi<pt.cards;mi++){
+      var isPistons=Math.random()<0.5;
+      var team=isPistons?"Pistons":ALL_TEAMS.NBA[Math.floor(Math.random()*ALL_TEAMS.NBA.length)];
+      var rarity=pickRarity(pt.rates);
+      var rm=RMAP[rarity];
+      cards.push({id:genId(),sport:"NBA",team:team,rarity:rarity,daily:rm.daily,win:rm.win,mp:rm.daily*365+rm.win*52});
+    }
+    return cards;
+  }
+  // ── BUNDLE BOXES ──────────────────────────────────────────────────────────────
   if(pt.bundle){
     var cards=[];
     if(pt.bundle.type==="blaster"){
-      // 3 random single-sport packs
       var sports=["NFL","NBA","MLB","MLS","College"];
       for(var b=0;b<3;b++){
         var sp=sports[rand(0,sports.length-1)];
         for(var i=0;i<4;i++) cards.push(genCard(pt.rates,null,sp));
       }
     } else if(pt.bundle.type==="mega"){
-      // 6 standard packs worth of cards
       var stdPt=PACK_TYPES.find(function(p){return p.id==="standard";});
       for(var b2=0;b2<6;b2++){
-        var subCards=buildPack(stdPt,false);
-        subCards.forEach(function(c){cards.push(c);});
+        buildPack(stdPt,false).forEach(function(c){cards.push(c);});
       }
     } else if(pt.bundle.type==="hobby"){
-      // 6 jumbo packs worth of cards — guarantee at least one Legacy+
       var jmbPt=PACK_TYPES.find(function(p){return p.id==="jumbo";});
       for(var b3=0;b3<6;b3++){
-        var subCards2=buildPack(jmbPt,false);
-        subCards2.forEach(function(c){cards.push(c);});
+        buildPack(jmbPt,false).forEach(function(c){cards.push(c);});
       }
-      // Guarantee: if no Legacy+ in entire box, replace last card
       var hasLeg=cards.some(function(c){return ORDER.indexOf(c.rarity)<=ORDER.indexOf("Legacy");});
       if(!hasLeg) cards[cards.length-1]=genCard(pt.rates,"Legacy",null);
     }
     return cards;
   }
-  // Regular packs — single sport or multi-sport
+  // ── REGULAR PACKS (basic, standard, jumbo, rookie rush, black box) ─────────────
   var rates=pity&&pt.id==="standard"?Object.assign({},pt.rates,{Elite:pt.rates.Elite+50}):pt.rates;
   var cards=[];
   for(var i=0;i<pt.cards;i++){
@@ -356,6 +531,10 @@ var CSS=`
   @keyframes cosmicRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
   @keyframes iconFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.1)}}
   @keyframes crownFloat{0%,100%{transform:translateY(0) scale(1) rotate(-5deg)}50%{transform:translateY(-2px) scale(1.12) rotate(5deg)}}
+  @keyframes goldSmokeFade{0%{opacity:0}15%{opacity:1}70%{opacity:0.8}100%{opacity:0}}
+  @keyframes goldParticleRise{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2)}20%{opacity:0.9}100%{opacity:0;transform:translate(-50%,-200%) scale(1.8)}}
+  @keyframes goldFlash{0%{opacity:1}100%{opacity:0}}
+  @keyframes slimePulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
   .bento-card{animation:bentoSlide 0.45s ease-out both}
   .badge-unlocked{animation:badgeUnlock 0.55s cubic-bezier(0.3,1.4,0.5,1) both}
   .showcase-card-anim{animation:showcaseFloat 4s ease-in-out infinite}
@@ -610,6 +789,16 @@ var RARITY_CFG={
     shadow:"0 0 40px rgba(140,50,255,0.75),0 0 80px rgba(232,22,30,0.35)",
     icon:"👑",serial:"/10",
   },
+  Radioactive:{
+    stripe:"#00ff44",stripeTxt:"#001a0a",
+    photoTop:"#000e04",photoBot:"#000601",
+    abbvFn:function(){return "rgba(0,255,68,0.92)";},
+    abbvShadow:"0 0 16px rgba(0,255,60,1),0 0 40px rgba(0,220,50,0.75),0 0 80px rgba(0,180,40,0.4)",
+    plateBdr:"transparent",nameCol:"#00ff44",rarCol:"#00cc33",
+    tagBg:"linear-gradient(90deg,#003d12,#00ff44,#003d12)",tagTxt:"#001a0a",
+    shadow:"0 0 20px rgba(0,255,60,0.8),0 0 50px rgba(0,200,40,0.45),0 0 90px rgba(0,160,30,0.25)",
+    icon:"☢",serial:"/10",
+  },
 };
 // helper for Base team-color abbv
 function hexToRgb(hex){
@@ -632,12 +821,233 @@ function PremiumCard(props) {
   var isElite=card.rarity==="Elite";
   var isRare=card.rarity==="Rare";
   var isBase=card.rarity==="Base";
+  var isRad=card.rarity==="Radioactive";
   var abbvColor=isBase?cfg.abbvFn(c1):cfg.abbvFn();
   var stripeStyle=isDyn
     ?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
     :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
     :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+    :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
     :cfg.stripe;
+
+  return (
+    <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:4,overflow:"visible",
+      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.35)"}}>
+
+      {/* Radioactive slimy outer halo */}
+      {isRad&&<div style={{position:"absolute",inset:-10,borderRadius:10,
+        background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.28) 0%,rgba(0,200,40,0.12) 45%,transparent 70%)",
+        animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
+      {isRad&&<div style={{position:"absolute",inset:-5,borderRadius:8,
+        border:"1.5px solid rgba(0,255,60,0.5)",
+        boxShadow:"0 0 16px rgba(0,255,60,0.4),inset 0 0 8px rgba(0,255,60,0.06)",
+        animation:"slimePulse 2.4s ease-in-out infinite 0.3s",pointerEvents:"none",zIndex:0}}/>}
+
+      {/* Card body wrapper with clip */}
+      <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",zIndex:2,
+        border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.15)"}}>
+
+        {/* Dynasty animated rainbow border */}
+        {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,background:cfg.photoBot,borderRadius:4,zIndex:1}}/>}
+
+        {/* LEFT STRIPE */}
+        <div style={{position:"absolute",left:0,top:0,bottom:0,width:20,background:stripeStyle,zIndex:6,
+          display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+            letterSpacing:"0.2em",textTransform:"uppercase",color:cfg.stripeTxt,
+            writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",userSelect:"none"}}>{card.team.toUpperCase()}</span>
+        </div>
+
+        {/* PHOTO AREA */}
+        <div style={{position:"absolute",left:20,top:0,right:0,bottom:38,
+          background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+
+          {isBase&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px),repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px)",zIndex:1}}/>}
+
+          {isRare&&<svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.14,zIndex:1}} viewBox="0 0 150 202" preserveAspectRatio="none">
+            <path d="M10,82 Q30,58 52,86 Q72,112 96,72" stroke="#4488ff" strokeWidth="1.5" fill="none"/>
+            <path d="M5,104 Q35,72 58,102 Q82,124 112,92" stroke="#6699ff" strokeWidth="1" fill="none"/>
+            <path d="M18,52 Q44,28 65,56 Q85,76 108,52" stroke="#3377ee" strokeWidth="1" fill="none"/>
+          </svg>}
+          {isRare&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+            <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
+          </div>}
+
+          {isElite&&<div style={{position:"absolute",left:0,right:0,top:"8%",height:"50%",background:"linear-gradient(180deg,transparent,rgba(0,230,120,0.18),rgba(0,180,220,0.12),transparent)",animation:"nebulaBreath 4s ease-in-out infinite",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(55deg,transparent,transparent 9px,rgba(34,200,100,0.06) 9px,rgba(34,200,100,0.06) 10px)",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+            <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(60,220,120,0.14),transparent)",animation:"shimmerSweep 3s ease-in-out infinite 0.5s"}}/>
+          </div>}
+          {isElite&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"20%",background:"linear-gradient(0deg,rgba(0,255,120,0.18) 0%,transparent 100%)",zIndex:3}}/>}
+
+          {isLegacy&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:180,height:180,opacity:0.1,zIndex:1}} viewBox="0 0 180 180">
+            <g transform="translate(90,90)">
+              {[0,45,90,135,22.5,67.5,112.5,157.5].map(function(a,i){return <line key={i} x1="0" y1="-85" x2="0" y2="85" stroke="#ffcc00" strokeWidth={i<4?1:0.6} transform={"rotate("+a+")"}/>;})}
+            </g>
+          </svg>}
+          {isLegacy&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 78% 62% at 60% 40%,rgba(255,200,0,0.36) 0%,rgba(220,120,0,0.2) 40%,transparent 90%)",zIndex:1}}/>}
+          {isLegacy&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(72deg,transparent,transparent 11px,rgba(255,200,0,0.055) 11px,rgba(255,200,0,0.055) 12px)",zIndex:1}}/>}
+          {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+            <div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"22%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,255,180,0.09),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+          </div>}
+
+          {isLeg&&<div style={{position:"absolute",inset:0,zIndex:1}}>
+            {[[15,24,2,2.1],[28,62,1,1.7],[11,76,2,2.5],[42,14,1,1.9],[21,46,2,2.3],[55,78,1,2.0],[65,35,1,2.6]].map(function(s,i){
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.4)+"s",opacity:0.6}}/>;
+            })}
+          </div>}
+          {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.48) 0%,rgba(200,10,10,0.25) 35%,rgba(60,0,0,0.1) 65%,transparent 80%)",zIndex:2}}/>}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:80,height:80,border:"1px solid rgba(255,70,40,0.3)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite",zIndex:3}}/>}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:120,height:120,border:"1px solid rgba(255,60,30,0.15)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite 0.7s",zIndex:3}}/>}
+          {isLeg&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:4}}>
+            <div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,40,0.14),transparent)",animation:"shimmerSweep 2.2s ease-in-out infinite"}}/>
+          </div>}
+          {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35) 0%,transparent 100%)",zIndex:4}}/>}
+          {isLeg&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#ff6040","#ff4020","#ff7050"][i],borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.55)+"s",boxShadow:"0 0 4px #ff4020",zIndex:6}}/>;})}
+
+          {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.22) 0deg,transparent 60deg,rgba(232,22,30,0.14) 120deg,transparent 180deg,rgba(153,51,255,0.18) 240deg,transparent 300deg,rgba(80,20,180,0.1) 360deg)",animation:"cosmicRing 25s linear infinite",zIndex:1}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"-20%",top:"-20%",width:"80%",height:"80%",background:"radial-gradient(ellipse at 60% 60%,rgba(153,51,255,0.28) 0%,rgba(80,20,180,0.12) 50%,transparent 70%)",animation:"nebulaBreath 5s ease-in-out infinite",zIndex:2}}/>}
+          {isDyn&&<div style={{position:"absolute",right:"-10%",top:"20%",width:"70%",height:"60%",background:"radial-gradient(ellipse at 40% 40%,rgba(232,22,30,0.18) 0%,rgba(120,10,40,0.08) 50%,transparent 70%)",animation:"nebulaBreath 4s ease-in-out infinite 1.5s",zIndex:2}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,zIndex:3}}>
+            {[[8,18,1,2.2],[15,55,2,1.8],[25,30,1,2.5],[18,80,2,1.6],[36,68,1,2.1],[12,40,2,3.0],[45,22,1,1.9],[56,76,1,2.4]].map(function(s,i){
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:["#fff","#cc99ff","#fff","#ffbbcc","#aabbff","#fff","#fff","#aaffee"][i],borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.35)+"s",boxShadow:i%2===0?"0 0 2px #fff":"0 0 3px rgba(200,150,255,0.8)"}}/>;
+            })}
+          </div>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:44,height:44,borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:80,height:20,borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",boxShadow:"0 0 8px rgba(180,80,255,0.3)",zIndex:5}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:100,height:25,borderRadius:"50%",border:"1px solid rgba(255,80,40,0.2)",zIndex:4}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(153,51,255,0.04) 3px,rgba(153,51,255,0.04) 4px)",zIndex:7,pointerEvents:"none"}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:8}}>
+            <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(180,80,255,0.14),rgba(255,255,255,0.05),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"18%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,80,0.08),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+          </div>}
+          {isDyn&&[20,36,52,66,82].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#cc66ff","#ff4460","#9933ff","#ffaa44","#ff3366"][i],borderRadius:"50%",animation:"emberRise "+(1.5+i*0.2)+"s ease-out infinite "+(i*0.4)+"s",boxShadow:"0 0 "+(5+i)+"px "+["#aa44ff","#ff2244","#8822ee","#ff8800","#ee1144"][i],zIndex:9}}/>;})}
+
+          {/* ── RADIOACTIVE VISUAL ── */}
+          {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.32) 0%,rgba(0,180,40,0.16) 40%,rgba(0,80,20,0.08) 65%,transparent 85%)",zIndex:1}}/>}
+          {/* Toxic grid lines */}
+          {isRad&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 22px,rgba(0,255,60,0.04) 22px,rgba(0,255,60,0.04) 23px),repeating-linear-gradient(90deg,transparent,transparent 22px,rgba(0,255,60,0.04) 22px,rgba(0,255,60,0.04) 23px)",zIndex:1}}/>}
+          {/* Radioactive symbol watermark */}
+          {isRad&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:100,height:100,opacity:0.09,zIndex:2}} viewBox="-50 -50 100 100">
+            <circle cx="0" cy="0" r="48" fill="none" stroke="#00ff44" strokeWidth="2"/>
+            <circle cx="0" cy="0" r="14" fill="#00ff44"/>
+            {[0,120,240].map(function(angle,i){
+              var rad=angle*Math.PI/180;
+              var rad2=(angle+60)*Math.PI/180;
+              return <path key={i} d={"M"+(Math.cos(rad)*16)+","+(Math.sin(rad)*16)+" L"+(Math.cos(rad)*46)+","+(Math.sin(rad)*46)+" A46,46 0 0,1 "+(Math.cos(rad2)*46)+","+(Math.sin(rad2)*46)+" L"+(Math.cos(rad2)*16)+","+(Math.sin(rad2)*16)+" Z"} fill="#00ff44"/>;
+            })}
+          </svg>}
+          {/* Toxic slime drips from top */}
+          {isRad&&<svg style={{position:"absolute",top:0,left:0,right:0,width:"100%",height:30,opacity:0.35,zIndex:3}} viewBox="0 0 150 30" preserveAspectRatio="none">
+            <path d="M0,0 Q18,0 20,14 Q22,26 24,28 Q26,30 28,26 Q30,22 31,8 Q40,0 55,0 Q65,0 67,18 Q69,28 71,30 Q73,28 75,14 Q77,4 90,0 Q105,0 107,20 Q109,28 111,30 Q113,28 115,16 Q117,4 130,0 L150,0 L150,0 L0,0 Z" fill="#00ff44"/>
+          </svg>}
+          {/* Toxic pulse rings */}
+          {isRad&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:70,height:70,border:"1px solid rgba(0,255,60,0.35)",borderRadius:"50%",animation:"pulsarRed 2.4s ease-out infinite",zIndex:3}}/>}
+          {isRad&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:110,height:110,border:"1px solid rgba(0,255,60,0.18)",borderRadius:"50%",animation:"pulsarRed 2.4s ease-out infinite 0.8s",zIndex:3}}/>}
+          {/* Shimmer sweep */}
+          {isRad&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:4}}>
+            <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(0,255,60,0.18),rgba(180,255,200,0.08),transparent)",animation:"shimmerSweep 2.8s ease-in-out infinite"}}/>
+          </div>}
+          {/* Green particle drips */}
+          {isRad&&[18,36,54,72,88].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"20%",left:lx+"%",width:2+i%2,height:2+i%2,background:"#00ff44",borderRadius:"50%",animation:"emberRise "+(1.4+i*0.2)+"s ease-out infinite "+(i*0.35)+"s",boxShadow:"0 0 6px rgba(0,255,60,0.9)",zIndex:6}}/>;})}
+          {/* Bottom glow */}
+          {isRad&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"35%",background:"linear-gradient(0deg,rgba(0,255,60,0.3) 0%,transparent 100%)",zIndex:4}}/>}
+
+          {/* Team color radial — all tiers */}
+          {!isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",pointerEvents:"none",zIndex:isDyn?1:4}}/>}
+
+          {/* ABBREVIATION */}
+          <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",
+            textAlign:"center",zIndex:isDyn?9:isRad?8:5,paddingLeft:4}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+              fontSize:code.length<=2?82:code.length<=3?62:code.length<=4?48:38,
+              fontWeight:900,letterSpacing:code.length<=2?"0.04em":"0.02em",
+              color:abbvColor,lineHeight:1,userSelect:"none",
+              textShadow:cfg.abbvShadow}}>{code}</span>
+          </div>
+
+          {/* Tier icon */}
+          {cfg.icon&&<div style={{position:"absolute",top:18,right:6,zIndex:12,fontSize:14,lineHeight:1,
+            animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+            filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95)) drop-shadow(0 0 12px rgba(255,150,0,0.6))"
+              :isRad?"drop-shadow(0 0 8px rgba(0,255,60,1)) drop-shadow(0 0 16px rgba(0,200,40,0.8))"
+              :isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.95))"
+              :isLegacy?"drop-shadow(0 0 4px rgba(255,180,0,0.8))"
+              :isElite?"drop-shadow(0 0 5px rgba(34,200,100,0.9))"
+              :"none"}}>{cfg.icon}</div>}
+
+          {/* Serial number — shown for Legacy+ including Radioactive */}
+          {cfg.serial&&<div style={{position:"absolute",bottom:6,left:22,zIndex:11,
+            fontFamily:"'Roboto Mono',monospace",fontSize:isRad?8:7,fontWeight:700,
+            color:isRad?"rgba(0,255,60,0.9)":isDyn?"rgba(200,140,255,0.6)":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",
+            letterSpacing:"0.06em",
+            textShadow:isRad?"0 0 8px rgba(0,255,60,0.8)":"none"}}>
+            {isRad?"#"+(card.serialNumber||"?")+" / 10":("#"+cfg.serial)}
+          </div>}
+
+          {/* Rarity tag — top right */}
+          <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"3px 7px",maxWidth:isRad?75:60,overflow:"hidden"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:isRad?7.5:9,fontWeight:900,
+              letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>
+              {card.rarity.toUpperCase()}
+            </span>
+          </div>
+
+          {/* Grade badge */}
+          {card.graded&&card.grade&&(
+            <div style={{position:"absolute",top:0,left:20,zIndex:12,background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"3px 7px"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
+            </div>
+          )}
+
+          {/* CD 2025 watermark */}
+          <div style={{position:"absolute",bottom:5,right:6,zIndex:7,fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:7,fontWeight:700,letterSpacing:"0.1em",
+            color:isRad?"rgba(0,255,60,0.25)":isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2025</div>
+
+          {/* Winner badge */}
+          {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:13,background:"#22aa44",padding:"2px 6px"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#fff",letterSpacing:"0.08em"}}>WIN</span>
+          </div>}
+        </div>
+
+        {/* NAME PLATE */}
+        <div style={{position:"absolute",bottom:0,left:0,right:0,height:38,
+          background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
+          borderTop:isRad?"3px solid #00ff44":isDyn?"3px solid transparent":"2px solid "+cfg.plateBdr,
+          borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+          boxShadow:isRad?"0 -2px 12px rgba(0,255,60,0.3)":"none",
+          zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+          paddingLeft:24,paddingRight:8,paddingTop:2,paddingBottom:2}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:card.team.length>10?10:card.team.length>7?12:14,
+            fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",
+            lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",
+            color:isRad?"#00ff44":isDyn?undefined:cfg.nameCol,
+            background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+            WebkitBackgroundClip:isDyn?"text":undefined,
+            WebkitTextFillColor:isDyn?"transparent":undefined,
+            textShadow:isRad?"0 0 8px rgba(0,255,60,0.6)":"none"}}>{card.team.toUpperCase()}</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:2}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+              letterSpacing:"0.04em",textTransform:"uppercase",
+              color:isRad?"rgba(0,200,40,0.8)":isDyn?undefined:cfg.rarCol,
+              background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+              WebkitBackgroundClip:isDyn?"text":undefined,
+              WebkitTextFillColor:isDyn?"transparent":undefined}}>
+              {card.sport} · {isRad?"RADIOACTIVE":""+card.rarity.toUpperCase()}
+            </span>
+            <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:9,fontWeight:700,
+              color:isRad?"#00ff44":isDyn?"#cc88ff":"#c8a800",
+              textShadow:isRad?"0 0 6px rgba(0,255,60,0.7)":"none"}}>{fmt(card.daily)}🪙</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   return (
     <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:4,overflow:"hidden",
@@ -2294,25 +2704,38 @@ function Onboarding(props) {
 }
 function Shop(props) {
   var balance=props.balance; var onBuy=props.onBuy; var pityCount=props.pityCount;
+  var motorCityBoost = isMotorCityBoostActive();
   var singleSport=PACK_TYPES.filter(function(p){return p.sport;});
-  var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle;});
+  var special=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&(p.playoffOnly||p.motorCity||p.sovereign||p.id==="basic");});
+  var multiSport=PACK_TYPES.filter(function(p){return !p.sport&&!p.bundle&&!p.playoffOnly&&!p.motorCity&&!p.sovereign&&p.id!=="basic";});
   var bundles=PACK_TYPES.filter(function(p){return p.bundle;});
-  var sportBg={NFL:"linear-gradient(145deg,#0a1628,#162040)",NBA:"linear-gradient(145deg,#1a0608,#2a0c10)",MLB:"linear-gradient(145deg,#08102a,#101840)",MLS:"linear-gradient(145deg,#051408,#0a2010)",College:"linear-gradient(145deg,#1a0c00,#281800)"};
-  var sportAccent={NFL:"#3366cc",NBA:"#cc2233",MLB:"#2255bb",MLS:"#228833",College:"#cc6600"};
-  var bundleBg={blaster:"linear-gradient(145deg,#12081e,#1e1030)",mega:"linear-gradient(145deg,#061420,#0c2030)",hobbybox:"linear-gradient(145deg,#1e0800,#2e1000)"};
 
   function PackCard(p){
     var pt=p.pt; var canAfford=balance>=pt.cost;
     var isBundle=!!pt.bundle; var isSingle=!!pt.sport;
-    var imgBg=isSingle?(sportBg[pt.sport]||"linear-gradient(145deg,#111,#222)"):isBundle?(bundleBg[pt.id]||"linear-gradient(145deg,#111,#222)"):"linear-gradient(145deg,#0a1628,#162040)";
-    var acc=isSingle?(sportAccent[pt.sport]||"#3366cc"):isBundle?(pt.id==="megabox"?"#0088cc":pt.id==="hobbybox"?"#cc3300":"#6633cc"):"#4466cc";
-    var badgeBg=pt.badge==="BEST VALUE"?"#e8161e":pt.badge==="BUNDLE"?"#7733cc":pt.badge==="MEGA"?"#0088cc":pt.badge==="HOBBY BOX"?"#333":"#e8161e";
+    var isSov=!!pt.sovereign; var isMotor=!!pt.motorCity; var isPlayoff=!!pt.playoffOnly;
+    var imgBg=isSingle?(sportBg[pt.sport]||"linear-gradient(145deg,#111,#222)"):isBundle?(bundleBg[pt.id]||"linear-gradient(145deg,#111,#222)")
+      :isSov?"linear-gradient(145deg,#0a0800,#1a1000)"
+      :isMotor?"linear-gradient(145deg,#08001a,#120030)"
+      :isPlayoff?"linear-gradient(145deg,#001a0a,#003018)"
+      :"linear-gradient(145deg,#0a1628,#162040)";
+    var acc=isSingle?(sportAccent[pt.sport]||"#3366cc"):isBundle?(pt.id==="megabox"?"#0088cc":pt.id==="hobbybox"?"#cc3300":"#6633cc")
+      :isSov?"#f5c518":isMotor?"#cc44ff":isPlayoff?"#22cc88":"#4466cc";
+    var badgeBg=pt.badge==="SOVEREIGN"?"linear-gradient(90deg,#7a5200,#f5c518,#7a5200)"
+      :pt.badge==="LIVE 3.0×"?(motorCityBoost?"#22aa44":"#888")
+      :pt.badge==="PLAYOFF"?"#e8161e"
+      :pt.badge==="BEST VALUE"?"#e8161e":pt.badge==="BUNDLE"?"#7733cc":pt.badge==="MEGA"?"#0088cc":pt.badge==="HOBBY BOX"?"#333":"#e8161e";
     return (
-      <div className="topps-product-card" style={{flex:"1 1 175px",minWidth:170,maxWidth:220,display:"flex",flexDirection:"column"}}>
+      <div className="topps-product-card" style={{flex:"1 1 175px",minWidth:170,maxWidth:isSov?280:220,display:"flex",flexDirection:"column",
+        boxShadow:isSov?"0 0 24px rgba(245,197,24,0.25)":undefined}}>
         {/* Image area */}
-        <div style={{height:130,background:imgBg,position:"relative",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
-          {pt.badge&&<div style={{position:"absolute",top:0,left:0,background:badgeBg,color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",padding:"3px 8px",clipPath:"polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)"}}>{pt.badge}</div>}
+        <div style={{height:isSov?160:130,background:imgBg,position:"relative",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
+          {pt.badge&&<div style={{position:"absolute",top:0,left:0,background:badgeBg,color:isSov?"#000":"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",padding:"3px 8px",clipPath:"polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)"}}>{pt.badge}</div>}
           {isSingle&&<div style={{position:"absolute",top:0,left:0,right:0,height:2,background:acc}}/>}
+          {/* Motor City expired notice */}
+          {isMotor&&!motorCityBoost&&<div style={{position:"absolute",top:0,right:0,background:"#888",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,padding:"2px 6px",letterSpacing:"0.06em"}}>BOOST EXPIRED</div>}
+          {isMotor&&motorCityBoost&&<div style={{position:"absolute",top:0,right:0,background:"#22aa44",color:"#fff",fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:700,padding:"2px 6px",letterSpacing:"0.06em",animation:"pulse 1s ease-in-out infinite"}}>🔴 LIVE 3.0×</div>}
+          {isSov&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 50%,rgba(245,197,24,0.15),transparent 70%)",animation:"goldSmokeFade 3s ease-in-out infinite alternate"}}/>}
           <BoosterPack packId={pt.id} size={80} floating={true}/>
           {/* Odds dots */}
           <div style={{position:"absolute",bottom:8,left:0,right:0,display:"flex",gap:4,justifyContent:"center"}}>
@@ -2323,8 +2746,11 @@ function Shop(props) {
         </div>
         {/* Info area */}
         <div style={{padding:"10px 12px",flex:1,display:"flex",flexDirection:"column",gap:6,background:"#fff",borderTop:"1px solid #e8e8e8"}}>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{pt.name}</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.04em",textTransform:"uppercase",color:isSov?"#c8a800":"#111"}}>{pt.name}</div>
           <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#888"}}>{pt.subtitle}</div>
+          {isMotor&&motorCityBoost&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#22aa44",letterSpacing:"0.06em",textTransform:"uppercase"}}>⚡ 3.0× Live Boost · Expires 6:30 PM ET</div>}
+          {isPlayoff&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#e8161e",letterSpacing:"0.06em",textTransform:"uppercase"}}>🏀 April 19 Playoff Teams Only</div>}
+          {isSov&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#c8a800",letterSpacing:"0.06em",textTransform:"uppercase"}}>⚡ Elite Floor · Grade 9+ Guaranteed</div>}
           {/* Odds */}
           <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:2}}>
             {Object.keys(pt.rates).filter(function(k){return pt.rates[k]>0&&pt.rates[k]>=1;}).map(function(r){
@@ -2333,7 +2759,13 @@ function Shop(props) {
           </div>
           {pt.guarantee&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,color:"#22aa44",letterSpacing:"0.08em",textTransform:"uppercase"}}>✓ {pt.guarantee} Guaranteed</div>}
           <button onClick={function(){onBuy(pt);}} disabled={!canAfford}
-            style={{marginTop:"auto",width:"100%",padding:"9px",background:canAfford?"#e8161e":"#e0ddd8",color:canAfford?"#fff":"#aaa",fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",border:"none",cursor:canAfford?"pointer":"not-allowed",clipPath:canAfford?"polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))":"none"}}>
+            style={{marginTop:"auto",width:"100%",padding:"9px",
+              background:!canAfford?"#e0ddd8":isSov?"linear-gradient(90deg,#7a5200,#c8a800,#f5c518,#c8a800,#7a5200)":"#e8161e",
+              backgroundSize:isSov?"200% auto":undefined,
+              animation:isSov&&canAfford?"balShimmer 3s linear infinite":undefined,
+              color:!canAfford?"#aaa":isSov?"#000":"#fff",
+              fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",border:"none",cursor:canAfford?"pointer":"not-allowed",
+              clipPath:canAfford?"polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))":"none"}}>
             <span style={{fontFamily:"'Roboto Mono',monospace"}}>{fmt(pt.cost)}</span> coins · {pt.cards} cards
           </button>
         </div>
@@ -2350,6 +2782,16 @@ function Shop(props) {
 
   return (
     <div style={{background:"#f0ede8",padding:"24px 20px 80px",maxWidth:960,margin:"0 auto"}}>
+      {/* Oracle Alert — Motor City live game */}
+      {motorCityBoost&&<div style={{background:"linear-gradient(90deg,rgba(0,100,255,0.1),rgba(200,68,255,0.08))",border:"1px solid rgba(200,68,255,0.35)",borderLeft:"3px solid #cc44ff",padding:"10px 16px",marginBottom:16,display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        <div style={{width:8,height:8,borderRadius:"50%",background:"#e8161e",animation:"pulse 1s ease-in-out infinite",flexShrink:0}}/>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:900,letterSpacing:"0.12em",textTransform:"uppercase",color:"#cc44ff"}}>🏀 Oracle Alert · Pistons @ Magic in ~2 hours</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"rgba(0,0,0,0.6)",marginTop:1}}>Load up on Detroit cards now for the <strong>3.0× Return Bonus</strong>. Motor City Box expires at 6:30 PM ET.</div>
+        </div>
+        <button onClick={function(){onBuy(PACK_TYPES.find(function(p){return p.motorCity;})||PACK_TYPES[0]);}}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:900,letterSpacing:"0.1em",textTransform:"uppercase",padding:"6px 14px",border:"none",cursor:"pointer",background:"#cc44ff",color:"#fff",flexShrink:0}}>Buy Motor City →</button>
+      </div>}
       <div style={{marginBottom:24}}>
         <div className="topps-section-title">Wax Wall</div>
         {pityCount>0&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,color:"#e8161e",letterSpacing:"0.1em",textTransform:"uppercase",marginTop:4}}>Pity {pityCount}/10 — Elite+ due soon</div>}
@@ -2359,30 +2801,74 @@ function Shop(props) {
         <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{singleSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
       <div style={{marginBottom:28}}>
+        <SectionHead label="Special Editions · April 19"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{special.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
+      </div>
+      <div style={{marginBottom:28}}>
         <SectionHead label="Multi-Sport Packs"/>
         <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{multiSport.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
       </div>
-      <div>
+      <div style={{marginBottom:32}}>
         <SectionHead label="Collector Boxes · Best Value"/>
         <div style={{display:"flex",flexWrap:"wrap",gap:12}}>{bundles.map(function(pt){return <PackCard key={pt.id} pt={pt}/>;})}</div>
+      </div>
+      {/* Whale Feed */}
+      <div>
+        <SectionHead label="⚡ Whale Feed · Sovereign Pulls"/>
+        <WhaleFeed/>
       </div>
     </div>
   );
 }
+function GoldenSmoke(props) {
+  var active=props.active;
+  if(!active) return null;
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:2500,pointerEvents:"none",overflow:"hidden"}}>
+      {/* Deep gold radial bloom */}
+      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 40%,rgba(245,197,24,0.55) 0%,rgba(200,130,0,0.3) 30%,rgba(139,80,0,0.15) 55%,transparent 75%)",animation:"goldSmokeFade 2.2s ease-out forwards"}}/>
+      {/* Smoke particles */}
+      {[[-20,30],[10,15],[35,25],[-35,20],[0,10],[20,35],[-10,28],[30,12]].map(function(pos,i){
+        return <div key={i} style={{position:"absolute",left:(50+pos[0])+"%",top:(40+pos[1])+"%",
+          width:rand(60,140),height:rand(60,140),
+          borderRadius:"50%",
+          background:"radial-gradient(ellipse,rgba(245,197,24,"+(0.2+i*0.03)+"),transparent 70%)",
+          animation:"goldParticleRise "+(1.2+i*0.15)+"s ease-out "+(i*0.08)+"s forwards",
+          transform:"translate(-50%,-50%)",opacity:0}}/>;
+      })}
+      {/* Screen vignette flash */}
+      <div style={{position:"absolute",inset:0,background:"rgba(245,197,24,0.12)",animation:"goldFlash 0.4s ease-out forwards"}}/>
+    </div>
+  );
+}
+
 function OpeningScreen(props) {
   var pack=props.pack; var cards=props.cards; var onDone=props.onDone; var winners=props.winners;
+  var isSovereign=pack&&pack.id==="sovereign";
   var shakingState=useState(true); var shaking=shakingState[0]; var setShaking=shakingState[1];
   var showCardsState=useState(false); var showCards=showCardsState[0]; var setShowCards=showCardsState[1];
   var glowingState=useState(false); var setGlowing=glowingState[1];
   var partState=useState(false); var particles=partState[0]; var setParticles=partState[1];
   var flippedState=useState([]); var flippedIds=flippedState[0]; var setFlippedIds=flippedState[1];
   var summaryState=useState(false); var showSummary=summaryState[0]; var setShowSummary=summaryState[1];
+  var goldState=useState(false); var showGold=goldState[0]; var setShowGold=goldState[1];
+  var screenShakeState=useState(false); var screenShake=screenShakeState[0]; var setScreenShake=screenShakeState[1];
   useEffect(function(){
     setGlowing(true);
+    // Play rip sound immediately
+    if(isSovereign){
+      playSovereignBoom();
+      setShowGold(true); setTimeout(function(){setShowGold(false);},2400);
+      setScreenShake(true); setTimeout(function(){setScreenShake(false);},600);
+    } else {
+      playPackRip();
+    }
     var t=setTimeout(function(){setParticles(true);setTimeout(function(){setParticles(false);},1200);setShaking(false);setTimeout(function(){setShowCards(true);},300);},1500);
     return function(){clearTimeout(t);};
   },[]);
-  function handleFlip(c){setFlippedIds(function(p){return p.concat([c.id]);});}
+  function handleFlip(c){
+    setFlippedIds(function(p){return p.concat([c.id]);});
+  }
   var allFlipped=flippedIds.length===cards.length&&cards.length>0;
   useEffect(function(){if(allFlipped)setTimeout(function(){setShowSummary(true);},700);},[allFlipped]);
   var fc=flippedIds.map(function(id){return cards.find(function(c){return c.id===id;});}).filter(Boolean);
@@ -2390,14 +2876,16 @@ function OpeningScreen(props) {
   var totalWin=fc.reduce(function(s,c){return s+c.win;},0);
   var rarCounts=cards.reduce(function(a,c){a[c.rarity]=(a[c.rarity]||0)+1;return a;},{});
   return (
-    <div style={{minHeight:"calc(100vh - 110px)",display:"flex",flexDirection:"column",alignItems:"center",padding:"32px 16px",gap:24,background:"#111"}}>
+    <div style={{minHeight:"calc(100vh - 110px)",display:"flex",flexDirection:"column",alignItems:"center",padding:"32px 16px",gap:24,background:isSovereign?"#0a0800":"#111",animation:screenShake?"packShake 0.5s ease":"none"}}>
+      <GoldenSmoke active={showGold}/>
       {!showCards&&(
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.4em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Opening {pack.name}</div>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.4em",color:isSovereign?"rgba(245,197,24,0.7)":"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Opening {pack.name}</div>
+          {isSovereign&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.3em",textTransform:"uppercase",color:"rgba(245,197,24,0.55)",textAlign:"center"}}>⚡ Sovereign Protocol Active · Elite Floor Enforced</div>}
           <div style={{position:"relative"}}><ParticleBurst active={particles}/><BoosterPack packId={pack.id} size={140} shaking={shaking} floating={!shaking}/></div>
-          {shaking&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.3em",color:"rgba(255,255,255,0.5)",textTransform:"uppercase"}}>Ripping Pack...</div>}
+          {shaking&&<div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.3em",color:isSovereign?"rgba(245,197,24,0.6)":"rgba(255,255,255,0.5)",textTransform:"uppercase"}}>{isSovereign?"Sovereign Vault Opening...":"Ripping Pack..."}</div>}
           <div style={{width:180,height:3,background:"#222",overflow:"hidden"}}>
-            <div style={{height:"100%",background:"#e8161e",animation:"shimmerSweep 1.5s ease-in-out infinite",backgroundSize:"200% 100%",backgroundImage:"linear-gradient(90deg,#e8161e 0%,#ff6060 50%,#e8161e 100%)"}}/>
+            <div style={{height:"100%",background:isSovereign?"#f5c518":"#e8161e",animation:"shimmerSweep 1.5s ease-in-out infinite",backgroundSize:"200% 100%",backgroundImage:isSovereign?"linear-gradient(90deg,#c8a800 0%,#f5e060 50%,#c8a800 100%)":"linear-gradient(90deg,#e8161e 0%,#ff6060 50%,#e8161e 100%)"}}/>
           </div>
         </div>
       )}
@@ -2416,7 +2904,7 @@ function OpeningScreen(props) {
             </div>
           </div>
           <div style={{width:"100%",maxWidth:760,height:3,background:"#222",marginBottom:8}}>
-            <div style={{height:"100%",background:"#e8161e",width:(flippedIds.length/cards.length*100)+"%",transition:"width 0.3s"}}/>
+            <div style={{height:"100%",background:isSovereign?"#f5c518":"#e8161e",width:(flippedIds.length/cards.length*100)+"%",transition:"width 0.3s"}}/>
           </div>
           <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12,maxWidth:760}}>
             {cards.map(function(c){return <FlipCard key={c.id} card={c} winners={winners} onFlip={handleFlip}/>;}) }
@@ -2424,9 +2912,9 @@ function OpeningScreen(props) {
         </div>
       )}
       {showSummary&&(
-        <div style={{background:"#fff",maxWidth:380,width:"100%",border:"1px solid #e0ddd8",boxShadow:"0 16px 48px rgba(0,0,0,0.3)"}}>
-          <div style={{background:"#e8161e",padding:"16px 20px"}}>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#fff"}}>Pack Summary</div>
+        <div style={{background:"#fff",maxWidth:380,width:"100%",border:"1px solid "+(isSovereign?"rgba(245,197,24,0.4)":"#e0ddd8"),boxShadow:isSovereign?"0 0 40px rgba(245,197,24,0.2),0 16px 48px rgba(0,0,0,0.3)":"0 16px 48px rgba(0,0,0,0.3)"}}>
+          <div style={{background:isSovereign?"linear-gradient(90deg,#7a5200,#c8a800,#f5c518,#c8a800,#7a5200)":"#e8161e",padding:"16px 20px"}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:isSovereign?"#000":"#fff"}}>{isSovereign?"⚡ Sovereign Pull":"Pack Summary"}</div>
           </div>
           <div style={{padding:"20px"}}>
             <div style={{display:"flex",gap:0,border:"1px solid #e8e8e8",marginBottom:16}}>
@@ -2437,11 +2925,12 @@ function OpeningScreen(props) {
                 </div>;
               })}
             </div>
+            {isSovereign&&<div style={{background:"rgba(245,197,24,0.08)",border:"1px solid rgba(245,197,24,0.3)",padding:"8px 12px",marginBottom:12,fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,color:"#c8a800",letterSpacing:"0.08em",textTransform:"uppercase"}}>⚡ Eligible for guaranteed Grade 9+ in Slab Lab</div>}
             <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:16}}>
               {Object.keys(rarCounts).map(function(r){return <span key={r} style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:700,padding:"3px 8px",border:"1px solid "+(RCOLORS[r]||"#aaa")+"66",color:RCOLORS[r]||"#aaa",letterSpacing:"0.06em",textTransform:"uppercase"}}>{r} ×{rarCounts[r]}</span>;})}
             </div>
             <div style={{display:"flex",gap:8}}>
-              <button onClick={onDone} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0}}>Add to Collection</button>
+              <button onClick={onDone} className="topps-btn-primary" style={{flex:2,fontSize:14,padding:"12px",clipPath:"none",borderRadius:0,background:isSovereign?"#c8a800":undefined}}>Add to Collection</button>
               <button style={{flex:1,background:"#f0ede8",color:"#555",fontFamily:"'Barlow Condensed',sans-serif",fontSize:14,fontWeight:700,padding:"12px",border:"1px solid #ddd",cursor:"pointer",letterSpacing:"0.06em",textTransform:"uppercase"}}>Share</button>
             </div>
           </div>
@@ -2751,6 +3240,54 @@ function PlayerRow(props) {
     </div>
   );
 }
+// ── WHALE FEED — global Sovereign pull activity log ──────────────────────────
+function WhaleFeed(props) {
+  var feedState=useState([]); var feed=feedState[0]; var setFeed=feedState[1];
+  var loadingState=useState(true); var loading=loadingState[0]; var setLoading=loadingState[1];
+  useEffect(function(){
+    if(!supabase){setLoading(false);return;}
+    supabase.from("activity_log")
+      .select("*").eq("event_type","sovereign_pull")
+      .order("created_at",{ascending:false}).limit(20)
+      .then(function(res){
+        if(res.data) setFeed(res.data);
+        setLoading(false);
+      });
+  },[]);
+  if(loading) return <div style={{padding:"20px 0",fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#aaa",textAlign:"center"}}>Loading Whale Feed...</div>;
+  if(!feed.length) return <div style={{padding:"16px 0",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",textAlign:"center"}}>No Sovereign pulls yet. Be the first whale.</div>;
+  return (
+    <div style={{display:"flex",flexDirection:"column",gap:6}}>
+      {feed.map(function(entry,i){
+        var rarColor=RCOLORS[entry.top_card_rarity]||"#aaa";
+        var ts=entry.created_at?new Date(entry.created_at):null;
+        var timeAgo=ts?Math.round((Date.now()-ts.getTime())/60000)+"m ago":"";
+        return (
+          <div key={entry.id||i} style={{background:"#fff",border:"1px solid rgba(245,197,24,0.2)",borderLeft:"3px solid #f5c518",padding:"10px 14px",display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:32,height:32,background:entry.avatar_color||"#f5c518",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:900,fontSize:12,color:"#fff"}}>{(entry.avatar_initials||"??").slice(0,2).toUpperCase()}</span>
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontWeight:800,fontSize:13,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>{entry.username||"Collector"}</span>
+                <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,background:"rgba(245,197,24,0.15)",border:"1px solid rgba(245,197,24,0.4)",color:"#c8a800",padding:"1px 6px",letterSpacing:"0.06em",textTransform:"uppercase"}}>⚡ SOVEREIGN</span>
+              </div>
+              <div style={{fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#666",marginTop:1}}>
+                Opened <span style={{fontWeight:600,color:"#111"}}>{entry.pack_name||"Sovereign Vault"}</span>
+                {entry.top_card_rarity&&<span> · Top pull: <span style={{color:rarColor,fontWeight:700}}>{entry.top_card_rarity}</span>{entry.top_card_team&&<span style={{color:"#888"}}> {entry.top_card_team}</span>}</span>}
+              </div>
+            </div>
+            <div style={{flexShrink:0,textAlign:"right"}}>
+              <div style={{fontFamily:"'Roboto Mono',monospace",fontSize:11,fontWeight:700,color:"#c8a800"}}>−{fmt(entry.coins_spent||50000)}🪙</div>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,color:"#bbb",letterSpacing:"0.08em",textTransform:"uppercase"}}>{timeAgo}</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Social(props) {
   var inventory=props.inventory; var initialVault=props.initialVault||null; var onClearVault=props.onClearVault; var shakeTeams=props.shakeTeams||{};
   var searchState=useState(""); var search=searchState[0]; var setSearch=searchState[1];
@@ -6019,6 +6556,7 @@ export default function App() {
     }
     var msg=gradeTier.multiplier>1?"Grade "+gradeTier.grade+" — "+gradeTier.multiplier+"× yield boost applied!":"Grade "+gradeTier.grade+" — "+gradeTier.label;
     pushNotif("Card Graded!",msg,gradeTier.tier==="gem"?"sale":"info");
+    if(gradeTier.grade===10) playRevealShimmer();
     addXp(300);
   }
   function completeOnboarding(cards,coins){
@@ -6225,14 +6763,55 @@ export default function App() {
     setBalance(function(b){return b-pt.cost;});
     var pa=pt.id==="standard"&&pity>=10;
     var cards=buildPack(pt,pa);
-    var hasElite=cards.some(function(c){return ["Elite","Legacy","Legendary","Dynasty"].includes(c.rarity);});
-    if(pt.id==="standard")setPity(hasElite?0:function(p){return p+1;});
-    setOpening({pack:pt,cards:cards});
-    setTab("opening");
-    var nextPacks=packsOpened+1;
-    setPacksOpened(nextPacks);
-    saveProfile(Object.assign({},loadProfile(),{packsOpened:nextPacks}));
-    if(userId) dbSaveProfile(userId,{coins:newBal,packs_opened:nextPacks});
+    // ── Try Radioactive roll on every pack open ────────────────────────────────
+    function finishBuy(radCard){
+      if(radCard){
+        // Insert one slot replacing the lowest rarity card
+        var lowest=cards.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);})[cards.length-1];
+        var idx=cards.indexOf(lowest);
+        if(idx>=0) cards[idx]=radCard; else cards.push(radCard);
+        // Log to Supabase radioactive_cards table
+        if(supabase&&userId){
+          supabase.from("radioactive_cards").insert({
+            serial_number:radCard.serialNumber,
+            card_id:radCard.id,
+            user_id:userId,
+            team:radCard.team,
+            sport:radCard.sport,
+          }).then(function(){});
+        }
+        if(onNotif) pushNotif("☢️ RADIOACTIVE PULL!","#"+radCard.serialNumber+" / 10 worldwide!","sale");
+      }
+      var hasElite=cards.some(function(c){return ["Elite","Legacy","Legendary","Dynasty","Radioactive"].includes(c.rarity);});
+      if(pt.id==="standard")setPity(hasElite?0:function(p){return p+1;});
+      setOpening({pack:pt,cards:cards});
+      setTab("opening");
+      var nextPacks=packsOpened+1;
+      setPacksOpened(nextPacks);
+      saveProfile(Object.assign({},loadProfile(),{packsOpened:nextPacks}));
+      if(userId) dbSaveProfile(userId,{coins:newBal,packs_opened:nextPacks});
+      if(pt.sovereign&&supabase&&userId){
+        var topCard=cards.slice().sort(function(a,b){return ORDER.indexOf(a.rarity)-ORDER.indexOf(b.rarity);})[0];
+        supabase.from("activity_log").insert({
+          user_id:userId,username:profile.username||"Collector",
+          avatar_initials:profile.avatarInitials||"??",avatar_color:profile.avatarColor||"#f5c518",
+          event_type:"sovereign_pull",pack_id:pt.id,pack_name:pt.name,
+          top_card_rarity:topCard?topCard.rarity:null,top_card_team:topCard?topCard.team:null,
+          coins_spent:pt.cost,created_at:new Date().toISOString(),
+        }).then(function(){});
+      }
+    }
+    // Check global Radioactive count from Supabase
+    if(supabase){
+      supabase.from("radioactive_cards").select("serial_number",{count:"exact"}).then(function(res){
+        var count=(res&&res.count)||(_radioactiveCount||0);
+        _radioactiveCount=count;
+        var radCard=tryRollRadioactive(count);
+        finishBuy(radCard);
+      }).catch(function(){finishBuy(null);});
+    } else {
+      finishBuy(tryRollRadioactive(_radioactiveCount||0));
+    }
   }
 
   function finishOpening(){
