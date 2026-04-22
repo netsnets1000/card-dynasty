@@ -6200,10 +6200,17 @@ export default function App() {
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
         if(hasCards){
-          var cards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp,graded:r.is_slabbed||false,grade:r.grade||null,gradeMultiplier:r.yield_multiplier||null,gradeTier:r.grade>=10?"gem":r.grade>=9?"mint":r.grade>=8?"good":"base"};});
+          var rawCards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp,graded:r.is_slabbed||false,grade:r.grade||null,gradeMultiplier:r.yield_multiplier||null,gradeTier:r.grade>=10?"gem":r.grade>=9?"mint":r.grade>=8?"good":"base"};});
+          var cards=trimToLimit(rawCards);
+          var trimmed=rawCards.length-cards.length;
           setInventory(cards);
           setOnboarded(true);
           setIsNewUser(false);
+          // If over cap, save the trimmed collection back to DB immediately
+          if(trimmed>0){
+            dbSaveCards(uid,cards);
+            console.log("[CardDynasty] Auto-trimmed "+trimmed+" cards for user "+uid+" (was "+rawCards.length+", now "+cards.length+")");
+          }
         } else {
           setIsNewUser(true);
           setOnboarded(false);
