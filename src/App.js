@@ -544,6 +544,12 @@ var CSS=`
   @keyframes goldParticleRise{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2)}20%{opacity:0.9}100%{opacity:0;transform:translate(-50%,-200%) scale(1.8)}}
   @keyframes goldFlash{0%{opacity:1}100%{opacity:0}}
   @keyframes slimePulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+  @keyframes chromeEdge{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes liquidGlass{0%,100%{opacity:0.45;transform:translateX(-100%) skewX(-20deg)}100%{opacity:0;transform:translateX(300%) skewX(-20deg)}}
+  @keyframes goldEtch{0%,100%{text-shadow:0 1px 0 #fff8c0,0 2px 4px rgba(180,120,0,0.8),0 0 12px rgba(255,200,0,0.5)}50%{text-shadow:0 1px 0 #fff,0 2px 8px rgba(200,140,0,1),0 0 24px rgba(255,220,0,0.9),0 0 40px rgba(255,160,0,0.4)}}
+  @keyframes nebulaFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes matteGrain{0%,100%{opacity:0.04}50%{opacity:0.07}}
+  @keyframes chromeSweep{0%{left:-60%;opacity:0}20%{opacity:0.7}80%{opacity:0.7}100%{left:130%;opacity:0}}
   .bento-card{animation:bentoSlide 0.45s ease-out both}
   .badge-unlocked{animation:badgeUnlock 0.55s cubic-bezier(0.3,1.4,0.5,1) both}
   .showcase-card-anim{animation:showcaseFloat 4s ease-in-out infinite}
@@ -738,64 +744,68 @@ function TeamEmblem(props) {
 // ── RARITY CONFIG ─────────────────────────────────────────────────────────────
 var RARITY_CFG={
   Base:{
-    stripe:"#6b7280",stripeTxt:"#fff",
-    photoTop:"#141820",photoBot:"#0c1018",
-    abbvFn:function(c1){return "rgba("+hexToRgb(c1)+",0.55)";},
+    stripe:"#4b5563",stripeTxt:"rgba(255,255,255,0.6)",
+    photoTop:"#111418",photoBot:"#0a0c10",
+    abbvFn:function(c1){return "rgba("+hexToRgb(c1)+",0.45)";},
     abbvShadow:"none",
-    plateBdr:"#777",nameCol:"#222",rarCol:"#777",
-    tagBg:"#6b7280",tagTxt:"#fff",
-    shadow:"none",
-    overlays:null,icon:null,serial:null,
-    photoExtra:function(W,H){return null;},
+    plateBdr:"#555",nameCol:"#333",rarCol:"#666",
+    tagBg:"#4b5563",tagTxt:"rgba(255,255,255,0.7)",
+    // Matte finish — flat, no glow, subtle grain
+    shadow:"0 2px 8px rgba(0,0,0,0.4)",
+    icon:null,serial:null,
   },
   Rare:{
-    stripe:"#1144cc",stripeTxt:"#fff",
-    photoTop:"#081440",photoBot:"#040c28",
-    abbvFn:function(){return "rgba(80,140,255,0.72)";},
-    abbvShadow:"0 0 22px rgba(50,120,255,0.55)",
-    plateBdr:"#2255cc",nameCol:"#111",rarCol:"#1a44cc",
+    stripe:"#1a44bb",stripeTxt:"#fff",
+    photoTop:"#06102e",photoBot:"#030818",
+    abbvFn:function(){return "rgba(100,160,255,0.65)";},
+    abbvShadow:"0 0 16px rgba(60,130,255,0.5)",
+    plateBdr:"#1a44bb",nameCol:"#111",rarCol:"#1a44cc",
     tagBg:"#1144cc",tagTxt:"#fff",
-    shadow:"0 0 18px rgba(40,100,230,0.45)",
+    shadow:"0 0 14px rgba(30,80,220,0.4)",
     icon:null,serial:null,
   },
   Elite:{
-    stripe:"#22aa55",stripeTxt:"#fff",
-    photoTop:"#040e08",photoBot:"#020a04",
-    abbvFn:function(){return "rgba(60,220,120,0.78)";},
-    abbvShadow:"0 0 18px rgba(34,200,100,0.7),0 0 40px rgba(0,180,80,0.3)",
-    plateBdr:"#22aa55",nameCol:"#111",rarCol:"#22aa55",
-    tagBg:"linear-gradient(90deg,#22aa55,#0aee77)",tagTxt:"#fff",
-    shadow:"0 0 22px rgba(34,170,85,0.5)",
+    stripe:"linear-gradient(180deg,#aaccff,#22aaff,#0066cc,#22aaff,#aaccff)",stripeTxt:"#001830",
+    photoTop:"#020c18",photoBot:"#010608",
+    abbvFn:function(){return "rgba(80,180,255,0.82)";},
+    abbvShadow:"0 0 20px rgba(40,160,255,0.9),0 0 50px rgba(0,120,255,0.45)",
+    plateBdr:"#1188ff",nameCol:"#d0eeff",rarCol:"#44aaff",
+    tagBg:"linear-gradient(90deg,#003366,#0066cc,#44aaff,#0066cc,#003366)",tagTxt:"#d0eeff",
+    // Chrome edges — neon blue glow + metallic shimmer
+    shadow:"0 0 22px rgba(0,140,255,0.7),0 0 60px rgba(0,100,255,0.25),inset 0 0 0 1px rgba(100,200,255,0.3)",
     icon:"⚡",serial:null,
   },
   Legacy:{
-    stripe:"#c8a800",stripeTxt:"#fff",
-    photoTop:"#1a0c00",photoBot:"#0a0500",
-    abbvFn:function(){return "rgba(255,210,40,0.9)";},
-    abbvShadow:"0 0 14px rgba(255,200,0,0.85),0 0 38px rgba(220,160,0,0.45),0 0 65px rgba(180,100,0,0.2)",
-    plateBdr:"#c8a800",nameCol:"#111",rarCol:"#b8900a",
-    tagBg:"linear-gradient(90deg,#c8a800,#ffe566,#c8a800)",tagTxt:"#000",
-    shadow:"0 0 28px rgba(200,168,0,0.62),0 0 60px rgba(200,168,0,0.18)",
+    stripe:"linear-gradient(180deg,#fff8c0,#c8a800,#8a6c00,#c8a800,#fff8c0)",stripeTxt:"#3a2800",
+    photoTop:"#120a00",photoBot:"#060300",
+    abbvFn:function(){return "rgba(255,215,40,0.92)";},
+    abbvShadow:"0 0 14px rgba(255,210,0,0.95),0 0 40px rgba(200,160,0,0.5),0 0 70px rgba(160,100,0,0.2)",
+    plateBdr:"transparent",nameCol:"#3a2800",rarCol:"#8a6400",
+    tagBg:"linear-gradient(90deg,#6a4400,#c8a800,#fff8c0,#c8a800,#6a4400)",tagTxt:"#1a0e00",
+    // Gold-leaf border + liquid glass shimmer
+    shadow:"0 0 30px rgba(200,168,0,0.7),0 0 70px rgba(180,130,0,0.2)",
     icon:"🔥",serial:"/500",
   },
   Legendary:{
-    stripe:"#e8161e",stripeTxt:"#fff",
-    photoTop:"#0e0202",photoBot:"#060000",
-    abbvFn:function(){return "rgba(255,80,50,0.92)";},
-    abbvShadow:"0 0 14px rgba(255,40,20,0.95),0 0 40px rgba(232,22,30,0.65),0 0 80px rgba(180,0,0,0.3)",
-    plateBdr:"#e8161e",nameCol:"#111",rarCol:"#cc0010",
-    tagBg:"linear-gradient(90deg,#cc0010,#ff3322)",tagTxt:"#fff",
-    shadow:"0 0 32px rgba(232,22,30,0.7),0 0 70px rgba(232,22,30,0.25)",
+    stripe:"linear-gradient(180deg,#ff6060,#cc0010,#660008,#cc0010,#ff6060)",stripeTxt:"#fff",
+    photoTop:"#0a0101",photoBot:"#040000",
+    abbvFn:function(){return "rgba(255,90,60,0.94)";},
+    abbvShadow:"0 0 16px rgba(255,50,20,1),0 0 45px rgba(220,20,10,0.7),0 0 90px rgba(180,0,0,0.35)",
+    plateBdr:"transparent",nameCol:"#ffe0e0",rarCol:"#ff6060",
+    tagBg:"linear-gradient(90deg,#550008,#cc0010,#ff4040,#cc0010,#550008)",tagTxt:"#ffe0e0",
+    // Liquid Glass — frosted overlay with gold shimmer border
+    shadow:"0 0 36px rgba(232,22,30,0.75),0 0 80px rgba(200,0,10,0.3)",
     icon:"★",serial:"/100",
   },
   Dynasty:{
-    stripe:"#9933ff",stripeTxt:"#fff",
-    photoTop:"#0a001e",photoBot:"#020008",
-    abbvFn:function(){return "rgba(200,120,255,0.95)";},
-    abbvShadow:"0 0 14px rgba(180,80,255,1),0 0 35px rgba(153,51,255,0.75),0 0 70px rgba(232,22,30,0.35)",
-    plateBdr:"transparent",nameCol:"#fff",rarCol:"#cc88ff",
-    tagBg:"linear-gradient(90deg,#9933ff,#cc0030)",tagTxt:"#fff",
-    shadow:"0 0 40px rgba(140,50,255,0.75),0 0 80px rgba(232,22,30,0.35)",
+    stripe:"linear-gradient(180deg,#ff99ff,#9933ff,#330099,#9933ff,#ff99ff)",stripeTxt:"#fff",
+    photoTop:"#04000e",photoBot:"#020006",
+    abbvFn:function(){return "rgba(210,130,255,0.96)";},
+    abbvShadow:"0 0 16px rgba(190,90,255,1),0 0 40px rgba(153,51,255,0.8),0 0 80px rgba(220,20,80,0.4)",
+    plateBdr:"transparent",nameCol:"#eeccff",rarCol:"#cc88ff",
+    tagBg:"linear-gradient(90deg,#220044,#9933ff,#ff00aa,#9933ff,#220044)",tagTxt:"#fff",
+    // Full Galaxy — deep nebula bg + gold-etched serial
+    shadow:"0 0 44px rgba(150,60,255,0.8),0 0 90px rgba(220,20,100,0.4),0 0 140px rgba(80,0,200,0.2)",
     icon:"👑",serial:"/10",
   },
   Radioactive:{
@@ -872,7 +882,13 @@ function PremiumCard(props) {
         <div style={{position:"absolute",left:20,top:0,right:0,bottom:38,
           background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
 
-          {isBase&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px),repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,255,255,0.015) 18px,rgba(255,255,255,0.015) 19px)",zIndex:1}}/>}
+          {/* ── BASE: matte grain texture ── */}
+          {isBase&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E\")",
+            zIndex:1,animation:"matteGrain 4s ease-in-out infinite"}}/>}
+          {isBase&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.012) 18px,rgba(255,255,255,0.012) 19px),repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,255,255,0.012) 18px,rgba(255,255,255,0.012) 19px)",
+            zIndex:1}}/>}
 
           {isRare&&<svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.14,zIndex:1}} viewBox="0 0 150 202" preserveAspectRatio="none">
             <path d="M10,82 Q30,58 52,86 Q72,112 96,72" stroke="#4488ff" strokeWidth="1.5" fill="none"/>
@@ -883,56 +899,125 @@ function PremiumCard(props) {
             <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
           </div>}
 
-          {isElite&&<div style={{position:"absolute",left:0,right:0,top:"8%",height:"50%",background:"linear-gradient(180deg,transparent,rgba(0,230,120,0.18),rgba(0,180,220,0.12),transparent)",animation:"nebulaBreath 4s ease-in-out infinite",zIndex:1}}/>}
-          {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(55deg,transparent,transparent 9px,rgba(34,200,100,0.06) 9px,rgba(34,200,100,0.06) 10px)",zIndex:1}}/>}
-          {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
-            <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(60,220,120,0.14),transparent)",animation:"shimmerSweep 3s ease-in-out infinite 0.5s"}}/>
+          {/* ── ELITE: chrome edges + faint blue neon glow ── */}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            background:"linear-gradient(160deg,rgba(0,100,200,0.14) 0%,rgba(0,60,140,0.06) 40%,rgba(0,140,255,0.16) 100%)",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%),linear-gradient(90deg,rgba(140,200,255,0.16) 0%,transparent 14%,transparent 86%,rgba(140,200,255,0.12) 100%)",
+            zIndex:2}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 85% 55% at 60% 50%,rgba(0,160,255,0.2) 0%,rgba(0,80,200,0.1) 50%,transparent 80%)",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}>
+            <div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),rgba(180,220,255,0.22),transparent)",
+              animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/>
           </div>}
-          {isElite&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"20%",background:"linear-gradient(0deg,rgba(0,255,120,0.18) 0%,transparent 100%)",zIndex:3}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(80,160,255,0.04) 3px,rgba(80,160,255,0.04) 4px)",
+            zIndex:1}}/>}
 
-          {isLegacy&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:180,height:180,opacity:0.1,zIndex:1}} viewBox="0 0 180 180">
-            <g transform="translate(90,90)">
-              {[0,45,90,135,22.5,67.5,112.5,157.5].map(function(a,i){return <line key={i} x1="0" y1="-85" x2="0" y2="85" stroke="#ffcc00" strokeWidth={i<4?1:0.6} transform={"rotate("+a+")"}/>;})}
+          {/* ── LEGACY: gold-leaf border + liquid glass transparency ── */}
+          {/* Deep amber base */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 80% 65% at 58% 42%,rgba(220,160,0,0.3) 0%,rgba(160,100,0,0.15) 45%,transparent 75%)",zIndex:1}}/>}
+          {/* Gold-leaf edge frames */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,zIndex:2,
+            backgroundImage:"linear-gradient(180deg,rgba(255,230,80,0.22) 0%,rgba(200,160,0,0.1) 4%,transparent 15%,transparent 85%,rgba(200,160,0,0.1) 96%,rgba(255,230,80,0.22) 100%),linear-gradient(90deg,rgba(255,220,60,0.2) 0%,rgba(180,130,0,0.08) 4%,transparent 15%,transparent 85%,rgba(180,130,0,0.08) 96%,rgba(255,220,60,0.18) 100%)"}}/>}
+          {/* Liquid glass: frosted inner layer */}
+          {isLegacy&&<div style={{position:"absolute",inset:"4px",
+            background:"linear-gradient(135deg,rgba(255,255,200,0.06) 0%,rgba(255,220,80,0.03) 40%,rgba(200,140,0,0.05) 100%)",
+            backdropFilter:"blur(0.5px)",
+            borderRadius:2,zIndex:2}}/>}
+          {/* Gold sunray burst */}
+          {isLegacy&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:200,height:200,opacity:0.08,zIndex:1}} viewBox="0 0 200 200">
+            <g transform="translate(100,100)">
+              {[0,30,60,90,120,150,15,45,75,105,135,165].map(function(a,i){
+                return <line key={i} x1="0" y1="-95" x2="0" y2="95" stroke="#ffcc00" strokeWidth={i<6?0.8:0.4} transform={"rotate("+a+")"}/>;
+              })}
             </g>
           </svg>}
-          {isLegacy&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 78% 62% at 60% 40%,rgba(255,200,0,0.36) 0%,rgba(220,120,0,0.2) 40%,transparent 90%)",zIndex:1}}/>}
-          {isLegacy&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(72deg,transparent,transparent 11px,rgba(255,200,0,0.055) 11px,rgba(255,200,0,0.055) 12px)",zIndex:1}}/>}
-          {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
-            <div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:"22%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,255,180,0.09),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+          {/* Liquid glass sweep — two-pass shimmer */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}>
+            <div style={{position:"absolute",width:"55%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,230,100,0.16),rgba(255,255,220,0.09),rgba(255,220,80,0.13),transparent)",
+              animation:"shimmerSweep 2.4s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"20%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,255,200,0.08),transparent)",
+              animation:"shimmerSweep 2.4s ease-in-out infinite 1.2s"}}/>
           </div>}
+          {/* Diagonal gold foil lines */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(68deg,transparent,transparent 12px,rgba(255,200,0,0.045) 12px,rgba(255,200,0,0.045) 13px)",
+            zIndex:1}}/>}
 
+          {/* ── LEGENDARY: liquid glass borders + supernova core ── */}
+          {/* Deep crimson base */}
+          {isLeg&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 90% 75% at 56% 40%,rgba(255,50,20,0.42) 0%,rgba(180,10,10,0.22) 35%,rgba(60,0,0,0.1) 65%,transparent 85%)",zIndex:2}}/>}
+          {/* Star field */}
           {isLeg&&<div style={{position:"absolute",inset:0,zIndex:1}}>
             {[[15,24,2,2.1],[28,62,1,1.7],[11,76,2,2.5],[42,14,1,1.9],[21,46,2,2.3],[55,78,1,2.0],[65,35,1,2.6]].map(function(s,i){
-              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.4)+"s",opacity:0.6}}/>;
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.4)+"s",opacity:0.7}}/>;
             })}
           </div>}
-          {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.48) 0%,rgba(200,10,10,0.25) 35%,rgba(60,0,0,0.1) 65%,transparent 80%)",zIndex:2}}/>}
-          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:80,height:80,border:"1px solid rgba(255,70,40,0.3)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite",zIndex:3}}/>}
-          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:120,height:120,border:"1px solid rgba(255,60,30,0.15)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite 0.7s",zIndex:3}}/>}
-          {isLeg&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:4}}>
-            <div style={{position:"absolute",width:"40%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,40,0.14),transparent)",animation:"shimmerSweep 2.2s ease-in-out infinite"}}/>
+          {/* Liquid glass edge: frosted borders */}
+          {isLeg&&<div style={{position:"absolute",inset:0,zIndex:3,
+            backgroundImage:"linear-gradient(180deg,rgba(255,180,180,0.2) 0%,rgba(255,80,60,0.08) 5%,transparent 18%,transparent 82%,rgba(255,80,60,0.08) 95%,rgba(255,180,180,0.18) 100%),linear-gradient(90deg,rgba(255,160,140,0.18) 0%,rgba(220,60,40,0.07) 5%,transparent 18%,transparent 82%,rgba(220,60,40,0.07) 95%,rgba(255,160,140,0.16) 100%)"}}/>}
+          {/* Glass inner surface */}
+          {isLeg&&<div style={{position:"absolute",inset:"3px",
+            background:"linear-gradient(135deg,rgba(255,200,200,0.05) 0%,rgba(255,80,60,0.03) 50%,rgba(180,0,0,0.04) 100%)",
+            borderRadius:2,zIndex:3}}/>}
+          {/* Shockwave rings */}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:80,height:80,border:"1px solid rgba(255,70,40,0.35)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite",zIndex:4}}/>}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:130,height:130,border:"1px solid rgba(255,60,30,0.18)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite 0.7s",zIndex:4}}/>}
+          {/* Glass shimmer */}
+          {isLeg&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:5}}>
+            <div style={{position:"absolute",width:"42%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,140,120,0.18),rgba(255,255,255,0.09),rgba(255,120,100,0.14),transparent)",
+              animation:"shimmerSweep 2.2s ease-in-out infinite"}}/>
           </div>}
-          {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35) 0%,transparent 100%)",zIndex:4}}/>}
-          {isLeg&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#ff6040","#ff4020","#ff7050"][i],borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.55)+"s",boxShadow:"0 0 4px #ff4020",zIndex:6}}/>;})}
-
-          {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.22) 0deg,transparent 60deg,rgba(232,22,30,0.14) 120deg,transparent 180deg,rgba(153,51,255,0.18) 240deg,transparent 300deg,rgba(80,20,180,0.1) 360deg)",animation:"cosmicRing 25s linear infinite",zIndex:1}}/>}
-          {isDyn&&<div style={{position:"absolute",left:"-20%",top:"-20%",width:"80%",height:"80%",background:"radial-gradient(ellipse at 60% 60%,rgba(153,51,255,0.28) 0%,rgba(80,20,180,0.12) 50%,transparent 70%)",animation:"nebulaBreath 5s ease-in-out infinite",zIndex:2}}/>}
-          {isDyn&&<div style={{position:"absolute",right:"-10%",top:"20%",width:"70%",height:"60%",background:"radial-gradient(ellipse at 40% 40%,rgba(232,22,30,0.18) 0%,rgba(120,10,40,0.08) 50%,transparent 70%)",animation:"nebulaBreath 4s ease-in-out infinite 1.5s",zIndex:2}}/>}
+          {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.38) 0%,transparent 100%)",zIndex:4}}/>}
+          {isLeg&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#ff7050","#ff5030","#ff8060"][i],borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.55)+"s",boxShadow:"0 0 4px #ff5030",zIndex:6}}/>;})}
+          {/* Diagonal glass texture */}
+          {isLeg&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(65deg,transparent,transparent 14px,rgba(255,120,100,0.04) 14px,rgba(255,120,100,0.04) 15px)",
+            zIndex:1}}/>}
+          {/* ── DYNASTY: full galaxy shader — moving nebula + gold-etched serial ── */}
+          {isDyn&&<div style={{position:"absolute",inset:0,
+            background:"linear-gradient(135deg,#04000e 0%,#080020 40%,#0e0008 70%,#020010 100%)",zIndex:0}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:"-20%",width:"140%",height:"140%",
+            background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.32) 0deg,transparent 55deg,rgba(232,22,30,0.2) 110deg,transparent 170deg,rgba(80,20,255,0.26) 225deg,transparent 280deg,rgba(200,40,120,0.18) 330deg,rgba(153,51,255,0.28) 360deg)",
+            animation:"cosmicRing 28s linear infinite",zIndex:1}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"-25%",top:"-25%",width:"90%",height:"90%",
+            background:"radial-gradient(ellipse at 55% 55%,rgba(153,51,255,0.35) 0%,rgba(80,20,180,0.2) 40%,transparent 70%)",
+            animation:"nebulaBreath 5s ease-in-out infinite",zIndex:2}}/>}
+          {isDyn&&<div style={{position:"absolute",right:"-15%",top:"15%",width:"75%",height:"65%",
+            background:"radial-gradient(ellipse at 40% 40%,rgba(220,20,80,0.25) 0%,rgba(140,10,50,0.12) 50%,transparent 75%)",
+            animation:"nebulaBreath 4.2s ease-in-out infinite 1.8s",zIndex:2}}/>}
           {isDyn&&<div style={{position:"absolute",inset:0,zIndex:3}}>
-            {[[8,18,1,2.2],[15,55,2,1.8],[25,30,1,2.5],[18,80,2,1.6],[36,68,1,2.1],[12,40,2,3.0],[45,22,1,1.9],[56,76,1,2.4]].map(function(s,i){
-              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:["#fff","#cc99ff","#fff","#ffbbcc","#aabbff","#fff","#fff","#aaffee"][i],borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.35)+"s",boxShadow:i%2===0?"0 0 2px #fff":"0 0 3px rgba(200,150,255,0.8)"}}/>;
+            {[[8,18,1,2.2],[15,55,2,1.8],[25,30,1,2.5],[18,80,2,1.6],[36,68,1,2.1],[12,40,2,3.0],[45,22,1,1.9],[56,76,1,2.4],[32,10,1,1.7],[62,48,1,2.8],[44,88,1,2.0],[20,62,2,2.3]].map(function(s,i){
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:["#fff","#cc99ff","#fff","#ffbbcc","#aabbff","#fff","#fff","#aaffee","#fff","#ddaaff","#fff","#ffeebb"][i],borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.3)+"s",boxShadow:i%2===0?"0 0 2px rgba(255,255,255,0.8)":"0 0 3px rgba(200,150,255,0.9)"}}/>;
             })}
           </div>}
-          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:44,height:44,borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
-          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:80,height:20,borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",boxShadow:"0 0 8px rgba(180,80,255,0.3)",zIndex:5}}/>}
-          {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:100,height:25,borderRadius:"50%",border:"1px solid rgba(255,80,40,0.2)",zIndex:4}}/>}
-          {isDyn&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(153,51,255,0.04) 3px,rgba(153,51,255,0.04) 4px)",zIndex:7,pointerEvents:"none"}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:48,height:48,borderRadius:"50%",
+            background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 30%,rgba(80,10,180,0.5) 60%,transparent 85%)",
+            boxShadow:"0 0 20px rgba(100,20,220,0.4)",zIndex:6}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:88,height:22,borderRadius:"50%",
+            border:"1.5px solid rgba(200,120,255,0.45)",boxShadow:"0 0 12px rgba(180,80,255,0.4),inset 0 0 6px rgba(180,80,255,0.1)",zIndex:5}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:112,height:28,borderRadius:"50%",
+            border:"1px solid rgba(255,80,40,0.25)",zIndex:4}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(120,40,255,0.04) 3px,rgba(120,40,255,0.04) 4px)",
+            zIndex:7,pointerEvents:"none"}}/>}
           {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:8}}>
-            <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(180,80,255,0.14),rgba(255,255,255,0.05),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:"18%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,80,80,0.08),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite 1.25s"}}/>
+            <div style={{position:"absolute",width:"32%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(180,80,255,0.18),rgba(255,255,255,0.06),transparent)",
+              animation:"shimmerSweep 2.6s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"20%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,80,120,0.1),transparent)",
+              animation:"shimmerSweep 2.6s ease-in-out infinite 1.3s"}}/>
           </div>}
-          {isDyn&&[20,36,52,66,82].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#cc66ff","#ff4460","#9933ff","#ffaa44","#ff3366"][i],borderRadius:"50%",animation:"emberRise "+(1.5+i*0.2)+"s ease-out infinite "+(i*0.4)+"s",boxShadow:"0 0 "+(5+i)+"px "+["#aa44ff","#ff2244","#8822ee","#ff8800","#ee1144"][i],zIndex:9}}/>;})}
+          {isDyn&&[18,32,48,64,80].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"22%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#cc66ff","#ff4460","#9933ff","#ffaa44","#ff3366"][i],borderRadius:"50%",animation:"emberRise "+(1.4+i*0.2)+"s ease-out infinite "+(i*0.4)+"s",boxShadow:"0 0 "+(6+i)+"px "+["#aa44ff","#ff2244","#8822ee","#ff8800","#ee1144"][i],zIndex:9}}/>;})}
 
           {/* ── RADIOACTIVE VISUAL ── */}
           {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.32) 0%,rgba(0,180,40,0.16) 40%,rgba(0,80,20,0.08) 65%,transparent 85%)",zIndex:1}}/>}
@@ -987,13 +1072,18 @@ function PremiumCard(props) {
               :isElite?"drop-shadow(0 0 5px rgba(34,200,100,0.9))"
               :"none"}}>{cfg.icon}</div>}
 
-          {/* Serial number — shown for Legacy+ including Radioactive */}
+          {/* Serial number — gold-etched 3D for Dynasty, standard for others */}
           {cfg.serial&&<div style={{position:"absolute",bottom:6,left:22,zIndex:11,
-            fontFamily:"'Roboto Mono',monospace",fontSize:isRad?8:7,fontWeight:700,
-            color:isRad?"rgba(0,255,60,0.9)":isDyn?"rgba(200,140,255,0.6)":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",
-            letterSpacing:"0.06em",
-            textShadow:isRad?"0 0 8px rgba(0,255,60,0.8)":"none"}}>
-            {isRad?"#"+(card.serialNumber||"?")+" / 10":("#"+cfg.serial)}
+            fontFamily:"'Roboto Mono',monospace",
+            fontSize:isRad?8:isDyn?9:7,
+            fontWeight:700,
+            letterSpacing:isDyn?"0.1em":"0.06em",
+            color:isRad?"rgba(0,255,60,0.9)":isDyn?"#f5e060":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",
+            textShadow:isRad?"0 0 8px rgba(0,255,60,0.8)"
+              :isDyn?"0 1px 0 rgba(255,255,255,0.3),0 2px 4px rgba(140,80,0,0.9),0 0 12px rgba(255,200,0,0.5)"
+              :"none",
+            animation:isDyn?"goldEtch 2.5s ease-in-out infinite":"none"}}>
+            {isRad?"#"+(card.serialNumber||"?")+" / 10":isDyn?"#01 / 10":"#"+cfg.serial}
           </div>}
 
           {/* Rarity tag — top right */}
@@ -1024,10 +1114,10 @@ function PremiumCard(props) {
 
         {/* NAME PLATE */}
         <div style={{position:"absolute",bottom:0,left:0,right:0,height:38,
-          background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
-          borderTop:isRad?"3px solid #00ff44":isDyn?"3px solid transparent":"2px solid "+cfg.plateBdr,
-          borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
-          boxShadow:isRad?"0 -2px 12px rgba(0,255,60,0.3)":"none",
+          background:isDyn?"#04000e":isRad?"#000e04":isLegacy?"linear-gradient(180deg,rgba(255,245,200,0.95),rgba(240,220,140,0.9))":isLeg?"linear-gradient(180deg,rgba(10,0,0,0.96),rgba(6,0,0,0.98))":"#fff",
+          borderTop:isRad?"3px solid #00ff44":isDyn?"3px solid transparent":isLegacy?"2px solid #c8a800":isLeg?"2px solid #880010":"2px solid "+cfg.plateBdr,
+          borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00,#9933ff) 1":"none",
+          boxShadow:isRad?"0 -2px 12px rgba(0,255,60,0.3)":isDyn?"0 -4px 20px rgba(100,20,220,0.4)":isLegacy?"0 -2px 8px rgba(200,168,0,0.3)":isLeg?"0 -2px 8px rgba(200,0,20,0.2)":"none",
           zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
           paddingLeft:24,paddingRight:8,paddingTop:2,paddingBottom:2}}>
           <div style={{fontFamily:"'Barlow Condensed',sans-serif",
