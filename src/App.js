@@ -1102,6 +1102,104 @@ function CardBack(props) {
   );
 }
 
+// ── HOLOGRAPHIC FOIL WRAPPER ─────────────────────────────────────────────────
+// Wraps Dynasty and Radioactive cards with mouse-tracked 3D tilt + foil shimmer.
+// Pure CSS — no Framer Motion needed.
+function HoloCard(props) {
+  var children = props.children;
+  var rarity = props.rarity;
+  var isActive = rarity === "Dynasty" || rarity === "Radioactive";
+  var ref = useRef(null);
+  var tiltState = useState({rx:0,ry:0,mx:50,my:50,over:false});
+  var tilt = tiltState[0]; var setTilt = tiltState[1];
+
+  if(!isActive) return children;
+
+  function handleMove(e) {
+    var el = ref.current; if(!el) return;
+    var rect = el.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var mx = Math.round((x / rect.width)  * 100);
+    var my = Math.round((y / rect.height) * 100);
+    // ±10 deg tilt
+    var ry =  ((x / rect.width)  - 0.5) * 20;
+    var rx = -((y / rect.height) - 0.5) * 20;
+    setTilt({rx:rx, ry:ry, mx:mx, my:my, over:true});
+  }
+  function handleLeave() {
+    setTilt({rx:0, ry:0, mx:50, my:50, over:false});
+  }
+
+  // Foil colour depends on rarity
+  var isDyn = rarity === "Dynasty";
+  // Gradient stops: iridescent pinks/blues/golds for Dynasty, toxic greens for Radioactive
+  var foilColors = isDyn
+    ? "hsl("+(tilt.mx*2.4)+",90%,65%), hsl("+(tilt.mx*2.4+80)+",85%,60%), hsl("+(tilt.mx*2.4+160)+",80%,65%)"
+    : "hsl("+(100+tilt.mx*0.6)+",100%,55%), hsl("+(120+tilt.mx*0.4)+",90%,45%), hsl(80,100%,60%)";
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{
+        position:"relative",
+        transformStyle:"preserve-3d",
+        transform: tilt.over
+          ? "perspective(900px) rotateX("+tilt.rx+"deg) rotateY("+tilt.ry+"deg) scale(1.04)"
+          : "perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)",
+        transition: tilt.over ? "transform 0.08s ease-out" : "transform 0.5s cubic-bezier(0.2,1,0.4,1)",
+        willChange:"transform",
+        zIndex: tilt.over ? 20 : "auto",
+      }}>
+      {children}
+
+      {/* ── FOIL LAYER — sits on top of card, pointer-events off ── */}
+      <div style={{
+        position:"absolute",
+        inset:0,
+        borderRadius:4,
+        pointerEvents:"none",
+        zIndex:50,
+        mixBlendMode:"color-dodge",
+        opacity: tilt.over ? 0.7 : 0.18,
+        transition:"opacity 0.3s ease",
+        background:
+          "radial-gradient(ellipse 80% 80% at "+tilt.mx+"% "+tilt.my+"%, "+foilColors+", transparent 70%)",
+        backgroundSize:"200% 200%",
+      }}/>
+
+      {/* ── SPECULAR GLINT — small bright spot that tracks cursor ── */}
+      <div style={{
+        position:"absolute",
+        inset:0,
+        borderRadius:4,
+        pointerEvents:"none",
+        zIndex:51,
+        opacity: tilt.over ? 0.55 : 0,
+        transition:"opacity 0.2s ease",
+        background:
+          "radial-gradient(ellipse 30% 25% at "+tilt.mx+"% "+tilt.my+"%, rgba(255,255,255,0.55), transparent 60%)",
+      }}/>
+
+      {/* ── RAINBOW SCAN LINES — fine prismatic grid ── */}
+      <div style={{
+        position:"absolute",
+        inset:0,
+        borderRadius:4,
+        pointerEvents:"none",
+        zIndex:49,
+        opacity: tilt.over ? 0.12 : 0.04,
+        transition:"opacity 0.3s ease",
+        backgroundImage:isDyn
+          ? "repeating-linear-gradient("+((tilt.mx*1.8)+30)+"deg, rgba(255,120,255,0.4) 0px, rgba(100,180,255,0.4) 2px, rgba(255,220,80,0.3) 4px, transparent 5px)"
+          : "repeating-linear-gradient("+((tilt.mx*1.8)+30)+"deg, rgba(0,255,80,0.4) 0px, rgba(120,255,160,0.3) 2px, rgba(200,255,100,0.3) 4px, transparent 5px)",
+      }}/>
+    </div>
+  );
+}
+
 function FlipCard(props) {
   var card=props.card; var autoFlip=props.autoFlip||false; var winners=props.winners||null;
   var onFlip=props.onFlip||null; var compact=props.compact||false;
@@ -1136,7 +1234,9 @@ function FlipCard(props) {
         </div>
         <div style={{position:"absolute",inset:0,backfaceVisibility:"hidden",
           WebkitBackfaceVisibility:"hidden",transform:"rotateY(180deg)"}}>
-          <PremiumCard card={card} isWinner={isWin}/>
+          <HoloCard rarity={card.rarity}>
+            <PremiumCard card={card} isWinner={isWin}/>
+          </HoloCard>
         </div>
       </div>
     </div>
@@ -1516,7 +1616,7 @@ function GradingLab(props){
                 var sel=selected&&selected.id===c.id;
                 return <div key={c.id} onClick={function(){setSelected(c);setErr("");}} style={{position:"relative",cursor:"pointer",borderRadius:16,border:"2px solid "+(sel?"#FFD700":"transparent"),boxShadow:sel?"0 0 24px rgba(255,215,0,0.4)":"none",transition:"all 0.18s",transform:sel?"scale(1.03)":"scale(1)"}}>
                   {sel&&<div style={{position:"absolute",top:-8,left:"50%",transform:"translateX(-50%)",zIndex:10,background:"#FFD700",color:"#000",fontSize:11,fontWeight:900,padding:"2px 10px",borderRadius:999,fontFamily:"'Oswald',sans-serif",whiteSpace:"nowrap"}}>Selected ✓</div>}
-                  <PremiumCard card={c}/>
+                  <HoloCard rarity={c.rarity}><PremiumCard card={c}/></HoloCard>
                 </div>;
               })}
             </div>
