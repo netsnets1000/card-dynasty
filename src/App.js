@@ -3490,9 +3490,10 @@ function Leaderboard(props) {
   var userColor=(profile&&profile.avatarColor)||"#f5c518";
   var userName=(profile&&profile.username)||"You";
   var userPlayer={id:"__me",name:userName,avatar:userInitials,color:userColor,favTeam:(profile&&profile.favTeam)||"",yield:userYield,power:userPower,coins:balance||0,isUser:true};
+  var refreshState=useState(0); var refreshTick=refreshState[0]; var setRefreshTick=refreshState[1];
   useEffect(function(){
     if(!supabase){setLoading(false);return;}
-    // Fetch profiles + coins as source of truth — users exist even if user_cards is empty
+    setLoading(true);
     supabase.from("profiles").select("id,username,avatar_color,avatar_initials,fav_team,coins").limit(50).then(function(res){
       if(res.error||!res.data){setLoading(false);return;}
       var ids=res.data.map(function(p){return p.id;});
@@ -3503,18 +3504,16 @@ function Leaderboard(props) {
           var pCards=cardRows.filter(function(c){return c.user_id===p.id;});
           var yld=pCards.reduce(function(s,c){return s+(c.daily||0);},0);
           var pwr=pCards.length*10+pCards.filter(function(c){return ["Legacy","Legendary","Dynasty"].includes(c.rarity);}).length*50;
-          // Use coins as tiebreaker / fallback so users with no cards still appear
           return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",yield:yld,power:pwr,coins:p.coins||0,cardCount:pCards.length};
         }).filter(function(p){
-          // Include anyone with cards OR coins > 0 — excludes empty ghost accounts
           return p.cardCount>0 || p.coins>0;
         });
         setPlayers(parsed);
         setLoading(false);
       });
     });
-  },[]);
-  var allPlayers=players.filter(function(p){return p.id!=="__me";}).concat([userPlayer]).sort(function(a,b){
+  },[refreshTick]);
+  var allPlayers=players.filter(function(p){return p.isUser||true;}).concat([userPlayer]).sort(function(a,b){
     return mode==="yield"?b.yield-a.yield:mode==="coins"?b.coins-a.coins:b.power-a.power;
   });
   var userRank=allPlayers.findIndex(function(p){return p.isUser;})+1;
@@ -3523,9 +3522,18 @@ function Leaderboard(props) {
   var podiumColors=["#b0b8c8","#f5c518","#cd7f32"]; var podiumHeights=[80,110,65]; var podiumRanks=[2,1,3];
   return (
     <div style={{maxWidth:680,margin:"0 auto",padding:"20px 16px 120px"}}>
-      <div style={{marginBottom:20}}>
-        <div className="topps-section-title">Rankings</div>
-        <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Live leaderboard · Real players</div>
+      <div style={{marginBottom:20,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div>
+          <div className="topps-section-title">Rankings</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:14,color:"#888"}}>Live leaderboard · Real players</div>
+        </div>
+        <button onClick={function(){setRefreshTick(function(t){return t+1;});}}
+          style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,
+            letterSpacing:"0.1em",textTransform:"uppercase",padding:"6px 14px",
+            border:"1px solid #ddd",cursor:"pointer",background:loading?"#f0ede8":"#fff",
+            color:"#888"}}>
+          {loading?"Loading...":"↻ Refresh"}
+        </button>
       </div>
       {/* Mode toggle */}
       <div style={{display:"flex",gap:6,marginBottom:24,flexWrap:"wrap"}}>
