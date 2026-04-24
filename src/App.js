@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { Analytics } from "@vercel/analytics/react";
 
 // ── SUPABASE CLIENT ───────────────────────────────────────────────────────────
 var SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || "";
@@ -7279,6 +7280,7 @@ export default function App() {
           </div>
         )}
       </div>
+      <Analytics />
     </div>
   );
 }
