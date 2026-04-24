@@ -6389,7 +6389,6 @@ export default function App() {
           }
         }
         var hasCards=cardsRes&&cardsRes.data&&cardsRes.data.length>0;
-        var cardQueryOk=cardsRes&&!cardsRes.error; // only trust the result if no error
         if(hasCards){
           var rawCards=cardsRes.data.map(function(r){return {id:r.card_id||genId(),sport:r.sport,team:r.team,rarity:r.rarity,daily:r.daily,win:r.win,mp:r.mp,graded:r.is_slabbed||false,grade:r.grade||null,gradeMultiplier:r.yield_multiplier||null,gradeTier:r.grade>=10?"gem":r.grade>=9?"mint":r.grade>=8?"good":"base"};});
           var cards=trimToLimit(rawCards);
@@ -6401,35 +6400,21 @@ export default function App() {
             dbSaveCards(uid,cards);
             console.log("[CardDynasty] Auto-trimmed "+trimmed+" cards for uid "+uid);
           }
-        } else if(cardQueryOk){
-          // Query succeeded but genuinely 0 cards in DB
-          var hasCoins = profileRes&&profileRes.data&&(profileRes.data.coins||0)>500;
-          var packsEver = profileRes&&profileRes.data&&(profileRes.data.packs_opened||0)>0;
-          if(hasCoins && packsEver){
-            // Real returning player who lost cards — give recovery pack
-            var recoveryCards=[
-              genCard({Base:70,Rare:30},null,null),
-              genCard({Base:70,Rare:30},null,null),
-              genCard({Base:70,Rare:30},null,null),
-              genCard({Rare:100},null,null),
-              genCard({Rare:100},null,null),
-            ];
-            setInventory(recoveryCards);
+        } else {
+          // No cards found — could be new user OR RLS blocking the read.
+          // NEVER write cards here — only route to onboarding for brand new users.
+          // Check packs_opened to distinguish: 0 = new user, >0 = existing player with read issue.
+          var packsEver=(profileRes&&profileRes.data&&(profileRes.data.packs_opened||0))||0;
+          if(packsEver>0){
+            // Existing player — cards may be blocked by RLS, don't wipe, just let them in
+            setInventory([]);
             setOnboarded(true);
             setIsNewUser(false);
-            dbSaveCards(uid, recoveryCards);
-            pushNotif("Cards Restored","Your collection was recovered. Keep opening packs!","info");
-            console.log("[CardDynasty] Recovery pack granted to uid "+uid);
           } else {
             // Genuinely new user
             setIsNewUser(true);
             setOnboarded(false);
           }
-        } else {
-          // Card query failed (RLS or network) — don't touch state, just unblock
-          console.warn("[CardDynasty] Card query failed for uid "+uid+", preserving state");
-          setOnboarded(true);
-          setIsNewUser(false);
         }
         setDbLoaded(true);
       }).catch(function(e){
