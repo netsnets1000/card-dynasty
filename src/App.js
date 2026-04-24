@@ -3433,7 +3433,7 @@ function Social(props) {
           var pCards=cardRows.filter(function(c){return c.user_id===p.id;}).map(function(c){return {id:c.card_id||genId(),sport:c.sport,team:c.team,rarity:c.rarity,daily:c.daily||0,win:c.win||0,mp:c.mp||0,likes:0};});
           var yld=pCards.reduce(function(s,c){return s+c.daily;},0);
           return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",bio:p.bio||"",yield:yld,coins:p.coins||0,inventory:pCards};
-        }).filter(function(p){return p.inventory.length>0||p.coins>5000;});
+        }).filter(function(p){return p.inventory.length>0||p.coins>0;});
         setPlayers(parsed);
         setLoading(false);
       });
@@ -3507,7 +3507,7 @@ function Leaderboard(props) {
           return {id:p.id,name:p.username||"Collector",avatar:(p.avatar_initials||"??").slice(0,2).toUpperCase(),color:p.avatar_color||"#f5c518",favTeam:p.fav_team||"",yield:yld,power:pwr,coins:p.coins||0,cardCount:pCards.length};
         }).filter(function(p){
           // Include anyone with cards OR coins > 0 — excludes empty ghost accounts
-          return p.cardCount>0 || p.coins>5000;
+          return p.cardCount>0 || p.coins>0;
         });
         setPlayers(parsed);
         setLoading(false);
@@ -6568,7 +6568,7 @@ export default function App() {
       if(cardRes.data) cardRes.data.forEach(function(r){userYields[r.user_id]=(userYields[r.user_id]||0)+(r.daily||0);});
       // Include all profiles — use daily yield if available, coins/100 as tiebreaker for users with no cards
       if(profRes.data) profRes.data.forEach(function(p){
-        if(userYields[p.id]===undefined && (p.coins||0)>5000){
+        if(userYields[p.id]===undefined && (p.coins||0)>0){
           userYields[p.id]=(p.coins||0)/100;
         }
       });
