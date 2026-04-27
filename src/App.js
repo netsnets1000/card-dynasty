@@ -6653,6 +6653,22 @@ export default function App() {
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
   var showOnboarding=((!onboarded&&inventory.length===0)||isNewUser||phase==="signup"||phase==="login")&&phase!=="landing"&&phase!=="app";
+
+  if(showOnboarding) return (
+    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
+      <style>{CSS}</style>
+      <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser||phase==="signup"} userId={userId} onSavePrefs={function(prefs){
+        if(!prefs) return;
+        var updated=loadProfile();
+        if(prefs.username) updated.username=prefs.username;
+        if(prefs.favSport) updated.favSport=prefs.favSport;
+        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
+        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
+        saveProfileAndState(updated);
+        pendingPrefsRef.current=updated;
+      }}/>
+    </div>
+  );
   function triggerShake(team) {
     setShakeTeams(function(prev){
       var n=Object.assign({},prev);
@@ -7096,22 +7112,6 @@ export default function App() {
     </div>
   );
 
-  if(showOnboarding) return (
-    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
-      <style>{CSS}</style>
-      <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser} userId={userId} onSavePrefs={function(prefs){
-        if(!prefs) return;
-        var updated=loadProfile();
-        if(prefs.username) updated.username=prefs.username;
-        if(prefs.favSport) updated.favSport=prefs.favSport;
-        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
-        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
-        saveProfileAndState(updated);
-        // Also store prefs in a ref so completeOnboarding can merge them
-        pendingPrefsRef.current=updated;
-      }}/>
-    </div>
-  );
   return (
     <div style={{background:"#f0ede8",minHeight:"100vh",color:"#111",fontFamily:"'Barlow',sans-serif"}}>
       <style>{CSS}</style>
