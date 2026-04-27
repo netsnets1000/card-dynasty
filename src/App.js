@@ -6343,7 +6343,21 @@ export default function App() {
   );
   } // end if(phase==="landing")
 
-  // ── SIGNUP ─────────────────────────────────────────────────────────────────
+  if(phase==="signup"||phase==="login") return (
+    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
+      <style>{CSS}</style>
+      <Onboarding onComplete={completeOnboarding} isNewUser={phase==="signup"} userId={userId} onSavePrefs={function(prefs){
+        if(!prefs) return;
+        var updated=loadProfile();
+        if(prefs.username) updated.username=prefs.username;
+        if(prefs.favSport) updated.favSport=prefs.favSport;
+        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
+        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
+        saveProfileAndState(updated);
+        pendingPrefsRef.current=updated;
+      }}/>
+    </div>
+  );
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
