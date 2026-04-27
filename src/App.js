@@ -6095,6 +6095,12 @@ export default function App() {
   var isMobile=useIsMobile();
   var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
   var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
+  var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var liveTeamsState=useState([]); var liveTeams=liveTeamsState[0]; var setLiveTeams=liveTeamsState[1];
+  var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
+  var notifState=useState([]); var notifs=notifState[0]; var setNotifs=notifState[1];
+  var showHowToPlayState=useState(false); var showHowToPlay=showHowToPlayState[0]; var setShowHowToPlay=showHowToPlayState[1];
+  var pendingPrefsRef=useRef(null);
   var tickerItems=["2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now","2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now"];
   var toppsHeader=(
     <div style={{display:"flex",flexDirection:"column"}}>
