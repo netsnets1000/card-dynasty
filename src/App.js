@@ -2377,7 +2377,6 @@ function Onboarding(props) {
 
   // ── LANDING ────────────────────────────────────────────────────────────────
   if(phase==="landing") {
-  var isMobile=useIsMobile();
   var heroCards=[
     {team:"Browns",  sport:"NFL", rarity:"Base",        col:"#4a2800",code:"CLE"},
     {team:"Celtics", sport:"NBA", rarity:"Rare",        col:"#1a6b3a",code:"BOS"},
@@ -6332,6 +6331,7 @@ export default function App() {
   var claimedLevelsState=useState([]); var claimedLevels=claimedLevelsState[0]; var setClaimedLevels=claimedLevelsState[1];
   var levelUpRewardState=useState(null); var levelUpReward=levelUpRewardState[0]; var setLevelUpReward=levelUpRewardState[1];
   var prevLevelRef=useRef(0);
+  var isMobile=useIsMobile();
   var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
   var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
 
