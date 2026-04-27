@@ -1301,6 +1301,7 @@ function useIsMobile(){
   },[]);
   return isMobile;
 }
+function FlipCard(props) {
   var card=props.card; var autoFlip=props.autoFlip||false; var winners=props.winners||null;
   var onFlip=props.onFlip||null; var compact=props.compact||false;
   var flippedState=useState(false); var flipped=flippedState[0]; var setFlipped=flippedState[1];
