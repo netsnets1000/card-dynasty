@@ -784,7 +784,7 @@ var RARITY_CFG={
     tagBg:"linear-gradient(90deg,#6a4400,#c8a800,#fff8c0,#c8a800,#6a4400)",tagTxt:"#1a0e00",
     // Gold-leaf border + liquid glass shimmer
     shadow:"0 0 30px rgba(200,168,0,0.7),0 0 70px rgba(180,130,0,0.2)",
-    icon:"🔥",serial:"/500",
+    icon:"🔥",serial:null,
   },
   Legendary:{
     stripe:"linear-gradient(180deg,#ff6060,#cc0010,#660008,#cc0010,#ff6060)",stripeTxt:"#fff",
@@ -795,7 +795,7 @@ var RARITY_CFG={
     tagBg:"linear-gradient(90deg,#550008,#cc0010,#ff4040,#cc0010,#550008)",tagTxt:"#ffe0e0",
     // Liquid Glass — frosted overlay with gold shimmer border
     shadow:"0 0 36px rgba(232,22,30,0.75),0 0 80px rgba(200,0,10,0.3)",
-    icon:"★",serial:"/100",
+    icon:"★",serial:null,
   },
   Dynasty:{
     stripe:"linear-gradient(180deg,#ff99ff,#9933ff,#330099,#9933ff,#ff99ff)",stripeTxt:"#fff",
@@ -1101,10 +1101,10 @@ function PremiumCard(props) {
             </div>
           )}
 
-          {/* CD 2025 watermark */}
+          {/* CD 2026 watermark */}
           <div style={{position:"absolute",bottom:5,right:6,zIndex:7,fontFamily:"'Barlow Condensed',sans-serif",
             fontSize:7,fontWeight:700,letterSpacing:"0.1em",
-            color:isRad?"rgba(0,255,60,0.25)":isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2025</div>
+            color:isRad?"rgba(0,255,60,0.25)":isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2026</div>
 
           {/* Winner badge */}
           {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:13,background:"#22aa44",padding:"2px 6px"}}>
@@ -1174,7 +1174,7 @@ function CardBack(props) {
         <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:10,fontWeight:700,
           letterSpacing:"0.4em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase"}}>Official Collector Edition</span>
         <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,
-          color:"rgba(255,255,255,0.2)",letterSpacing:"0.2em",textTransform:"uppercase",marginTop:4}}>2025 Series 1</span>
+          color:"rgba(255,255,255,0.2)",letterSpacing:"0.2em",textTransform:"uppercase",marginTop:4}}>2026 Series 1</span>
         {!autoFlip&&<div style={{marginTop:12,background:"rgba(232,22,30,0.15)",border:"1px solid rgba(232,22,30,0.4)",padding:"5px 16px"}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,fontWeight:800,
             letterSpacing:"0.25em",color:"#e8161e",textTransform:"uppercase"}}>Tap to Reveal</span>
@@ -2357,9 +2357,6 @@ function Onboarding(props) {
         </div>
         {/* Nav links — hidden on mobile */}
         <div className="topps-nav-links">
-          {["Shop","Exchange","Collection","Live","Rankings"].map(function(n){
-            return <button key={n} className="topps-nav-link">{n}</button>;
-          })}
         </div>
         {/* Sign In — always visible */}
         <button onClick={function(){setPhase("login");}} className="topps-btn-outline"
@@ -2377,7 +2374,7 @@ function Onboarding(props) {
         <div className="topps-hero-stripes"/>
         <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:32,flexWrap:"wrap",position:"relative",zIndex:2}}>
           <div style={{flex:1,minWidth:240}} className="topps-reveal">
-            <div className="topps-eyebrow" style={{marginBottom:12}}>2025 Season · Free to Play</div>
+            <div className="topps-eyebrow" style={{marginBottom:12}}>2026 Season · Free to Play</div>
             <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,8vw,72px)",fontWeight:900,letterSpacing:"0.02em",lineHeight:0.92,textTransform:"uppercase",color:"#fff",marginBottom:16}}>
               Build Your<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Dynasty.</em>
             </div>
@@ -2393,7 +2390,7 @@ function Onboarding(props) {
               </button>
             </div>
             <div style={{display:"flex",gap:32}}>
-              {[["150+","Teams"],["6","Rarities"],["Live","Scores"],["Free","To Play"]].map(function(s){
+              {[["150+","Teams"],["7","Rarities"],["Live","Scores"],["Free","To Play"]].map(function(s){
                 return <div key={s[0]}>
                   <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:"0.02em"}}>{s[0]}</div>
                   <div style={{fontSize:10,letterSpacing:"0.2em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",fontWeight:600,marginTop:2}}>{s[1]}</div>
@@ -2402,14 +2399,16 @@ function Onboarding(props) {
             </div>
           </div>
 
-          {/* Hero cards — showcasing all key rarity tiers */}
-          <div style={{display:"flex",gap:10,alignItems:"flex-end",flexShrink:0,perspective:1200}}>
+          {/* Hero cards — all 7 rarity tiers */}
+          <div style={{display:"flex",gap:6,alignItems:"flex-end",flexShrink:0,perspective:1200,flexWrap:"wrap",justifyContent:"center",maxWidth:480}}>
             {[
-              {team:"Celtics",sport:"NBA",rarity:"Base",col:"#1a6b3a",code:"BOS",rotate:-6,shift:28,scale:0.82},
-              {team:"Chiefs",sport:"NFL",rarity:"Rare",col:"#8a0010",code:"KC",rotate:-2,shift:12,scale:0.9},
-              {team:"Lakers",sport:"NBA",rarity:"Dynasty",col:"#4a0080",code:"LAL",rotate:0,shift:0,scale:1.08,featured:true},
-              {team:"Patriots",sport:"NFL",rarity:"Legendary",col:"#002244",code:"NE",rotate:2,shift:12,scale:0.9},
-              {team:"Yankees",sport:"MLB",rarity:"Legacy",col:"#003087",code:"NYY",rotate:6,shift:28,scale:0.82},
+              {team:"Browns",  sport:"NFL",  rarity:"Base",         col:"#4a2800",code:"CLE", rotate:-8, shift:36,scale:0.70},
+              {team:"Celtics", sport:"NBA",  rarity:"Rare",         col:"#1a6b3a",code:"BOS", rotate:-4, shift:20,scale:0.78},
+              {team:"Thunder", sport:"NBA",  rarity:"Elite",        col:"#007AC1",code:"OKC", rotate:-1, shift:8, scale:0.86},
+              {team:"Lakers",  sport:"NBA",  rarity:"Dynasty",      col:"#4a0080",code:"LAL", rotate:0,  shift:0, scale:1.06,featured:true},
+              {team:"Patriots",sport:"NFL",  rarity:"Legendary",    col:"#002244",code:"NE",  rotate:1,  shift:8, scale:0.86},
+              {team:"Yankees", sport:"MLB",  rarity:"Legacy",       col:"#003087",code:"NYY", rotate:4,  shift:20,scale:0.78},
+              {team:"Pistons", sport:"NBA",  rarity:"Radioactive",  col:"#00ff44",code:"DET", rotate:8,  shift:36,scale:0.70},
             ].map(function(c){
               var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
               var baseW=154; var baseH=218;
@@ -2417,76 +2416,95 @@ function Onboarding(props) {
               var isDyn=c.rarity==="Dynasty";
               var isLeg=c.rarity==="Legendary";
               var isLegacy=c.rarity==="Legacy";
-              var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)":isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)":isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)":cfg.stripe;
+              var isElite=c.rarity==="Elite";
+              var isRad=c.rarity==="Radioactive";
+              var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+                :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+                :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+                :isElite?"linear-gradient(180deg,#aaccff,#22aaff,#0066cc,#22aaff,#aaccff)"
+                :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
+                :cfg.stripe;
               var abbvCol=c.rarity==="Base"?("rgba("+hexToRgb(c.col)+",0.55)"):cfg.abbvFn();
               return (
-                <div key={c.team} style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
-                  flexShrink:0,cursor:"pointer",
-                  boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
-                  transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",
-                  transition:"transform 0.2s",
-                  border:isDyn?"2px solid transparent":"1px solid rgba(0,0,0,0.2)"}}>
-                  {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
-                  {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
-                  {/* Stripe */}
-                  <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
-                  </div>
-                  {/* Photo area */}
-                  <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
-                    background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
-                    {/* Rarity overlays — abbreviated for landing */}
-                    {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
-                    {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
-                    {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
-                    {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
-                    {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
-                    {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
-                    {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;}) }
-                    {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
-                    {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
-                    <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
-                    {/* Abbreviation */}
-                    <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:5}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",
-                        fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
-                        fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
+                <div key={c.team} style={{position:"relative",flexShrink:0}}>
+                  {/* Radioactive outer halo */}
+                  {isRad&&<div style={{position:"absolute",inset:-6,borderRadius:8,
+                    background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.25) 0%,transparent 70%)",
+                    animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
+                  <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
+                    flexShrink:0,cursor:"pointer",zIndex:1,
+                    boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
+                    transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",
+                    transition:"transform 0.2s",
+                    border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.2)"}}>
+                    {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+                    {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
+                    {/* Stripe */}
+                    <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:isRad?"#001a0a":"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
                     </div>
-                    {/* Tier icon */}
-                    {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
-                      animation:isDyn?"crownFloat 2.2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
-                      filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
-                    {/* Serial */}
-                    {cfg.serial&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.04),fontWeight:700,color:isDyn?"rgba(200,140,255,0.6)":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",letterSpacing:"0.05em"}}>{"#"+cfg.serial}</div>}
-                    {/* Rarity tag */}
-                    <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px 6px"}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:cfg.tagTxt}}>{c.rarity.toUpperCase()}</span>
+                    {/* Photo area */}
+                    <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
+                      background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+                      {/* Rarity overlays */}
+                      {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.3) 0%,rgba(0,180,40,0.14) 40%,transparent 75%)",zIndex:1}}/>}
+                      {isRad&&<svg style={{position:"absolute",top:0,left:0,width:"100%",height:"20px",opacity:0.35,zIndex:3}} viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,0 Q15,0 17,10 Q19,18 21,19 Q23,18 24,6 Q33,0 46,0 Q54,0 56,13 Q58,19 60,20 Q62,18 63,10 Q65,3 76,0 Q87,0 89,15 Q91,19 93,20 Q95,18 96,11 Q98,3 100,0 Z" fill="#00ff44"/></svg>}
+                      {isElite&&<div style={{position:"absolute",inset:0,background:"linear-gradient(160deg,rgba(0,100,200,0.14),rgba(0,140,255,0.16))",zIndex:1}}/>}
+                      {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%)",zIndex:2}}/>}
+                      {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}><div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),transparent)",animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/></div>}
+                      {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
+                      {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
+                      {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
+                      {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
+                      {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
+                      {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
+                      {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;})}
+                      {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+                      {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
+                      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
+                      {/* Abbreviation */}
+                      <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:isRad?8:5}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+                          fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
+                          fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
+                      </div>
+                      {/* Tier icon */}
+                      {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
+                        animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+                        filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isRad?"drop-shadow(0 0 8px rgba(0,255,60,1))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
+                      {/* Serial — Radioactive only */}
+                      {isRad&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.05),fontWeight:700,color:"rgba(0,255,60,0.9)",letterSpacing:"0.05em",textShadow:"0 0 6px rgba(0,255,60,0.8)"}}>#1 / 10</div>}
+                      {/* Rarity tag */}
+                      <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px "+Math.round(W*0.04)+"px"}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>{c.rarity.toUpperCase()}</span>
+                      </div>
                     </div>
-                    {c.featured&&<div style={{position:"absolute",bottom:4,right:5,zIndex:8,fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.04),fontWeight:700,letterSpacing:"0.1em",color:isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)"}}>CD 2025</div>}
-                  </div>
-                  {/* Name plate */}
-                  <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
-                    background:isDyn?"#0a0020":"#fff",
-                    borderTop:isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
-                    borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
-                    zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
-                    paddingLeft:Math.round(W*0.14),paddingRight:6}}>
-                    <div style={{fontFamily:"'Barlow Condensed',sans-serif",
-                      fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
-                      fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
-                      background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
-                      WebkitBackgroundClip:isDyn?"text":undefined,
-                      WebkitTextFillColor:isDyn?"transparent":undefined,
-                      color:isDyn?undefined:cfg.nameCol,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>
-                      {c.team.toUpperCase()}
-                    </div>
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
-                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
-                        letterSpacing:"0.05em",textTransform:"uppercase",
-                        background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+                    {/* Name plate */}
+                    <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
+                      background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
+                      borderTop:isRad?"2px solid #00ff44":isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
+                      borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+                      zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+                      paddingLeft:Math.round(W*0.14),paddingRight:6}}>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+                        fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
+                        fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
+                        background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
                         WebkitBackgroundClip:isDyn?"text":undefined,
                         WebkitTextFillColor:isDyn?"transparent":undefined,
-                        color:isDyn?undefined:cfg.rarCol}}>{c.sport} · {c.rarity}</span>
+                        color:isDyn?undefined:isRad?"#00ff44":cfg.nameCol,
+                        textShadow:isRad?"0 0 6px rgba(0,255,60,0.6)":"none",
+                        overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>
+                        {c.team.toUpperCase()}
+                      </div>
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
+                          letterSpacing:"0.05em",textTransform:"uppercase",
+                          background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+                          WebkitBackgroundClip:isDyn?"text":undefined,
+                          WebkitTextFillColor:isDyn?"transparent":undefined,
+                          color:isDyn?undefined:isRad?"rgba(0,200,40,0.8)":cfg.rarCol}}>{c.sport} · {c.rarity}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2522,10 +2540,10 @@ function Onboarding(props) {
       <div style={{background:"#f0ede8",padding:"20px",borderBottom:"1px solid #e0ddd8"}}>
         <div style={{maxWidth:920,margin:"0 auto",display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
           <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginRight:8}}>Rarity Scale:</span>
-          {[{r:"Base",c:"#aaa"},{r:"Rare",c:"#4488ff"},{r:"Elite",c:"#22bb66"},{r:"Legacy",c:"#c8a800"},{r:"Legendary",c:"#e8161e"},{r:"Dynasty",c:"#8822cc"}].map(function(item){
-            return <span key={item.r} className="topps-rarity-pill" style={{borderColor:item.c,color:item.c,background:item.c+"11"}}>{item.r}</span>;
+          {[{r:"Base",c:"#aaa"},{r:"Rare",c:"#4488ff"},{r:"Elite",c:"#22aaff"},{r:"Legacy",c:"#c8a800"},{r:"Legendary",c:"#e8161e"},{r:"Dynasty",c:"#8822cc"},{r:"Radioactive",c:"#00ff44"}].map(function(item){
+            return <span key={item.r} className="topps-rarity-pill" style={{borderColor:item.c,color:item.c,background:item.c+"11",boxShadow:item.r==="Radioactive"?"0 0 8px "+item.c+"44":"none"}}>{item.r}</span>;
           })}
-          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#aaa",marginLeft:"auto",letterSpacing:"0.1em",textTransform:"uppercase"}}>Dynasty cards numbered /10</span>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#aaa",marginLeft:"auto",letterSpacing:"0.1em",textTransform:"uppercase"}}>☢ Radioactive — only 10 exist worldwide</span>
         </div>
       </div>
 
@@ -2537,6 +2555,13 @@ function Onboarding(props) {
         <button onClick={function(){setPhase("signup");}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
           Get Started — It's Free
         </button>
+      </div>
+
+      {/* Copyright footer */}
+      <div style={{background:"#111",padding:"16px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:600,letterSpacing:"0.15em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)"}}>
+          © 2026 Card Dynasty · Created by Drew &amp; Shawn · All Rights Reserved
+        </div>
       </div>
     </div>
   );
