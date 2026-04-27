@@ -6232,6 +6232,7 @@ export default function App() {
   }
   return (
     <div className="topps-screen">
+      <style>{CSS}</style>
       {toppsHeader}
       {/* Hero */}
       <div className="topps-hero">
