@@ -2399,16 +2399,16 @@ function Onboarding(props) {
             </div>
           </div>
 
-          {/* Hero cards — all 7 rarity tiers */}
-          <div style={{display:"flex",gap:6,alignItems:"flex-end",flexShrink:0,perspective:1200,flexWrap:"wrap",justifyContent:"center",maxWidth:480}}>
+          {/* Hero cards — all 7 rarity tiers in a clean arc */}
+          <div style={{display:"flex",gap:8,alignItems:"flex-end",flexShrink:0,perspective:1200}}>
             {[
-              {team:"Browns",  sport:"NFL",  rarity:"Base",         col:"#4a2800",code:"CLE", rotate:-8, shift:36,scale:0.70},
-              {team:"Celtics", sport:"NBA",  rarity:"Rare",         col:"#1a6b3a",code:"BOS", rotate:-4, shift:20,scale:0.78},
-              {team:"Thunder", sport:"NBA",  rarity:"Elite",        col:"#007AC1",code:"OKC", rotate:-1, shift:8, scale:0.86},
-              {team:"Lakers",  sport:"NBA",  rarity:"Dynasty",      col:"#4a0080",code:"LAL", rotate:0,  shift:0, scale:1.06,featured:true},
-              {team:"Patriots",sport:"NFL",  rarity:"Legendary",    col:"#002244",code:"NE",  rotate:1,  shift:8, scale:0.86},
-              {team:"Yankees", sport:"MLB",  rarity:"Legacy",       col:"#003087",code:"NYY", rotate:4,  shift:20,scale:0.78},
-              {team:"Pistons", sport:"NBA",  rarity:"Radioactive",  col:"#00ff44",code:"DET", rotate:8,  shift:36,scale:0.70},
+              {team:"Browns",  sport:"NFL", rarity:"Base",       col:"#4a2800",code:"CLE", rotate:-8, shift:40, scale:0.72},
+              {team:"Celtics", sport:"NBA", rarity:"Rare",       col:"#1a6b3a",code:"BOS", rotate:-5, shift:22, scale:0.80},
+              {team:"Thunder", sport:"NBA", rarity:"Elite",      col:"#007AC1",code:"OKC", rotate:-2, shift:10, scale:0.88},
+              {team:"Lakers",  sport:"NBA", rarity:"Dynasty",    col:"#4a0080",code:"LAL", rotate:0,  shift:0,  scale:1.05,featured:true},
+              {team:"Pistons", sport:"NBA", rarity:"Radioactive",col:"#00ff44",code:"DET", rotate:0,  shift:0,  scale:1.05,featured:true},
+              {team:"Patriots",sport:"NFL", rarity:"Legendary",  col:"#002244",code:"NE",  rotate:2,  shift:10, scale:0.88},
+              {team:"Yankees", sport:"MLB", rarity:"Legacy",     col:"#003087",code:"NYY", rotate:5,  shift:22, scale:0.80},
             ].map(function(c){
               var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
               var baseW=154; var baseH=218;
