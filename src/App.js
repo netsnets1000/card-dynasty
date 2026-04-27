@@ -6095,6 +6095,7 @@ export default function App() {
   var isMobile=useIsMobile();
   var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
   var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
+  var tickerItems=["2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now","2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now"];
   var toppsHeader=(
     <div style={{display:"flex",flexDirection:"column"}}>
       {/* Ticker */}
