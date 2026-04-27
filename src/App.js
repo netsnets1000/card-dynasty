@@ -2324,8 +2324,14 @@ function Onboarding(props) {
   var onComplete=props.onComplete;
   var onSavePrefs=props.onSavePrefs||function(){};
   var isNewUser=props.isNewUser||false;
-  var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
-  useEffect(function(){if(isNewUser) setPhase("profile_setup");},[isNewUser]);
+  var initialPhase=props.initialPhase||null;
+  var toppsHeader=props.header||null;
+  var phaseState=useState(initialPhase||(isNewUser?"profile_setup":"login")); var phase=phaseState[0]; var setPhase=phaseState[1];
+  useEffect(function(){
+    if(initialPhase) setPhase(initialPhase);
+    else if(isNewUser) setPhase("profile_setup");
+    else setPhase("login");
+  },[isNewUser,initialPhase]);
   var glowingState=useState(false); var setGlowing=glowingState[1];
   var cardsState=useState([]); var cards=cardsState[0]; var setCards=cardsState[1];
   var flippedState=useState([]); var flippedIds=flippedState[0]; var setFlippedIds=flippedState[1];
@@ -6657,16 +6663,22 @@ export default function App() {
   if(showOnboarding) return (
     <div style={{background:"#f0ede8",minHeight:"100vh"}}>
       <style>{CSS}</style>
-      <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser||phase==="signup"} userId={userId} onSavePrefs={function(prefs){
-        if(!prefs) return;
-        var updated=loadProfile();
-        if(prefs.username) updated.username=prefs.username;
-        if(prefs.favSport) updated.favSport=prefs.favSport;
-        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
-        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
-        saveProfileAndState(updated);
-        pendingPrefsRef.current=updated;
-      }}/>
+      <Onboarding
+        onComplete={completeOnboarding}
+        isNewUser={isNewUser||phase==="signup"}
+        initialPhase={phase==="signup"?"profile_setup":phase==="login"?"login":null}
+        userId={userId}
+        header={toppsHeader}
+        onSavePrefs={function(prefs){
+          if(!prefs) return;
+          var updated=loadProfile();
+          if(prefs.username) updated.username=prefs.username;
+          if(prefs.favSport) updated.favSport=prefs.favSport;
+          if(prefs.favTeam) updated.favTeam=prefs.favTeam;
+          if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
+          saveProfileAndState(updated);
+          pendingPrefsRef.current=updated;
+        }}/>
     </div>
   );
   function triggerShake(team) {
