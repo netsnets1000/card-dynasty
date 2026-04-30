@@ -2192,28 +2192,15 @@ function ProfileSetupStep(props) {
 // client ID from console.cloud.google.com when connecting a backend.
 var GOOGLE_CLIENT_ID=process.env.REACT_APP_GOOGLE_CLIENT_ID||"YOUR_GOOGLE_CLIENT_ID";
 
-// Secret guest access — hidden until user clicks the logo area 5 times rapidly
 function GuestUnlock(props){
   var onComplete=props.onComplete; var cards=props.cards||[];
-  var clickState=React.useState(0); var clicks=clickState[0]; var setClicks=clickState[1];
-  var visibleState=React.useState(false); var visible=visibleState[0]; var setVisible=visibleState[1];
-  var timerRef=React.useRef(null);
-  function handleClick(){
-    var next=clicks+1;
-    setClicks(next);
-    clearTimeout(timerRef.current);
-    if(next>=5){setVisible(true);setClicks(0);}
-    else{timerRef.current=setTimeout(function(){setClicks(0);},2000);}
-  }
-  if(visible) return (
-    <button onClick={function(){onComplete(cards,500);}}
-      style={{background:"none",border:"1px dashed #ccc",cursor:"pointer",
-        fontFamily:"'Barlow',sans-serif",fontSize:12,color:"#bbb",padding:"4px 12px",marginTop:4}}>
-      🔧 Continue as guest (dev only)
-    </button>
+  return (
+    <div style={{marginTop:16,textAlign:"center"}}>
+      <a onClick={function(){onComplete(cards,500);}} style={{fontFamily:"'Barlow',sans-serif",fontSize:11,color:"#ccc",cursor:"pointer",textDecoration:"none"}}>
+        dev: skip
+      </a>
+    </div>
   );
-  // Small gray square — visible but subtle, 5 clicks reveals guest button
-  return <div onClick={handleClick} style={{width:12,height:12,background:"#ddd",cursor:"pointer",userSelect:"none",marginTop:8,borderRadius:2}}/>;
 }
 
 function AuthForm(props) {
@@ -2383,7 +2370,11 @@ function Onboarding(props) {
 
   if(phase==="signup") return (
     <div className="topps-screen">
-      {toppsHeader}
+            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
+          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
+        </div>
+      </div>
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
         <div style={{display:"flex",gap:40,maxWidth:920,width:"100%",alignItems:"flex-start",flexWrap:"wrap"}}>
           {/* Left — what you get */}
@@ -2436,7 +2427,11 @@ function Onboarding(props) {
   // ── LOGIN ──────────────────────────────────────────────────────────────────
   if(phase==="login") return (
     <div className="topps-screen">
-      {toppsHeader}
+            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
+          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
+        </div>
+      </div>
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px"}}>
         <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"36px 32px",maxWidth:400,width:"100%"}} className="topps-reveal">
           <div style={{borderBottom:"3px solid #e8161e",paddingBottom:16,marginBottom:24}}>
@@ -2553,7 +2548,11 @@ function Onboarding(props) {
   // ── PROFILE SETUP ─────────────────────────────────────────────────────────
   if(phase==="profile_setup") return (
     <div className="topps-screen">
-      {toppsHeader}
+            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
+          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
+        </div>
+      </div>
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
         <ProfileSetupStep onComplete={function(prefs){
           if(prefs) onSavePrefs(prefs);
