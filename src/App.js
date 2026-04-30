@@ -6124,7 +6124,7 @@ export default function App() {
   var isMobile=useIsMobile();
   var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
   var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
-  var phaseState=useState("landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
+  var phaseState=useState(typeof window!=="undefined"&&window.location.hash&&window.location.hash.indexOf("access_token")>=0?"app":"landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
   var liveTeamsState=useState([]); var liveTeams=liveTeamsState[0]; var setLiveTeams=liveTeamsState[1];
   var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
   var notifState=useState([]); var notifs=notifState[0]; var setNotifs=notifState[1];
