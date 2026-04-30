@@ -6853,6 +6853,7 @@ export default function App() {
     setBalance(finalCoins);
     setOnboarded(true);
     setIsNewUser(false);
+    setPhase("app");
     setTab("shop");
     if (refCode) {
       pushNotif("Referral Bonus! 🎁", "+1,000 bonus coins from referral code "+refCode, "sale");
