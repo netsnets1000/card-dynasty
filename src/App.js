@@ -6683,7 +6683,7 @@ export default function App() {
   },[userId,inventory.length]);
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
-  var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
+  var showOnboarding=authReady&&((!onboarded&&inventory.length===0)||isNewUser)&&phase!=="landing";
 
   if(showOnboarding) return (
     <div style={{background:"#f0ede8",minHeight:"100vh"}}>
