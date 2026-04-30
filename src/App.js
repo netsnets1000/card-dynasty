@@ -6648,7 +6648,6 @@ export default function App() {
   var grailFeedState=useState([]); var grailFeed=grailFeedState[0]; var setGrailFeed=grailFeedState[1];
   var lastRefreshState=useState(Date.now()); var lastRefresh=lastRefreshState[0]; var setLastRefresh=lastRefreshState[1];
   var listModalState=useState(null); var listModal=listModalState[0]; var setListModal=listModalState[1];
-  var notifsState=useState([]); var notifs=notifsState[0]; var setNotifs=notifsState[1];
   var socialVaultState=useState(null); var socialVault=socialVaultState[0]; var setSocialVault=socialVaultState[1];
   var loginModalState=useState(false); var showLoginModal=loginModalState[0]; var setShowLoginModal=loginModalState[1];
   var howToPlayState=useState(false); var showHowToPlay=howToPlayState[0]; var setShowHowToPlay=howToPlayState[1];
@@ -6658,7 +6657,6 @@ export default function App() {
   var inventoryRef=useRef(inventory);
   var claimedBadgesState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_badges")||"[]");}catch(e){return [];}});
   var claimedBadges=claimedBadgesState[0]; var setClaimedBadges=claimedBadgesState[1];
-  var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
   // Load real global rank from Supabase — uses both user_cards yield and profiles.coins as fallback
   useEffect(function(){
     if(!supabase||!userId) return;
