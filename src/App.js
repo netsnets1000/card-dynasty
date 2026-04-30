@@ -6516,14 +6516,14 @@ export default function App() {
           // Check packs_opened to distinguish: 0 = new user, >0 = existing player with read issue.
           var packsEver=(profileRes&&profileRes.data&&(profileRes.data.packs_opened||0))||0;
           if(packsEver>0){
-            // Existing player — cards may be blocked by RLS, don't wipe, just let them in
             setInventory([]);
             setOnboarded(true);
             setIsNewUser(false);
           } else {
-            // Genuinely new user
-            setIsNewUser(true);
-            setOnboarded(false);
+            // No packs opened and no cards — still let them in, don't re-onboard
+            setInventory([]);
+            setOnboarded(true);
+            setIsNewUser(false);
           }
         }
         setDbLoaded(true);
