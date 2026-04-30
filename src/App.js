@@ -6542,11 +6542,9 @@ export default function App() {
     var sub=supabase.auth.onAuthStateChange(function(event,session){
       if((event==="SIGNED_IN"||event==="TOKEN_REFRESHED")&&session&&session.user){
         setUserId(session.user.id);
-        setOnboarded(true);
-        setIsNewUser(false);
-        setPhase("app");
         dbLoadUser(session.user.id);
         setAuthReady(true);
+        setPhase("app");
         if(window.location.hash&&window.location.hash.indexOf("access_token")>=0){
           window.history.replaceState(null,"",window.location.pathname);
         }
@@ -6554,10 +6552,10 @@ export default function App() {
       if(event==="INITIAL_SESSION"){
         if(session&&session.user){
           setUserId(session.user.id);
-          setOnboarded(true);
-          setIsNewUser(false);
-          setPhase("app");
           dbLoadUser(session.user.id);
+          setPhase("app");
+        } else {
+          setPhase("landing");
         }
         setAuthReady(true);
       }
@@ -6685,7 +6683,7 @@ export default function App() {
   },[userId,inventory.length]);
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
-  var showOnboarding=!userId&&((!onboarded&&inventory.length===0)||isNewUser||phase==="signup"||phase==="login")&&phase!=="landing"&&phase!=="app";
+  var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
 
   if(showOnboarding) return (
     <div style={{background:"#f0ede8",minHeight:"100vh"}}>
