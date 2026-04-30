@@ -1301,6 +1301,89 @@ function useIsMobile(){
   },[]);
   return isMobile;
 }
+  function HeroCard(props){
+    var c=props.c; var W=props.W; var H=props.H;
+    var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
+    var isDyn=c.rarity==="Dynasty"; var isLeg=c.rarity==="Legendary";
+    var isLegacy=c.rarity==="Legacy"; var isElite=c.rarity==="Elite";
+    var isRad=c.rarity==="Radioactive";
+    var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+      :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+      :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+      :isElite?"linear-gradient(180deg,#aaccff,#22aaff,#0066cc,#22aaff,#aaccff)"
+      :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
+      :cfg.stripe;
+    var abbvCol=c.rarity==="Base"?("rgba("+hexToRgb(c.col)+",0.55)"):cfg.abbvFn();
+    return (
+      <div style={{position:"relative",flexShrink:0}}>
+        {isRad&&<div style={{position:"absolute",inset:-6,borderRadius:8,
+          background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.25) 0%,transparent 70%)",
+          animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
+        <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
+          zIndex:1,boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
+          border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.2)"}}>
+          {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
+          <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:isRad?"#001a0a":"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
+          </div>
+          <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
+            background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+            {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.3) 0%,rgba(0,180,40,0.14) 40%,transparent 75%)",zIndex:1}}/>}
+            {isRad&&<svg style={{position:"absolute",top:0,left:0,width:"100%",height:"20px",opacity:0.35,zIndex:3}} viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,0 Q15,0 17,10 Q19,18 21,19 Q23,18 24,6 Q33,0 46,0 Q54,0 56,13 Q58,19 60,20 Q62,18 63,10 Q65,3 76,0 Q87,0 89,15 Q91,19 93,20 Q95,18 96,11 Q98,3 100,0 Z" fill="#00ff44"/></svg>}
+            {isElite&&<div style={{position:"absolute",inset:0,background:"linear-gradient(160deg,rgba(0,100,200,0.14),rgba(0,140,255,0.16))",zIndex:1}}/>}
+            {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%)",zIndex:2}}/>}
+            {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}><div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),transparent)",animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/></div>}
+            {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
+            {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
+            {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
+            {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
+            {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
+            {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
+            {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;})}
+            {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+            {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
+            <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
+            <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:isRad?8:5}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+                fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
+                fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
+            </div>
+            {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
+              animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+              filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isRad?"drop-shadow(0 0 8px rgba(0,255,60,1))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
+            {isRad&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.05),fontWeight:700,color:"rgba(0,255,60,0.9)",letterSpacing:"0.05em",textShadow:"0 0 6px rgba(0,255,60,0.8)"}}>#1 / 10</div>}
+            <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px "+Math.round(W*0.04)+"px"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>{c.rarity.toUpperCase()}</span>
+            </div>
+          </div>
+          <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
+            background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
+            borderTop:isRad?"2px solid #00ff44":isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
+            borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+            zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+            paddingLeft:Math.round(W*0.14),paddingRight:6}}>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+              fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
+              fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
+              background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+              WebkitBackgroundClip:isDyn?"text":undefined,WebkitTextFillColor:isDyn?"transparent":undefined,
+              color:isDyn?undefined:isRad?"#00ff44":cfg.nameCol,
+              textShadow:isRad?"0 0 6px rgba(0,255,60,0.6)":"none",
+              overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>{c.team.toUpperCase()}</div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
+                letterSpacing:"0.05em",textTransform:"uppercase",
+                background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+                WebkitBackgroundClip:isDyn?"text":undefined,WebkitTextFillColor:isDyn?"transparent":undefined,
+                color:isDyn?undefined:isRad?"rgba(0,200,40,0.8)":cfg.rarCol}}>{c.sport} · {c.rarity}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 function FlipCard(props) {
   var card=props.card; var autoFlip=props.autoFlip||false; var winners=props.winners||null;
   var onFlip=props.onFlip||null; var compact=props.compact||false;
@@ -6177,88 +6260,6 @@ export default function App() {
     {rotate:2, shift:10,scale:0.88},
     {rotate:5, shift:22,scale:0.80},
   ];
-  function HeroCard(props){
-    var c=props.c; var W=props.W; var H=props.H;
-    var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
-    var isDyn=c.rarity==="Dynasty"; var isLeg=c.rarity==="Legendary";
-    var isLegacy=c.rarity==="Legacy"; var isElite=c.rarity==="Elite";
-    var isRad=c.rarity==="Radioactive";
-    var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
-      :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
-      :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
-      :isElite?"linear-gradient(180deg,#aaccff,#22aaff,#0066cc,#22aaff,#aaccff)"
-      :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
-      :cfg.stripe;
-    var abbvCol=c.rarity==="Base"?("rgba("+hexToRgb(c.col)+",0.55)"):cfg.abbvFn();
-    return (
-      <div style={{position:"relative",flexShrink:0}}>
-        {isRad&&<div style={{position:"absolute",inset:-6,borderRadius:8,
-          background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.25) 0%,transparent 70%)",
-          animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
-        <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
-          zIndex:1,boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
-          border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.2)"}}>
-          {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
-          {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
-          <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:isRad?"#001a0a":"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
-          </div>
-          <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
-            background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
-            {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.3) 0%,rgba(0,180,40,0.14) 40%,transparent 75%)",zIndex:1}}/>}
-            {isRad&&<svg style={{position:"absolute",top:0,left:0,width:"100%",height:"20px",opacity:0.35,zIndex:3}} viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,0 Q15,0 17,10 Q19,18 21,19 Q23,18 24,6 Q33,0 46,0 Q54,0 56,13 Q58,19 60,20 Q62,18 63,10 Q65,3 76,0 Q87,0 89,15 Q91,19 93,20 Q95,18 96,11 Q98,3 100,0 Z" fill="#00ff44"/></svg>}
-            {isElite&&<div style={{position:"absolute",inset:0,background:"linear-gradient(160deg,rgba(0,100,200,0.14),rgba(0,140,255,0.16))",zIndex:1}}/>}
-            {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%)",zIndex:2}}/>}
-            {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}><div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),transparent)",animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/></div>}
-            {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
-            {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
-            {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
-            {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
-            {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
-            {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
-            {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;})}
-            {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
-            {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
-            <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
-            <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:isRad?8:5}}>
-              <span style={{fontFamily:"'Barlow Condensed',sans-serif",
-                fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
-                fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
-            </div>
-            {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
-              animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
-              filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isRad?"drop-shadow(0 0 8px rgba(0,255,60,1))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
-            {isRad&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.05),fontWeight:700,color:"rgba(0,255,60,0.9)",letterSpacing:"0.05em",textShadow:"0 0 6px rgba(0,255,60,0.8)"}}>#1 / 10</div>}
-            <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px "+Math.round(W*0.04)+"px"}}>
-              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>{c.rarity.toUpperCase()}</span>
-            </div>
-          </div>
-          <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
-            background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
-            borderTop:isRad?"2px solid #00ff44":isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
-            borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
-            zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
-            paddingLeft:Math.round(W*0.14),paddingRight:6}}>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",
-              fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
-              fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
-              background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
-              WebkitBackgroundClip:isDyn?"text":undefined,WebkitTextFillColor:isDyn?"transparent":undefined,
-              color:isDyn?undefined:isRad?"#00ff44":cfg.nameCol,
-              textShadow:isRad?"0 0 6px rgba(0,255,60,0.6)":"none",
-              overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>{c.team.toUpperCase()}</div>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
-              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
-                letterSpacing:"0.05em",textTransform:"uppercase",
-                background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
-                WebkitBackgroundClip:isDyn?"text":undefined,WebkitTextFillColor:isDyn?"transparent":undefined,
-                color:isDyn?undefined:isRad?"rgba(0,200,40,0.8)":cfg.rarCol}}>{c.sport} · {c.rarity}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="topps-screen">
       <style>{CSS}</style>
