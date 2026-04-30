@@ -6150,7 +6150,7 @@ export default function App() {
         <div className="topps-nav-links">
         </div>
         {/* Sign In — always visible */}
-        <button onClick={function(){setPhase("login");setOnboarded(false);setIsNewUser(false);}} className="topps-btn-outline"
+        <button onClick={function(){setPhase("login");setOnboarded(false);}} className="topps-btn-outline"
           style={{padding:"6px 16px",fontSize:12,flexShrink:0,whiteSpace:"nowrap"}}>Sign In</button>
       </div>
     </div>
@@ -6276,10 +6276,10 @@ export default function App() {
               Collect official cards across NFL, NBA, MLB, MLS &amp; College. Every card earns real daily coins. Live scores boost your collection in real time.
             </div>
             <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:28}}>
-              <button onClick={function(){setPhase("signup");setOnboarded(false);setIsNewUser(true);}} className="topps-btn-primary" style={{fontSize:16,padding:"14px 40px"}}>
+              <button onClick={function(){setPhase("signup");setIsNewUser(true);}} className="topps-btn-primary" style={{fontSize:16,padding:"14px 40px"}}>
                 Claim Free Starter Pack
               </button>
-              <button onClick={function(){setPhase("login");setOnboarded(false);setIsNewUser(false);}} className="topps-btn-secondary">
+              <button onClick={function(){setPhase("login");setOnboarded(false);}} className="topps-btn-secondary">
                 Sign In
               </button>
             </div>
@@ -6357,7 +6357,7 @@ export default function App() {
         <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(22px,4vw,30px)",fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#fff",marginBottom:14}}>
           Your free starter pack is waiting.
         </div>
-        <button onClick={function(){setPhase("signup");setOnboarded(false);setIsNewUser(true);}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
+        <button onClick={function(){setPhase("signup");setIsNewUser(true);}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
           Get Started — It's Free
         </button>
       </div>
@@ -6681,7 +6681,7 @@ export default function App() {
   },[userId,inventory.length]);
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
-  var showOnboarding=authReady&&(!userId||isNewUser)&&((!onboarded&&inventory.length===0)||isNewUser)&&phase!=="landing"&&phase!=="app";
+  var showOnboarding=authReady&&!userId&&(!onboarded||isNewUser)&&phase!=="landing";
 
   if(showOnboarding) return (
     <div style={{background:"#f0ede8",minHeight:"100vh"}}>
@@ -6851,7 +6851,6 @@ export default function App() {
     setBalance(finalCoins);
     setOnboarded(true);
     setIsNewUser(false);
-    setPhase("app");
     setTab("shop");
     if (refCode) {
       pushNotif("Referral Bonus! 🎁", "+1,000 bonus coins from referral code "+refCode, "sale");
