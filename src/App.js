@@ -830,9 +830,10 @@ function hexToRgb(hex){
 
 function PremiumCard(props) {
   var card=props.card; var isWinner=props.isWinner||false;
-  var W=170; var H=W*1.9; // ~323px — tall portrait matching new aspect ratio
-  var code=teamCode(card.team);
+  var W=170; var H=240;
+  var cfg=RARITY_CFG[card.rarity]||RARITY_CFG.Base;
   var col=getColors(card.team); var c1=col[0];
+  var code=teamCode(card.team);
   var isDyn=card.rarity==="Dynasty";
   var isLeg=card.rarity==="Legendary";
   var isLegacy=card.rarity==="Legacy";
@@ -840,262 +841,314 @@ function PremiumCard(props) {
   var isRare=card.rarity==="Rare";
   var isBase=card.rarity==="Base";
   var isRad=card.rarity==="Radioactive";
-
-  // ── Theme per rarity (new palette) ──────────────────────────────────────
-  var theme={
-    Base:     {primary:"#C9C9CF",dim:"#6E6E76",accent:"#9a9aa3",glow:"rgba(201,201,207,0.18)",bg:"radial-gradient(ellipse at 50% 35%,#1c1c1f 0%,#0a0a0c 75%,#050506 100%)",border:"rgba(180,180,190,0.35)",label:"BASE",sub:"COMMON",shadow:"0 2px 12px rgba(0,0,0,0.5)"},
-    Rare:     {primary:"#2F7BFF",dim:"#1A4FB8",accent:"#5C9CFF",glow:"rgba(47,123,255,0.45)",bg:"linear-gradient(180deg,#0b1b3e 0%,#061029 60%,#03081a 100%)",border:"#2F7BFF",label:"RARE",sub:"UNCOMMON",shadow:"0 0 22px rgba(47,123,255,0.45),0 0 1px #2F7BFF"},
-    Elite:    {primary:"#3FD4F0",dim:"#1F8BAA",accent:"#7FE6F7",glow:"rgba(63,212,240,0.5)",bg:"linear-gradient(180deg,#0a2c52 0%,#061a32 55%,#04101f 100%)",border:"#3FD4F0",label:"ELITE",sub:"RARE",shadow:"0 0 26px rgba(63,212,240,0.5),0 0 1px #3FD4F0"},
-    Legacy:   {primary:"#E8B547",dim:"#8C6B1F",accent:"#F1CC7A",glow:"rgba(232,181,71,0.5)",bg:"radial-gradient(ellipse at 50% 40%,#251a07 0%,#110b03 60%,#060401 100%)",border:"#B8902F",label:"LEGACY",sub:"EPIC",shadow:"0 0 28px rgba(232,181,71,0.5)"},
-    Legendary:{primary:"#FF2E2E",dim:"#A01010",accent:"#FF6B6B",glow:"rgba(255,46,46,0.6)",bg:"radial-gradient(ellipse at 50% 40%,#420808 0%,#1d0303 60%,#0a0101 100%)",border:"#FF2E2E",label:"LEGENDARY",sub:"MYTHIC",shadow:"0 0 34px rgba(255,46,46,0.6),0 0 1px #FF2E2E"},
-    Dynasty:  {primary:"#D946EF",dim:"#7B1FA2",accent:"#F0ABFC",glow:"rgba(217,70,239,0.7)",bg:"radial-gradient(ellipse at 50% 70%,#4d1175 0%,#1c0640 45%,#08021a 100%)",border:"#E879F9",label:"DYNASTY",sub:"INSANE",shadow:"0 0 22px rgba(217,70,239,0.7),0 0 55px rgba(217,70,239,0.45),0 0 110px rgba(140,80,255,0.25)"},
-    Radioactive:{primary:"#5BFF1F",dim:"#2A9410",accent:"#A8FF7A",glow:"rgba(91,255,31,0.75)",bg:"radial-gradient(ellipse at 50% 50%,#0e3d0e 0%,#052005 55%,#020a02 100%)",border:"#5BFF1F",label:"RADIOACTIVE",sub:"ONE OF TEN",shadow:"0 0 40px rgba(91,255,31,0.75),0 0 90px rgba(91,255,31,0.3)"},
-  }[card.rarity]||{primary:"#C9C9CF",dim:"#6E6E76",accent:"#9a9aa3",glow:"rgba(201,201,207,0.18)",bg:"#0a0a0c",border:"rgba(180,180,190,0.35)",label:card.rarity,sub:"",shadow:"none"};
-
-  var pr=theme.primary; var ac=theme.accent;
-
-  // Abbreviation gradient text for Legacy/Legendary/Dynasty
-  var abbvGradient=isDyn
-    ?"linear-gradient(180deg,#FFC6F4 0%,#FF6FE8 25%,"+pr+" 50%,#8B5CFF 78%,#5DB8FF 100%)"
-    :isLeg?"linear-gradient(180deg,#FFD580 0%,#FF7A3D 22%,"+pr+" 50%,#C20E0E 80%,"+theme.dim+" 100%)"
-    :isLegacy?"linear-gradient(180deg,#FFE7A8 0%,"+ac+" 35%,"+pr+" 65%,"+theme.dim+" 100%)"
-    :null;
-  var useGradText=isDyn||isLeg||isLegacy;
-  var abbvFontSize=code.length<=2?Math.round(W*0.42):code.length<=3?Math.round(W*0.32):code.length<=4?Math.round(W*0.24):Math.round(W*0.2);
-
-  // Corner ornament variant
-  var cornerVariant=isBase?"simple":isRare?"pixel":isElite?"geometric":isLegacy?"ornate":isLeg?"geometric":isDyn?"geometric":"geometric";
-
-  // Corner SVG paths
-  function cornerPath(v,clr){
-    if(v==="pixel") return <path d={"M2 22 V14 H6 V10 H10 V6 H14 V2 H22"} fill="none" stroke={clr} strokeWidth="1.4"/>;
-    if(v==="geometric") return <><path d={"M2 20 V2 H20"} fill="none" stroke={clr} strokeWidth="1.2"/><path d={"M6 20 V6 H20"} fill="none" stroke={clr} strokeWidth="0.8" opacity="0.6"/><circle cx="20" cy="20" r="1.5" fill={clr}/></>;
-    if(v==="ornate") return <><path d={"M2 24 V2 H24"} fill="none" stroke={clr} strokeWidth="1.2"/><path d={"M6 18 V6 H18 M10 14 V10 H14"} fill="none" stroke={clr} strokeWidth="0.8" opacity="0.7"/></>;
-    return <path d={"M2 16 V4 H16"} fill="none" stroke={clr} strokeWidth="1.2"/>;
-  }
-  var cs=22;
-  function Corners(){
-    var p=cornerPath(cornerVariant,pr);
-    return <>
-      <svg viewBox="0 0 24 24" width={cs} height={cs} style={{position:"absolute",top:6,left:6,zIndex:8}}>{p}</svg>
-      <svg viewBox="0 0 24 24" width={cs} height={cs} style={{position:"absolute",top:6,right:6,zIndex:8,transform:"scaleX(-1)"}}>{p}</svg>
-      <svg viewBox="0 0 24 24" width={cs} height={cs} style={{position:"absolute",bottom:6,left:6,zIndex:8,transform:"scaleY(-1)"}}>{p}</svg>
-      <svg viewBox="0 0 24 24" width={cs} height={cs} style={{position:"absolute",bottom:6,right:6,zIndex:8,transform:"scale(-1,-1)"}}>{p}</svg>
-    </>;
-  }
+  var abbvColor=isBase?cfg.abbvFn(c1):cfg.abbvFn();
+  var stripeStyle=isDyn
+    ?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+    :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+    :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+    :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
+    :cfg.stripe;
 
   return (
-    <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:10,overflow:"visible",
-      boxShadow:theme.shadow}}>
+    <div style={{width:W,height:H,position:"relative",flexShrink:0,borderRadius:4,overflow:"visible",
+      boxShadow:cfg.shadow+",0 8px 24px rgba(0,0,0,0.35)"}}>
 
-      {/* Radioactive outer halo */}
-      {isRad&&<div style={{position:"absolute",inset:-10,borderRadius:16,
-        background:"radial-gradient(ellipse at 50% 50%,rgba(91,255,31,0.22) 0%,transparent 70%)",
+      {/* Radioactive slimy outer halo */}
+      {isRad&&<div style={{position:"absolute",inset:-10,borderRadius:10,
+        background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.28) 0%,rgba(0,200,40,0.12) 45%,transparent 70%)",
         animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
-      {isRad&&<div style={{position:"absolute",inset:-4,borderRadius:14,
-        border:"1.5px solid rgba(91,255,31,0.45)",
-        boxShadow:"0 0 16px rgba(91,255,31,0.35)",
+      {isRad&&<div style={{position:"absolute",inset:-5,borderRadius:8,
+        border:"1.5px solid rgba(0,255,60,0.5)",
+        boxShadow:"0 0 16px rgba(0,255,60,0.4),inset 0 0 8px rgba(0,255,60,0.06)",
         animation:"slimePulse 2.4s ease-in-out infinite 0.3s",pointerEvents:"none",zIndex:0}}/>}
 
-      {/* Card body */}
-      <div style={{width:W,height:H,position:"relative",borderRadius:10,overflow:"hidden",zIndex:2,
-        border:"1.5px solid "+theme.border,background:theme.bg}}>
+      {/* Card body wrapper with clip */}
+      <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",zIndex:2,
+        border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.15)"}}>
 
-        {/* Noise/grain overlay */}
-        <div aria-hidden style={{position:"absolute",inset:0,opacity:0.18,mixBlendMode:"overlay",zIndex:1,
-          backgroundImage:"url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")"}}/>
+        {/* Dynasty animated rainbow border */}
+        {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+        {isDyn&&<div style={{position:"absolute",inset:0,background:cfg.photoBot,borderRadius:4,zIndex:1}}/>}
 
-        {/* Sport watermark behind abbv */}
-        <svg style={{position:"absolute",left:"11%",top:"20%",width:"78%",height:"62%",opacity:isBase?0.05:isRare?0.08:0.1,pointerEvents:"none",zIndex:2}} viewBox="0 0 100 100" fill="none" stroke={pr} strokeWidth="1.2">
-          {card.sport==="NFL"
-            ?<><ellipse cx="50" cy="50" rx="42" ry="22" transform="rotate(-28 50 50)"/><path d="M38 50h24M42 45v10M46 43v14M50 42v16M54 43v14"/></>
-            :card.sport==="MLB"
-            ?<><circle cx="50" cy="50" r="38"/><path d="M22 35c10 4 16 12 16 22-0 8-6 16-14 20" strokeDasharray="2 2"/><path d="M78 35c-10 4-16 12-16 22 0 8 6 16 14 20" strokeDasharray="2 2"/></>
-            :<><circle cx="50" cy="50" r="38"/><path d="M12 50h76M50 12v76"/><path d="M22 22c12 12 18 22 18 28s-6 16-18 28"/><path d="M78 22c-12 12-18 22-18 28s6 16 18 28"/></>}
-        </svg>
-
-        {/* ── Rarity background effects ── */}
-
-        {/* Base: pixel perimeter */}
-        {isBase&&<div aria-hidden style={{position:"absolute",inset:8,pointerEvents:"none",zIndex:3,
-          backgroundImage:"linear-gradient(90deg,"+pr+" 50%,transparent 50%),linear-gradient(90deg,"+pr+" 50%,transparent 50%),linear-gradient(0deg,"+pr+" 50%,transparent 50%),linear-gradient(0deg,"+pr+" 50%,transparent 50%)",
-          backgroundRepeat:"repeat-x,repeat-x,repeat-y,repeat-y",
-          backgroundSize:"6px 1px,6px 1px,1px 6px,1px 6px",
-          backgroundPosition:"0 0,0 100%,0 0,100% 0",opacity:0.5}}/>}
-
-        {/* Rare: blue shimmer lines */}
-        {isRare&&<svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.14,zIndex:3}} viewBox="0 0 170 323" preserveAspectRatio="none">
-          <path d="M10,130 Q50,90 90,130 Q130,170 160,110" stroke={ac} strokeWidth="1.5" fill="none"/>
-          <path d="M5,165 Q55,115 95,160 Q135,195 165,145" stroke={pr} strokeWidth="1" fill="none"/>
-          <path d="M20,85 Q65,45 100,85 Q135,120 160,80" stroke={theme.dim} strokeWidth="1" fill="none"/>
-        </svg>}
-        {isRare&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}>
-          <div style={{position:"absolute",width:"30%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(47,123,255,0.18),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
-        </div>}
-
-        {/* Elite: diagonal light streaks */}
-        {isElite&&<svg viewBox="0 0 100 200" preserveAspectRatio="none" style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.55,mixBlendMode:"screen",zIndex:3}}>
-          <defs><linearGradient id="eStreak" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={ac} stopOpacity="0"/><stop offset="40%" stopColor={ac} stopOpacity="0.35"/><stop offset="100%" stopColor={ac} stopOpacity="0"/></linearGradient></defs>
-          {[10,22,38,55,70,85].map(function(x,i){return <line key={i} x1={x} y1="-10" x2={x-20} y2="210" stroke="url(#eStreak)" strokeWidth={i%2?0.6:1.2}/>;}) }
-        </svg>}
-
-        {/* Legacy: art-deco sunrays */}
-        {isLegacy&&<svg viewBox="0 0 100 200" preserveAspectRatio="none" style={{position:"absolute",inset:0,width:"100%",height:"100%",mixBlendMode:"screen",zIndex:3}}>
-          <defs>
-            <linearGradient id="lRay" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={ac} stopOpacity="0"/><stop offset="35%" stopColor={ac} stopOpacity="0.55"/><stop offset="70%" stopColor={pr} stopOpacity="0.35"/><stop offset="100%" stopColor={pr} stopOpacity="0"/></linearGradient>
-            <linearGradient id="lBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor={ac} stopOpacity="0"/><stop offset="50%" stopColor={ac} stopOpacity="0.6"/><stop offset="100%" stopColor={ac} stopOpacity="0"/></linearGradient>
-          </defs>
-          {[-72,-54,-38,-22,-8,8,22,38,54,72].map(function(deg,i){return <line key={i} x1="50" y1="0" x2={50+deg*1.4} y2="220" stroke="url(#lRay)" strokeWidth={Math.abs(deg)<15?1.2:0.5} opacity={Math.abs(deg)<15?0.55:0.35}/>;}) }
-          <line x1="0" y1="48" x2="100" y2="48" stroke="url(#lBand)" strokeWidth="0.4"/>
-          <line x1="0" y1="152" x2="100" y2="152" stroke="url(#lBand)" strokeWidth="0.4"/>
-          <g fill="none" stroke={ac} strokeWidth="0.5" opacity="0.55"><path d="M50 38 L54 42 L50 46 L46 42 Z"/><path d="M50 162 L54 158 L50 154 L46 158 Z"/></g>
-        </svg>}
-        {isLegacy&&<div style={{position:"absolute",inset:10,border:"0.5px solid "+theme.dim,borderRadius:6,opacity:0.5,pointerEvents:"none",zIndex:3}}/>}
-
-        {/* Legendary: embers + heat streaks */}
-        {isLeg&&<svg viewBox="0 0 100 200" preserveAspectRatio="none" style={{position:"absolute",inset:0,width:"100%",height:"100%",mixBlendMode:"screen",zIndex:3}}>
-          <defs>
-            <linearGradient id="legStreak" x1="0.3" y1="1" x2="0" y2="0"><stop offset="0%" stopColor={ac} stopOpacity="0.6"/><stop offset="60%" stopColor={pr} stopOpacity="0.3"/><stop offset="100%" stopColor={pr} stopOpacity="0"/></linearGradient>
-            <radialGradient id="legEmber"><stop offset="0%" stopColor="#FFD080" stopOpacity="1"/><stop offset="40%" stopColor={ac} stopOpacity="0.7"/><stop offset="100%" stopColor={ac} stopOpacity="0"/></radialGradient>
-          </defs>
-          {[8,22,38,55,72,88].map(function(x,i){return <line key={i} x1={x} y1="210" x2={x-28} y2="-10" stroke="url(#legStreak)" strokeWidth={i%2?0.7:1.4} opacity="0.55"/>;}) }
-          {[[18,165,2.2],[82,130,1.6],[42,178,2.8],[68,95,1.8],[24,55,1.2],[58,30,1.6],[32,115,1.4],[76,60,1.3]].map(function(e,i){return <circle key={i} cx={e[0]} cy={e[1]} r={e[2]} fill="url(#legEmber)"/>;}) }
-          <ellipse cx="50" cy="195" rx="55" ry="12" fill={ac} opacity="0.25"/>
-        </svg>}
-        {isLeg&&<div style={{position:"absolute",inset:10,border:"0.5px solid "+theme.dim,borderRadius:6,opacity:0.5,pointerEvents:"none",zIndex:3}}/>}
-
-        {/* Dynasty: cosmic backdrop */}
-        {isDyn&&<svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,width:"100%",height:"100%",zIndex:3}}>
-          <defs>
-            <radialGradient id="dPlanet" cx="0.38" cy="0.32" r="0.7"><stop offset="0%" stopColor="#FFD4F6" stopOpacity="1"/><stop offset="35%" stopColor={ac} stopOpacity="0.95"/><stop offset="75%" stopColor={pr} stopOpacity="0.65"/><stop offset="100%" stopColor="#1a0530" stopOpacity="0.95"/></radialGradient>
-            <radialGradient id="dNeb1" cx="0.28" cy="0.72" r="0.55"><stop offset="0%" stopColor={pr} stopOpacity="0.55"/><stop offset="100%" stopColor="transparent"/></radialGradient>
-            <radialGradient id="dNeb2" cx="0.78" cy="0.48" r="0.4"><stop offset="0%" stopColor="#FF6FE8" stopOpacity="0.45"/><stop offset="100%" stopColor="transparent"/></radialGradient>
-            <linearGradient id="dComet" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#fff" stopOpacity="0"/><stop offset="100%" stopColor="#fff" stopOpacity="0.95"/></linearGradient>
-          </defs>
-          <rect width="100" height="200" fill="url(#dNeb1)"/>
-          <rect width="100" height="200" fill="url(#dNeb2)"/>
-          <ellipse cx="22" cy="38" rx="14" ry="2.4" fill="none" stroke={ac} strokeWidth="0.35" opacity="0.45" transform="rotate(-22 22 38)"/>
-          <line x1="14" y1="22" x2="36" y2="44" stroke="url(#dComet)" strokeWidth="0.9"/>
-          <circle cx="36" cy="44" r="0.9" fill="#fff"/>
-          <circle cx="50" cy="86" r="22" fill="url(#dPlanet)"/>
-          <ellipse cx="50" cy="88" rx="40" ry="8.5" fill="none" stroke={pr} strokeWidth="0.4" opacity="0.45"/>
-          <ellipse cx="50" cy="88" rx="36" ry="7" fill="none" stroke={pr} strokeWidth="1.5" opacity="0.95"/>
-          <ellipse cx="50" cy="88" rx="32" ry="5.5" fill="none" stroke={ac} strokeWidth="0.6" opacity="0.75"/>
-          <circle cx="78" cy="58" r="3.6" fill="#F0CCFF"/>
-          {[[12,18,0.5],[88,12,0.4],[22,42,0.6],[78,38,0.4],[8,60,0.3],[92,75,0.5],[50,150,0.7],[30,170,0.5],[70,180,0.4],[40,25,0.5],[60,118,0.3],[15,90,0.4],[85,95,0.6],[25,135,0.5],[55,52,0.3],[75,165,0.4]].map(function(s,i){return <circle key={i} cx={s[0]} cy={s[1]} r={s[2]} fill="#fff" opacity={0.45+((i*13)%50)/110}/>;}) }
-        </svg>}
-
-        {/* Radioactive: drip overlay */}
-        {isRad&&<svg viewBox="0 0 200 400" preserveAspectRatio="none" style={{position:"absolute",inset:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:3}}>
-          <defs>
-            <linearGradient id="radDrip" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={ac} stopOpacity="1"/><stop offset="70%" stopColor={pr} stopOpacity="0.95"/><stop offset="100%" stopColor={pr} stopOpacity="0.5"/></linearGradient>
-            <filter id="radGlow"><feGaussianBlur stdDeviation="2"/></filter>
-          </defs>
-          <g filter="url(#radGlow)" opacity="0.6">
-            <path d="M0 0 L0 40 Q5 55 10 50 Q15 42 20 50 L25 70 Q30 80 35 65 L40 35 L55 35 Q60 50 65 45 Q70 38 78 60 Q85 80 92 55 L100 30 L125 30 Q130 55 138 50 L150 75 Q155 85 160 60 L180 35 Q188 50 200 38 L200 0 Z" fill="url(#radDrip)"/>
-          </g>
-          <path d="M0 0 L0 38 Q5 52 10 47 Q15 40 20 47 L25 65 Q30 75 35 62 L40 33 L55 33 Q60 46 65 42 Q70 35 78 56 Q85 75 92 52 L100 28 L125 28 Q130 52 138 47 L150 70 Q155 80 160 57 L180 33 Q188 47 200 36 L200 0 Z" fill="url(#radDrip)"/>
-        </svg>}
-
-        {/* ── Corner ornaments ── */}
-        <Corners/>
-
-        {/* ── Top row: Card Dynasty crown + rarity label + sport ── */}
-        <div style={{position:"absolute",top:0,left:0,right:0,padding:"14px 14px 0",zIndex:9,
-          display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div style={{display:"flex",alignItems:"flex-start",gap:5}}>
-            <span style={{fontSize:12,lineHeight:1,filter:"drop-shadow(0 0 4px "+pr+")"}}>👑</span>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7,lineHeight:1.15,
-              letterSpacing:"0.08em",fontWeight:700,color:pr,textTransform:"uppercase"}}>
-              Card<br/>Dynasty
-            </div>
-          </div>
-          {/* Sport icon */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={pr} strokeWidth="1.5">
-            {card.sport==="NFL"
-              ?<><ellipse cx="12" cy="12" rx="9" ry="5.2" transform="rotate(-30 12 12)"/><path d="M9 12h6M10.5 10.5v3M12 10v4M13.5 10.5v3"/></>
-              :card.sport==="MLB"
-              ?<><circle cx="12" cy="12" r="9"/><path d="M5 7c2 1 3 2.8 3 5s-1 4-3 5M19 7c-2 1-3 2.8-3 5s1 4 3 5" strokeDasharray="1.5 1.5"/></>
-              :<><circle cx="12" cy="12" r="9.25"/><path d="M3 12h18M12 3v18"/><path d="M5.6 5.6c2.4 2.4 3.8 5.4 3.8 6.4s-1.4 4-3.8 6.4M18.4 5.6c-2.4 2.4-3.8 5.4-3.8 6.4s1.4 4 3.8 6.4"/></>}
-          </svg>
+        {/* LEFT STRIPE */}
+        <div style={{position:"absolute",left:0,top:0,bottom:0,width:20,background:stripeStyle,zIndex:6,
+          display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,
+            letterSpacing:"0.2em",textTransform:"uppercase",color:cfg.stripeTxt,
+            writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",userSelect:"none"}}>{card.team.toUpperCase()}</span>
         </div>
 
-        {/* ── Center: Team abbreviation ── */}
-        <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-52%)",
-          textAlign:"center",zIndex:7,padding:"0 10px"}}>
-          <div style={{
-            fontFamily:"'Barlow Condensed',sans-serif",
-            fontWeight:900,
-            fontSize:abbvFontSize,
-            lineHeight:0.9,
-            letterSpacing:"-0.02em",
-            color:useGradText?undefined:pr,
-            textShadow:useGradText?undefined:"0 0 8px "+theme.glow+",0 0 22px "+theme.glow,
-            background:useGradText?abbvGradient:undefined,
-            WebkitBackgroundClip:useGradText?"text":undefined,
-            WebkitTextFillColor:useGradText?"transparent":undefined,
-            userSelect:"none",
-          }}>{code}</div>
-        </div>
+        {/* PHOTO AREA */}
+        <div style={{position:"absolute",left:20,top:0,right:0,bottom:38,
+          background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
 
-        {/* ── Grade badge ── */}
-        {card.graded&&card.grade&&(
-          <div style={{position:"absolute",top:42,left:8,zIndex:12,
-            background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"2px 7px",borderRadius:2}}>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
-          </div>
-        )}
+          {/* ── BASE: matte grain texture ── */}
+          {isBase&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E\")",
+            zIndex:1,animation:"matteGrain 4s ease-in-out infinite"}}/>}
+          {isBase&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.012) 18px,rgba(255,255,255,0.012) 19px),repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,255,255,0.012) 18px,rgba(255,255,255,0.012) 19px)",
+            zIndex:1}}/>}
 
-        {/* ── Winner badge ── */}
-        {isWinner&&<div style={{position:"absolute",top:42,right:8,zIndex:13,
-          background:"#22aa44",padding:"2px 6px",borderRadius:2}}>
-          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#fff",letterSpacing:"0.08em"}}>WIN</span>
-        </div>}
-
-        {/* ── Bottom info bar ── */}
-        <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"0 12px 10px",zIndex:9,
-          display:"flex",flexDirection:"column",gap:3}}>
-
-          {/* Serial number (Dynasty / Radioactive) */}
-          {(isDyn||isRad)&&<div style={{
-            fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
-            letterSpacing:"1.5px",color:pr,textAlign:"center",
-            textShadow:"0 0 8px "+theme.glow,
-            animation:isDyn?"goldEtch 2.5s ease-in-out infinite":"slimePulse 2.4s ease-in-out infinite"}}>
-            {isRad?"#"+(card.serialNumber||"?")+" / 10":"#01 / 10"}
+          {isRare&&<svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.14,zIndex:1}} viewBox="0 0 150 202" preserveAspectRatio="none">
+            <path d="M10,82 Q30,58 52,86 Q72,112 96,72" stroke="#4488ff" strokeWidth="1.5" fill="none"/>
+            <path d="M5,104 Q35,72 58,102 Q82,124 112,92" stroke="#6699ff" strokeWidth="1" fill="none"/>
+            <path d="M18,52 Q44,28 65,56 Q85,76 108,52" stroke="#3377ee" strokeWidth="1" fill="none"/>
+          </svg>}
+          {isRare&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}>
+            <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/>
           </div>}
 
-          {/* Divider */}
-          <div style={{height:1,background:"linear-gradient(90deg,transparent,"+pr+",transparent)",opacity:0.5}}/>
+          {/* ── ELITE: chrome edges + faint blue neon glow ── */}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            background:"linear-gradient(160deg,rgba(0,100,200,0.14) 0%,rgba(0,60,140,0.06) 40%,rgba(0,140,255,0.16) 100%)",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%),linear-gradient(90deg,rgba(140,200,255,0.16) 0%,transparent 14%,transparent 86%,rgba(140,200,255,0.12) 100%)",
+            zIndex:2}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 85% 55% at 60% 50%,rgba(0,160,255,0.2) 0%,rgba(0,80,200,0.1) 50%,transparent 80%)",zIndex:1}}/>}
+          {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}>
+            <div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),rgba(180,220,255,0.22),transparent)",
+              animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/>
+          </div>}
+          {isElite&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(80,160,255,0.04) 3px,rgba(80,160,255,0.04) 4px)",
+            zIndex:1}}/>}
 
-          {/* Team name */}
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif",
-            fontSize:card.team.length>12?8:card.team.length>8?9:10,
-            fontWeight:700,letterSpacing:"1.4px",color:"#e6e6ea",
-            textTransform:"uppercase",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
-            {card.team}
+          {/* ── LEGACY: gold-leaf border + liquid glass transparency ── */}
+          {/* Deep amber base */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 80% 65% at 58% 42%,rgba(220,160,0,0.3) 0%,rgba(160,100,0,0.15) 45%,transparent 75%)",zIndex:1}}/>}
+          {/* Gold-leaf edge frames */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,zIndex:2,
+            backgroundImage:"linear-gradient(180deg,rgba(255,230,80,0.22) 0%,rgba(200,160,0,0.1) 4%,transparent 15%,transparent 85%,rgba(200,160,0,0.1) 96%,rgba(255,230,80,0.22) 100%),linear-gradient(90deg,rgba(255,220,60,0.2) 0%,rgba(180,130,0,0.08) 4%,transparent 15%,transparent 85%,rgba(180,130,0,0.08) 96%,rgba(255,220,60,0.18) 100%)"}}/>}
+          {/* Liquid glass: frosted inner layer */}
+          {isLegacy&&<div style={{position:"absolute",inset:"4px",
+            background:"linear-gradient(135deg,rgba(255,255,200,0.06) 0%,rgba(255,220,80,0.03) 40%,rgba(200,140,0,0.05) 100%)",
+            backdropFilter:"blur(0.5px)",
+            borderRadius:2,zIndex:2}}/>}
+          {/* Gold sunray burst */}
+          {isLegacy&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:200,height:200,opacity:0.08,zIndex:1}} viewBox="0 0 200 200">
+            <g transform="translate(100,100)">
+              {[0,30,60,90,120,150,15,45,75,105,135,165].map(function(a,i){
+                return <line key={i} x1="0" y1="-95" x2="0" y2="95" stroke="#ffcc00" strokeWidth={i<6?0.8:0.4} transform={"rotate("+a+")"}/>;
+              })}
+            </g>
+          </svg>}
+          {/* Liquid glass sweep — two-pass shimmer */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}>
+            <div style={{position:"absolute",width:"55%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,230,100,0.16),rgba(255,255,220,0.09),rgba(255,220,80,0.13),transparent)",
+              animation:"shimmerSweep 2.4s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"20%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,255,200,0.08),transparent)",
+              animation:"shimmerSweep 2.4s ease-in-out infinite 1.2s"}}/>
+          </div>}
+          {/* Diagonal gold foil lines */}
+          {isLegacy&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(68deg,transparent,transparent 12px,rgba(255,200,0,0.045) 12px,rgba(255,200,0,0.045) 13px)",
+            zIndex:1}}/>}
+
+          {/* ── LEGENDARY: liquid glass borders + supernova core ── */}
+          {/* Deep crimson base */}
+          {isLeg&&<div style={{position:"absolute",inset:0,
+            background:"radial-gradient(ellipse 90% 75% at 56% 40%,rgba(255,50,20,0.42) 0%,rgba(180,10,10,0.22) 35%,rgba(60,0,0,0.1) 65%,transparent 85%)",zIndex:2}}/>}
+          {/* Star field */}
+          {isLeg&&<div style={{position:"absolute",inset:0,zIndex:1}}>
+            {[[15,24,2,2.1],[28,62,1,1.7],[11,76,2,2.5],[42,14,1,1.9],[21,46,2,2.3],[55,78,1,2.0],[65,35,1,2.6]].map(function(s,i){
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:"#fff",borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.4)+"s",opacity:0.7}}/>;
+            })}
+          </div>}
+          {/* Liquid glass edge: frosted borders */}
+          {isLeg&&<div style={{position:"absolute",inset:0,zIndex:3,
+            backgroundImage:"linear-gradient(180deg,rgba(255,180,180,0.2) 0%,rgba(255,80,60,0.08) 5%,transparent 18%,transparent 82%,rgba(255,80,60,0.08) 95%,rgba(255,180,180,0.18) 100%),linear-gradient(90deg,rgba(255,160,140,0.18) 0%,rgba(220,60,40,0.07) 5%,transparent 18%,transparent 82%,rgba(220,60,40,0.07) 95%,rgba(255,160,140,0.16) 100%)"}}/>}
+          {/* Glass inner surface */}
+          {isLeg&&<div style={{position:"absolute",inset:"3px",
+            background:"linear-gradient(135deg,rgba(255,200,200,0.05) 0%,rgba(255,80,60,0.03) 50%,rgba(180,0,0,0.04) 100%)",
+            borderRadius:2,zIndex:3}}/>}
+          {/* Shockwave rings */}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:80,height:80,border:"1px solid rgba(255,70,40,0.35)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite",zIndex:4}}/>}
+          {isLeg&&<div style={{position:"absolute",left:"55%",top:"40%",transform:"translate(-50%,-50%)",width:130,height:130,border:"1px solid rgba(255,60,30,0.18)",borderRadius:"50%",animation:"pulsarRed 2.2s ease-out infinite 0.7s",zIndex:4}}/>}
+          {/* Glass shimmer */}
+          {isLeg&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:5}}>
+            <div style={{position:"absolute",width:"42%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,140,120,0.18),rgba(255,255,255,0.09),rgba(255,120,100,0.14),transparent)",
+              animation:"shimmerSweep 2.2s ease-in-out infinite"}}/>
+          </div>}
+          {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.38) 0%,transparent 100%)",zIndex:4}}/>}
+          {isLeg&&[22,42,62].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"25%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#ff7050","#ff5030","#ff8060"][i],borderRadius:"50%",animation:"emberRise "+(1.6+i*0.25)+"s ease-out infinite "+(i*0.55)+"s",boxShadow:"0 0 4px #ff5030",zIndex:6}}/>;})}
+          {/* Diagonal glass texture */}
+          {isLeg&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(65deg,transparent,transparent 14px,rgba(255,120,100,0.04) 14px,rgba(255,120,100,0.04) 15px)",
+            zIndex:1}}/>}
+          {/* ── DYNASTY: full galaxy shader — moving nebula + gold-etched serial ── */}
+          {isDyn&&<div style={{position:"absolute",inset:0,
+            background:"linear-gradient(135deg,#04000e 0%,#080020 40%,#0e0008 70%,#020010 100%)",zIndex:0}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:"-20%",width:"140%",height:"140%",
+            background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.32) 0deg,transparent 55deg,rgba(232,22,30,0.2) 110deg,transparent 170deg,rgba(80,20,255,0.26) 225deg,transparent 280deg,rgba(200,40,120,0.18) 330deg,rgba(153,51,255,0.28) 360deg)",
+            animation:"cosmicRing 28s linear infinite",zIndex:1}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"-25%",top:"-25%",width:"90%",height:"90%",
+            background:"radial-gradient(ellipse at 55% 55%,rgba(153,51,255,0.35) 0%,rgba(80,20,180,0.2) 40%,transparent 70%)",
+            animation:"nebulaBreath 5s ease-in-out infinite",zIndex:2}}/>}
+          {isDyn&&<div style={{position:"absolute",right:"-15%",top:"15%",width:"75%",height:"65%",
+            background:"radial-gradient(ellipse at 40% 40%,rgba(220,20,80,0.25) 0%,rgba(140,10,50,0.12) 50%,transparent 75%)",
+            animation:"nebulaBreath 4.2s ease-in-out infinite 1.8s",zIndex:2}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,zIndex:3}}>
+            {[[8,18,1,2.2],[15,55,2,1.8],[25,30,1,2.5],[18,80,2,1.6],[36,68,1,2.1],[12,40,2,3.0],[45,22,1,1.9],[56,76,1,2.4],[32,10,1,1.7],[62,48,1,2.8],[44,88,1,2.0],[20,62,2,2.3]].map(function(s,i){
+              return <div key={i} style={{position:"absolute",width:s[2],height:s[2],background:["#fff","#cc99ff","#fff","#ffbbcc","#aabbff","#fff","#fff","#aaffee","#fff","#ddaaff","#fff","#ffeebb"][i],borderRadius:"50%",top:s[0]+"%",left:s[1]+"%",animation:"twinkle "+s[3]+"s ease-in-out infinite "+(i*0.3)+"s",boxShadow:i%2===0?"0 0 2px rgba(255,255,255,0.8)":"0 0 3px rgba(200,150,255,0.9)"}}/>;
+            })}
+          </div>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:48,height:48,borderRadius:"50%",
+            background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 30%,rgba(80,10,180,0.5) 60%,transparent 85%)",
+            boxShadow:"0 0 20px rgba(100,20,220,0.4)",zIndex:6}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:88,height:22,borderRadius:"50%",
+            border:"1.5px solid rgba(200,120,255,0.45)",boxShadow:"0 0 12px rgba(180,80,255,0.4),inset 0 0 6px rgba(180,80,255,0.1)",zIndex:5}}/>}
+          {isDyn&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:112,height:28,borderRadius:"50%",
+            border:"1px solid rgba(255,80,40,0.25)",zIndex:4}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,
+            backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(120,40,255,0.04) 3px,rgba(120,40,255,0.04) 4px)",
+            zIndex:7,pointerEvents:"none"}}/>}
+          {isDyn&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:8}}>
+            <div style={{position:"absolute",width:"32%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(180,80,255,0.18),rgba(255,255,255,0.06),transparent)",
+              animation:"shimmerSweep 2.6s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:"20%",height:"300%",top:"-100%",
+              background:"linear-gradient(90deg,transparent,rgba(255,80,120,0.1),transparent)",
+              animation:"shimmerSweep 2.6s ease-in-out infinite 1.3s"}}/>
+          </div>}
+          {isDyn&&[18,32,48,64,80].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"22%",left:lx+"%",width:3+i%2,height:3+i%2,background:["#cc66ff","#ff4460","#9933ff","#ffaa44","#ff3366"][i],borderRadius:"50%",animation:"emberRise "+(1.4+i*0.2)+"s ease-out infinite "+(i*0.4)+"s",boxShadow:"0 0 "+(6+i)+"px "+["#aa44ff","#ff2244","#8822ee","#ff8800","#ee1144"][i],zIndex:9}}/>;})}
+
+          {/* ── RADIOACTIVE VISUAL ── */}
+          {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.32) 0%,rgba(0,180,40,0.16) 40%,rgba(0,80,20,0.08) 65%,transparent 85%)",zIndex:1}}/>}
+          {/* Toxic grid lines */}
+          {isRad&&<div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 22px,rgba(0,255,60,0.04) 22px,rgba(0,255,60,0.04) 23px),repeating-linear-gradient(90deg,transparent,transparent 22px,rgba(0,255,60,0.04) 22px,rgba(0,255,60,0.04) 23px)",zIndex:1}}/>}
+          {/* Radioactive symbol watermark */}
+          {isRad&&<svg style={{position:"absolute",left:"50%",top:"42%",transform:"translate(-50%,-50%)",width:100,height:100,opacity:0.09,zIndex:2}} viewBox="-50 -50 100 100">
+            <circle cx="0" cy="0" r="48" fill="none" stroke="#00ff44" strokeWidth="2"/>
+            <circle cx="0" cy="0" r="14" fill="#00ff44"/>
+            {[0,120,240].map(function(angle,i){
+              var rad=angle*Math.PI/180;
+              var rad2=(angle+60)*Math.PI/180;
+              return <path key={i} d={"M"+(Math.cos(rad)*16)+","+(Math.sin(rad)*16)+" L"+(Math.cos(rad)*46)+","+(Math.sin(rad)*46)+" A46,46 0 0,1 "+(Math.cos(rad2)*46)+","+(Math.sin(rad2)*46)+" L"+(Math.cos(rad2)*16)+","+(Math.sin(rad2)*16)+" Z"} fill="#00ff44"/>;
+            })}
+          </svg>}
+          {/* Toxic slime drips from top */}
+          {isRad&&<svg style={{position:"absolute",top:0,left:0,right:0,width:"100%",height:30,opacity:0.35,zIndex:3}} viewBox="0 0 150 30" preserveAspectRatio="none">
+            <path d="M0,0 Q18,0 20,14 Q22,26 24,28 Q26,30 28,26 Q30,22 31,8 Q40,0 55,0 Q65,0 67,18 Q69,28 71,30 Q73,28 75,14 Q77,4 90,0 Q105,0 107,20 Q109,28 111,30 Q113,28 115,16 Q117,4 130,0 L150,0 L150,0 L0,0 Z" fill="#00ff44"/>
+          </svg>}
+          {/* Toxic pulse rings */}
+          {isRad&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:70,height:70,border:"1px solid rgba(0,255,60,0.35)",borderRadius:"50%",animation:"pulsarRed 2.4s ease-out infinite",zIndex:3}}/>}
+          {isRad&&<div style={{position:"absolute",left:"52%",top:"40%",transform:"translate(-50%,-50%)",width:110,height:110,border:"1px solid rgba(0,255,60,0.18)",borderRadius:"50%",animation:"pulsarRed 2.4s ease-out infinite 0.8s",zIndex:3}}/>}
+          {/* Shimmer sweep */}
+          {isRad&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:4}}>
+            <div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(0,255,60,0.18),rgba(180,255,200,0.08),transparent)",animation:"shimmerSweep 2.8s ease-in-out infinite"}}/>
+          </div>}
+          {/* Green particle drips */}
+          {isRad&&[18,36,54,72,88].map(function(lx,i){return <div key={i} style={{position:"absolute",bottom:"20%",left:lx+"%",width:2+i%2,height:2+i%2,background:"#00ff44",borderRadius:"50%",animation:"emberRise "+(1.4+i*0.2)+"s ease-out infinite "+(i*0.35)+"s",boxShadow:"0 0 6px rgba(0,255,60,0.9)",zIndex:6}}/>;})}
+          {/* Bottom glow */}
+          {isRad&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"35%",background:"linear-gradient(0deg,rgba(0,255,60,0.3) 0%,transparent 100%)",zIndex:4}}/>}
+
+          {/* Team color radial — all tiers */}
+          {!isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c1+"44 0%,transparent 70%)",pointerEvents:"none",zIndex:isDyn?1:4}}/>}
+
+          {/* ABBREVIATION */}
+          <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",
+            textAlign:"center",zIndex:isDyn?9:isRad?8:5,paddingLeft:4}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+              fontSize:code.length<=2?82:code.length<=3?62:code.length<=4?48:38,
+              fontWeight:900,letterSpacing:code.length<=2?"0.04em":"0.02em",
+              color:abbvColor,lineHeight:1,userSelect:"none",
+              textShadow:cfg.abbvShadow}}>{code}</span>
           </div>
 
-          {/* Rarity + daily yield row */}
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:7.5,fontWeight:700,
-              letterSpacing:"1.6px",color:pr,textTransform:"uppercase"}}>{theme.label}</span>
-            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
-              letterSpacing:"0.05em",color:pr,
-              textShadow:"0 0 6px "+theme.glow}}>{fmt(card.daily)}🪙</span>
+          {/* Tier icon */}
+          {cfg.icon&&<div style={{position:"absolute",top:18,right:6,zIndex:12,fontSize:14,lineHeight:1,
+            animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+            filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95)) drop-shadow(0 0 12px rgba(255,150,0,0.6))"
+              :isRad?"drop-shadow(0 0 8px rgba(0,255,60,1)) drop-shadow(0 0 16px rgba(0,200,40,0.8))"
+              :isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.95))"
+              :isLegacy?"drop-shadow(0 0 4px rgba(255,180,0,0.8))"
+              :isElite?"drop-shadow(0 0 5px rgba(34,200,100,0.9))"
+              :"none"}}>{cfg.icon}</div>}
+
+          {/* Serial number — gold-etched 3D for Dynasty, standard for others */}
+          {cfg.serial&&<div style={{position:"absolute",bottom:6,left:22,zIndex:11,
+            fontFamily:"'Roboto Mono',monospace",
+            fontSize:isRad?8:isDyn?9:7,
+            fontWeight:700,
+            letterSpacing:isDyn?"0.1em":"0.06em",
+            color:isRad?"rgba(0,255,60,0.9)":isDyn?"#f5e060":isLeg?"rgba(255,100,80,0.55)":"rgba(255,210,60,0.55)",
+            textShadow:isRad?"0 0 8px rgba(0,255,60,0.8)"
+              :isDyn?"0 1px 0 rgba(255,255,255,0.3),0 2px 4px rgba(140,80,0,0.9),0 0 12px rgba(255,200,0,0.5)"
+              :"none",
+            animation:isDyn?"goldEtch 2.5s ease-in-out infinite":"none"}}>
+            {isRad?"#"+(card.serialNumber||"?")+" / 10":isDyn?"#01 / 10":"#"+cfg.serial}
+          </div>}
+
+          {/* Rarity tag — top right */}
+          <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"3px 7px",maxWidth:isRad?75:60,overflow:"hidden"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:isRad?7.5:9,fontWeight:900,
+              letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>
+              {card.rarity.toUpperCase()}
+            </span>
           </div>
+
+          {/* Grade badge */}
+          {card.graded&&card.grade&&(
+            <div style={{position:"absolute",top:0,left:20,zIndex:12,background:"linear-gradient(135deg,#c8a800,#f5c518)",padding:"3px 7px"}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:9,fontWeight:900,letterSpacing:"0.08em",color:"#000"}}>PSA {card.grade}</span>
+            </div>
+          )}
+
+          {/* CD 2026 watermark */}
+          <div style={{position:"absolute",bottom:5,right:6,zIndex:7,fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:7,fontWeight:700,letterSpacing:"0.1em",
+            color:isRad?"rgba(0,255,60,0.25)":isDyn?"rgba(180,120,255,0.3)":"rgba(255,255,255,0.25)",userSelect:"none"}}>CD 2026</div>
+
+          {/* Winner badge */}
+          {isWinner&&<div style={{position:"absolute",top:20,left:4,zIndex:13,background:"#22aa44",padding:"2px 6px"}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:900,color:"#fff",letterSpacing:"0.08em"}}>WIN</span>
+          </div>}
         </div>
 
-        {/* CD 2026 watermark */}
-        <div style={{position:"absolute",bottom:52,right:8,zIndex:6,fontFamily:"'Barlow Condensed',sans-serif",
-          fontSize:6,fontWeight:700,letterSpacing:"0.1em",
-          color:isRad?"rgba(91,255,31,0.2)":isDyn?"rgba(217,70,239,0.2)":"rgba(255,255,255,0.15)",
-          userSelect:"none"}}>CD 2026</div>
-
+        {/* NAME PLATE */}
+        <div style={{position:"absolute",bottom:0,left:0,right:0,height:38,
+          background:isDyn?"#04000e":isRad?"#000e04":isLegacy?"linear-gradient(180deg,rgba(255,245,200,0.95),rgba(240,220,140,0.9))":isLeg?"linear-gradient(180deg,rgba(10,0,0,0.96),rgba(6,0,0,0.98))":"#fff",
+          borderTop:isRad?"3px solid #00ff44":isDyn?"3px solid transparent":isLegacy?"2px solid #c8a800":isLeg?"2px solid #880010":"2px solid "+cfg.plateBdr,
+          borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00,#9933ff) 1":"none",
+          boxShadow:isRad?"0 -2px 12px rgba(0,255,60,0.3)":isDyn?"0 -4px 20px rgba(100,20,220,0.4)":isLegacy?"0 -2px 8px rgba(200,168,0,0.3)":isLeg?"0 -2px 8px rgba(200,0,20,0.2)":"none",
+          zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+          paddingLeft:24,paddingRight:8,paddingTop:2,paddingBottom:2}}>
+          <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+            fontSize:card.team.length>10?10:card.team.length>7?12:14,
+            fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",
+            lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",
+            color:isRad?"#00ff44":isDyn?undefined:cfg.nameCol,
+            background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+            WebkitBackgroundClip:isDyn?"text":undefined,
+            WebkitTextFillColor:isDyn?"transparent":undefined,
+            textShadow:isRad?"0 0 8px rgba(0,255,60,0.6)":"none"}}>{card.team.toUpperCase()}</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:2}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:8,fontWeight:700,
+              letterSpacing:"0.04em",textTransform:"uppercase",
+              color:isRad?"rgba(0,200,40,0.8)":isDyn?undefined:cfg.rarCol,
+              background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+              WebkitBackgroundClip:isDyn?"text":undefined,
+              WebkitTextFillColor:isDyn?"transparent":undefined}}>
+              {card.sport} · {isRad?"RADIOACTIVE":""+card.rarity.toUpperCase()}
+            </span>
+            <span style={{fontFamily:"'Roboto Mono',monospace",fontSize:9,fontWeight:700,
+              color:isRad?"#00ff44":isDyn?"#cc88ff":"#c8a800",
+              textShadow:isRad?"0 0 6px rgba(0,255,60,0.7)":"none"}}>{fmt(card.daily)}🪙</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+
 // Card back — Topps-style foil back
 function CardBack(props) {
   var W=props.width||170; var H=props.height||240; var autoFlip=props.autoFlip||false;
@@ -1236,39 +1289,6 @@ function HoloCard(props) {
     </div>
   );
 }
-
-// ── RESPONSIVE HOOK ─────────────────────────────────────────────────────────
-function useIsMobile(){
-  var wState=useState(typeof window!=="undefined"?window.innerWidth<=700:false);
-  var isMobile=wState[0]; var setIsMobile=wState[1];
-  useEffect(function(){
-    function onResize(){setIsMobile(window.innerWidth<=700);}
-    window.addEventListener("resize",onResize);
-    return function(){window.removeEventListener("resize",onResize);};
-  },[]);
-  return isMobile;
-}
-  function HeroCard(props){
-    var c=props.c; var W=props.W; var H=props.H||Math.round(props.W*1.9);
-    // Build a minimal card object compatible with PremiumCard
-    var rm=RMAP[c.rarity]||RMAP.Base;
-    var fakeCard={
-      team:c.team, sport:c.sport, rarity:c.rarity,
-      daily:rm.daily, win:rm.win, mp:rm.daily*365+rm.win*52,
-      id:"hero-"+c.rarity, serialNumber:1,
-    };
-    // Scale wrapper — PremiumCard is always W=170, we scale it
-    var scale=W/170;
-    return (
-      <div style={{position:"relative",flexShrink:0,
-        width:W,height:Math.round(170*1.9*scale),
-        transform:"scale("+scale+")",transformOrigin:"top left",
-        marginRight:Math.round(W-170)+"px",
-        marginBottom:Math.round(170*1.9*(scale-1))+"px"}}>
-        <PremiumCard card={fakeCard}/>
-      </div>
-    );
-  }
 
 function FlipCard(props) {
   var card=props.card; var autoFlip=props.autoFlip||false; var winners=props.winners||null;
@@ -2161,17 +2181,6 @@ function ProfileSetupStep(props) {
 // client ID from console.cloud.google.com when connecting a backend.
 var GOOGLE_CLIENT_ID=process.env.REACT_APP_GOOGLE_CLIENT_ID||"YOUR_GOOGLE_CLIENT_ID";
 
-function GuestUnlock(props){
-  var onComplete=props.onComplete; var cards=props.cards||[];
-  return (
-    <div style={{marginTop:16,textAlign:"center"}}>
-      <a onClick={function(){onComplete(cards,500);}} style={{fontFamily:"'Barlow',sans-serif",fontSize:11,color:"#ccc",cursor:"pointer",textDecoration:"none"}}>
-        dev: skip
-      </a>
-    </div>
-  );
-}
-
 function AuthForm(props) {
   var mode=props.mode; var onComplete=props.onComplete; var cards=props.cards||[]; var onBack=props.onBack;
   var emailState=useState(""); var email=emailState[0]; var setEmail=emailState[1];
@@ -2293,7 +2302,7 @@ function AuthForm(props) {
         {loading?"Please wait...":(isSignup?"Create Account":"Sign In")}
       </button>
       <div style={{display:"flex",flexDirection:"column",gap:6,alignItems:"center"}}>
-        {isSignup&&<GuestUnlock onComplete={onComplete} cards={cards}/>}
+        {isSignup&&<button onClick={function(){onComplete(cards,500);}} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",textDecoration:"underline",padding:0}}>Skip for now — continue as guest</button>}
         {onBack&&<button onClick={onBack} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"'Barlow',sans-serif",fontSize:13,color:"#aaa",textDecoration:"underline",padding:0}}>← Back</button>}
       </div>
     </div>
@@ -2331,13 +2340,236 @@ function Onboarding(props) {
   // Ticker items
   var tickerItems=["2025 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now","2025 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now"];
 
-  if(phase==="signup") return (
-    <div className="topps-screen">
-            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
-          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
+  var toppsHeader=(
+    <div style={{display:"flex",flexDirection:"column"}}>
+      {/* Ticker */}
+      <div className="topps-ticker">
+        <div className="topps-ticker-inner">
+          {tickerItems.map(function(t,i){return <span key={i} className="topps-ticker-item">{t}</span>;})}
         </div>
       </div>
+      {/* Header — single row, no wrapping */}
+      <div className="topps-header">
+        {/* Logo — always visible, single line */}
+        <div style={{display:"flex",flexDirection:"column",justifyContent:"center",flexShrink:0}}>
+          <div className="topps-logo-main">CARD <em>DYNASTY</em></div>
+          <div className="topps-logo-sub">Official Collector · 2025</div>
+        </div>
+        {/* Nav links — hidden on mobile */}
+        <div className="topps-nav-links">
+        </div>
+        {/* Sign In — always visible */}
+        <button onClick={function(){setPhase("login");}} className="topps-btn-outline"
+          style={{padding:"6px 16px",fontSize:12,flexShrink:0,whiteSpace:"nowrap"}}>Sign In</button>
+      </div>
+    </div>
+  );
+
+  // ── LANDING ────────────────────────────────────────────────────────────────
+  if(phase==="landing") return (
+    <div className="topps-screen">
+      {toppsHeader}
+      {/* Hero */}
+      <div className="topps-hero">
+        <div className="topps-hero-stripes"/>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:32,flexWrap:"wrap",position:"relative",zIndex:2}}>
+          <div style={{flex:1,minWidth:240}} className="topps-reveal">
+            <div className="topps-eyebrow" style={{marginBottom:12}}>2026 Season · Free to Play</div>
+            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,8vw,72px)",fontWeight:900,letterSpacing:"0.02em",lineHeight:0.92,textTransform:"uppercase",color:"#fff",marginBottom:16}}>
+              Build Your<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Dynasty.</em>
+            </div>
+            <div style={{fontSize:16,color:"rgba(255,255,255,0.65)",lineHeight:1.65,marginBottom:28,maxWidth:380,fontFamily:"'Barlow',sans-serif"}}>
+              Collect official cards across NFL, NBA, MLB, MLS &amp; College. Every card earns real daily coins. Live scores boost your collection in real time.
+            </div>
+            <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:28}}>
+              <button onClick={function(){setPhase("signup");}} className="topps-btn-primary" style={{fontSize:16,padding:"14px 40px"}}>
+                Claim Free Starter Pack
+              </button>
+              <button onClick={function(){setPhase("login");}} className="topps-btn-secondary">
+                Sign In
+              </button>
+            </div>
+            <div style={{display:"flex",gap:32}}>
+              {[["150+","Teams"],["7","Rarities"],["Live","Scores"],["Free","To Play"]].map(function(s){
+                return <div key={s[0]}>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:"0.02em"}}>{s[0]}</div>
+                  <div style={{fontSize:10,letterSpacing:"0.2em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",fontWeight:600,marginTop:2}}>{s[1]}</div>
+                </div>;
+              })}
+            </div>
+          </div>
+
+          {/* Hero cards — all 7 rarity tiers in a clean arc */}
+          <div style={{display:"flex",gap:8,alignItems:"flex-end",flexShrink:0,perspective:1200}}>
+            {[
+              {team:"Browns",  sport:"NFL", rarity:"Base",       col:"#4a2800",code:"CLE", rotate:-8, shift:40, scale:0.72},
+              {team:"Celtics", sport:"NBA", rarity:"Rare",       col:"#1a6b3a",code:"BOS", rotate:-5, shift:22, scale:0.80},
+              {team:"Thunder", sport:"NBA", rarity:"Elite",      col:"#007AC1",code:"OKC", rotate:-2, shift:10, scale:0.88},
+              {team:"Lakers",  sport:"NBA", rarity:"Dynasty",    col:"#4a0080",code:"LAL", rotate:0,  shift:0,  scale:1.05,featured:true},
+              {team:"Pistons", sport:"NBA", rarity:"Radioactive",col:"#00ff44",code:"DET", rotate:0,  shift:0,  scale:1.05,featured:true},
+              {team:"Patriots",sport:"NFL", rarity:"Legendary",  col:"#002244",code:"NE",  rotate:2,  shift:10, scale:0.88},
+              {team:"Yankees", sport:"MLB", rarity:"Legacy",     col:"#003087",code:"NYY", rotate:5,  shift:22, scale:0.80},
+            ].map(function(c){
+              var cfg=RARITY_CFG[c.rarity]||RARITY_CFG.Base;
+              var baseW=154; var baseH=218;
+              var W=Math.round(baseW*c.scale); var H=Math.round(baseH*c.scale);
+              var isDyn=c.rarity==="Dynasty";
+              var isLeg=c.rarity==="Legendary";
+              var isLegacy=c.rarity==="Legacy";
+              var isElite=c.rarity==="Elite";
+              var isRad=c.rarity==="Radioactive";
+              var stripeStyle=isDyn?"linear-gradient(180deg,#aa44ff,#6600cc,#e8161e,#9933ff)"
+                :isLeg?"linear-gradient(180deg,#ff2222,#8a0010,#ff1818)"
+                :isLegacy?"linear-gradient(180deg,#f5c518,#8a6c00,#f5c518)"
+                :isElite?"linear-gradient(180deg,#aaccff,#22aaff,#0066cc,#22aaff,#aaccff)"
+                :isRad?"linear-gradient(180deg,#00ff44,#006622,#00ff44)"
+                :cfg.stripe;
+              var abbvCol=c.rarity==="Base"?("rgba("+hexToRgb(c.col)+",0.55)"):cfg.abbvFn();
+              return (
+                <div key={c.team} style={{position:"relative",flexShrink:0}}>
+                  {/* Radioactive outer halo */}
+                  {isRad&&<div style={{position:"absolute",inset:-6,borderRadius:8,
+                    background:"radial-gradient(ellipse at 50% 50%,rgba(0,255,60,0.25) 0%,transparent 70%)",
+                    animation:"slimePulse 2.4s ease-in-out infinite",pointerEvents:"none",zIndex:0}}/>}
+                  <div style={{width:W,height:H,position:"relative",borderRadius:4,overflow:"hidden",
+                    flexShrink:0,cursor:"pointer",zIndex:1,
+                    boxShadow:cfg.shadow+",0 12px 32px rgba(0,0,0,0.7)",
+                    transform:"rotate("+c.rotate+"deg) translateY("+c.shift+"px)",
+                    transition:"transform 0.2s",
+                    border:isDyn?"2px solid transparent":isRad?"2px solid rgba(0,255,60,0.6)":"1px solid rgba(0,0,0,0.2)"}}>
+                    {isDyn&&<div style={{position:"absolute",inset:-2,background:"linear-gradient(135deg,#9933ff,#e8161e,#ff6600,#9933ff)",borderRadius:6,zIndex:0,animation:"dynastyShine 3s linear infinite"}}/>}
+                    {isDyn&&<div style={{position:"absolute",inset:0,background:"#050010",borderRadius:4,zIndex:1}}/>}
+                    {/* Stripe */}
+                    <div style={{position:"absolute",left:0,top:0,bottom:0,width:Math.round(W*0.12),background:stripeStyle,zIndex:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.048),fontWeight:900,letterSpacing:"0.18em",textTransform:"uppercase",color:isRad?"#001a0a":"#fff",writingMode:"vertical-rl",transform:"rotate(180deg)",whiteSpace:"nowrap",opacity:0.9}}>{c.team.toUpperCase()}</span>
+                    </div>
+                    {/* Photo area */}
+                    <div style={{position:"absolute",left:Math.round(W*0.12),top:0,right:0,bottom:Math.round(H*0.16),
+                      background:"linear-gradient(160deg,"+cfg.photoTop+","+cfg.photoBot+")",overflow:"hidden",zIndex:2}}>
+                      {/* Rarity overlays */}
+                      {isRad&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 85% 70% at 58% 40%,rgba(0,255,60,0.3) 0%,rgba(0,180,40,0.14) 40%,transparent 75%)",zIndex:1}}/>}
+                      {isRad&&<svg style={{position:"absolute",top:0,left:0,width:"100%",height:"20px",opacity:0.35,zIndex:3}} viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,0 Q15,0 17,10 Q19,18 21,19 Q23,18 24,6 Q33,0 46,0 Q54,0 56,13 Q58,19 60,20 Q62,18 63,10 Q65,3 76,0 Q87,0 89,15 Q91,19 93,20 Q95,18 96,11 Q98,3 100,0 Z" fill="#00ff44"/></svg>}
+                      {isElite&&<div style={{position:"absolute",inset:0,background:"linear-gradient(160deg,rgba(0,100,200,0.14),rgba(0,140,255,0.16))",zIndex:1}}/>}
+                      {isElite&&<div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(180deg,rgba(180,220,255,0.18) 0%,transparent 10%,transparent 90%,rgba(180,220,255,0.14) 100%)",zIndex:2}}/>}
+                      {isElite&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:3}}><div style={{position:"absolute",width:"26%",height:"300%",top:"-100%",background:"linear-gradient(90deg,transparent,rgba(180,220,255,0.28),rgba(255,255,255,0.12),transparent)",animation:"shimmerSweep 3s ease-in-out infinite",transform:"skewX(-12deg)"}}/></div>}
+                      {c.rarity==="Rare"&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"35%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(100,160,255,0.14),transparent)",animation:"shimmerSweep 3.5s ease-in-out infinite"}}/></div>}
+                      {isLegacy&&<div style={{position:"absolute",inset:0,overflow:"hidden",zIndex:2}}><div style={{position:"absolute",width:"50%",height:"300%",top:"-100%",left:"-5%",background:"linear-gradient(90deg,transparent,rgba(255,220,80,0.18),rgba(255,255,200,0.1),rgba(255,220,80,0.14),transparent)",animation:"shimmerSweep 2.5s ease-in-out infinite"}}/></div>}
+                      {isLeg&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 88% 70% at 58% 40%,rgba(255,60,20,0.45) 0%,rgba(200,10,10,0.2) 40%,transparent 80%)",zIndex:2}}/>}
+                      {isLeg&&<div style={{position:"absolute",bottom:0,left:0,right:0,height:"30%",background:"linear-gradient(0deg,rgba(232,22,30,0.35),transparent)",zIndex:3}}/>}
+                      {isDyn&&<div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 120% 120% at 50% 50%,#0a001e 0%,#020008 70%,#000 100%)",zIndex:1}}/>}
+                      {isDyn&&<div style={{position:"absolute",inset:0,background:"conic-gradient(from 0deg at 55% 42%,rgba(153,51,255,0.2) 0deg,transparent 60deg,rgba(232,22,30,0.12) 120deg,transparent 180deg,rgba(153,51,255,0.15) 240deg,transparent 300deg)",animation:"cosmicRing 25s linear infinite",zIndex:2}}/>}
+                      {isDyn&&[8,15,25,18,36,12,45,56].map(function(top,i){var lefts=[18,55,30,80,68,40,22,76];return <div key={i} style={{position:"absolute",width:i%2+1,height:i%2+1,background:"#fff",borderRadius:"50%",top:top+"%",left:lefts[i]+"%",animation:"twinkle "+(1.8+i*0.25)+"s ease-in-out infinite "+(i*0.35)+"s",opacity:0.7}}/>;})}
+                      {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.22),height:Math.round(W*0.22),borderRadius:"50%",background:"radial-gradient(ellipse at 50% 50%,rgba(0,0,0,1) 35%,rgba(100,20,200,0.4) 65%,transparent 80%)",zIndex:6}}/>}
+                      {isDyn&&<div style={{position:"absolute",left:"52%",top:"42%",transform:"translate(-50%,-50%)",width:Math.round(W*0.42),height:Math.round(W*0.1),borderRadius:"50%",border:"1.5px solid rgba(200,120,255,0.38)",zIndex:5}}/>}
+                      <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse 90% 70% at 60% 40%,"+c.col+"44 0%,transparent 70%)",zIndex:4}}/>
+                      {/* Abbreviation */}
+                      <div style={{position:"absolute",left:0,right:0,top:"50%",transform:"translateY(-50%)",textAlign:"center",zIndex:isDyn?9:isRad?8:5}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",
+                          fontSize:c.code.length<=2?Math.round(W*0.42):c.code.length<=3?Math.round(W*0.32):Math.round(W*0.24),
+                          fontWeight:900,color:abbvCol,lineHeight:1,userSelect:"none",textShadow:cfg.abbvShadow}}>{c.code}</span>
+                      </div>
+                      {/* Tier icon */}
+                      {cfg.icon&&<div style={{position:"absolute",top:Math.round(H*0.09),right:Math.round(W*0.04),zIndex:12,fontSize:Math.round(W*0.08),lineHeight:1,
+                        animation:isDyn?"crownFloat 2.2s ease-in-out infinite":isRad?"slimePulse 2s ease-in-out infinite":"iconFloat 2s ease-in-out infinite",
+                        filter:isDyn?"drop-shadow(0 0 6px rgba(255,200,0,0.95))":isRad?"drop-shadow(0 0 8px rgba(0,255,60,1))":isLeg?"drop-shadow(0 0 5px rgba(255,100,60,0.9))":"drop-shadow(0 0 4px rgba(255,180,0,0.8))"}}>{cfg.icon}</div>}
+                      {/* Serial — Radioactive only */}
+                      {isRad&&<div style={{position:"absolute",bottom:5,left:Math.round(W*0.14),zIndex:9,fontFamily:"'Roboto Mono',monospace",fontSize:Math.round(W*0.05),fontWeight:700,color:"rgba(0,255,60,0.9)",letterSpacing:"0.05em",textShadow:"0 0 6px rgba(0,255,60,0.8)"}}>#1 / 10</div>}
+                      {/* Rarity tag */}
+                      <div style={{position:"absolute",top:0,right:0,zIndex:12,background:cfg.tagBg,padding:"2px "+Math.round(W*0.04)+"px"}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:cfg.tagTxt,whiteSpace:"nowrap"}}>{c.rarity.toUpperCase()}</span>
+                      </div>
+                    </div>
+                    {/* Name plate */}
+                    <div style={{position:"absolute",bottom:0,left:0,right:0,height:Math.round(H*0.16),
+                      background:isDyn?"#0a0020":isRad?"#000e04":"#fff",
+                      borderTop:isRad?"2px solid #00ff44":isDyn?"2px solid transparent":"2px solid "+cfg.plateBdr,
+                      borderImage:isDyn?"linear-gradient(90deg,#9933ff,#e8161e,#ffaa00) 1":"none",
+                      zIndex:6,display:"flex",flexDirection:"column",justifyContent:"center",
+                      paddingLeft:Math.round(W*0.14),paddingRight:6}}>
+                      <div style={{fontFamily:"'Barlow Condensed',sans-serif",
+                        fontSize:c.team.length>8?Math.round(W*0.072):Math.round(W*0.085),
+                        fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",lineHeight:1,
+                        background:isDyn?"linear-gradient(90deg,#cc88ff,#ff6699)":undefined,
+                        WebkitBackgroundClip:isDyn?"text":undefined,
+                        WebkitTextFillColor:isDyn?"transparent":undefined,
+                        color:isDyn?undefined:isRad?"#00ff44":cfg.nameCol,
+                        textShadow:isRad?"0 0 6px rgba(0,255,60,0.6)":"none",
+                        overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis"}}>
+                        {c.team.toUpperCase()}
+                      </div>
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:2}}>
+                        <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:Math.round(W*0.052),fontWeight:700,
+                          letterSpacing:"0.05em",textTransform:"uppercase",
+                          background:isDyn?"linear-gradient(90deg,#9933ff,#e8161e)":undefined,
+                          WebkitBackgroundClip:isDyn?"text":undefined,
+                          WebkitTextFillColor:isDyn?"transparent":undefined,
+                          color:isDyn?undefined:isRad?"rgba(0,200,40,0.8)":cfg.rarCol}}>{c.sport} · {c.rarity}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Features strip */}
+      <div style={{background:"#fff",borderBottom:"1px solid #e8e8e8"}}>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",flexWrap:"wrap"}}>
+          {[
+            {icon:"📦",title:"Open Packs",desc:"NFL, NBA, MLB, MLS & College cards from foil packs"},
+            {icon:"🪙",title:"Earn Daily Coins",desc:"Every card generates passive income every day"},
+            {icon:"🔴",title:"Live Score Boosts",desc:"Cards earn 1.5× when your team plays in real time"},
+            {icon:"📈",title:"Trade & Rank",desc:"List on the Exchange, complete sets, climb the board"},
+          ].map(function(f,i){
+            return (
+              <div key={i} style={{flex:"1 1 200px",padding:"20px 24px",borderRight:i<3?"1px solid #eee":"none",display:"flex",gap:14,alignItems:"flex-start"}}>
+                <span style={{fontSize:20,flexShrink:0}}>{f.icon}</span>
+                <div>
+                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:3}}>{f.title}</div>
+                  <div style={{fontSize:13,color:"#777",lineHeight:1.5,fontFamily:"'Barlow',sans-serif"}}>{f.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Rarity ladder */}
+      <div style={{background:"#f0ede8",padding:"20px",borderBottom:"1px solid #e0ddd8"}}>
+        <div style={{maxWidth:920,margin:"0 auto",display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginRight:8}}>Rarity Scale:</span>
+          {[{r:"Base",c:"#aaa"},{r:"Rare",c:"#4488ff"},{r:"Elite",c:"#22aaff"},{r:"Legacy",c:"#c8a800"},{r:"Legendary",c:"#e8161e"},{r:"Dynasty",c:"#8822cc"},{r:"Radioactive",c:"#00ff44"}].map(function(item){
+            return <span key={item.r} className="topps-rarity-pill" style={{borderColor:item.c,color:item.c,background:item.c+"11",boxShadow:item.r==="Radioactive"?"0 0 8px "+item.c+"44":"none"}}>{item.r}</span>;
+          })}
+          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#aaa",marginLeft:"auto",letterSpacing:"0.1em",textTransform:"uppercase"}}>☢ Radioactive — only 10 exist worldwide</span>
+        </div>
+      </div>
+
+      {/* CTA footer band */}
+      <div style={{background:"#e8161e",padding:"28px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(22px,4vw,30px)",fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#fff",marginBottom:14}}>
+          Your free starter pack is waiting.
+        </div>
+        <button onClick={function(){setPhase("signup");}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
+          Get Started — It's Free
+        </button>
+      </div>
+
+      {/* Copyright footer */}
+      <div style={{background:"#111",padding:"16px 20px",textAlign:"center"}}>
+        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:600,letterSpacing:"0.15em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)"}}>
+          © 2026 Card Dynasty · Created by Drew &amp; Shawn · All Rights Reserved
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── SIGNUP ─────────────────────────────────────────────────────────────────
+  if(phase==="signup") return (
+    <div className="topps-screen">
+      {toppsHeader}
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
         <div style={{display:"flex",gap:40,maxWidth:920,width:"100%",alignItems:"flex-start",flexWrap:"wrap"}}>
           {/* Left — what you get */}
@@ -2390,11 +2622,7 @@ function Onboarding(props) {
   // ── LOGIN ──────────────────────────────────────────────────────────────────
   if(phase==="login") return (
     <div className="topps-screen">
-            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
-          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
-        </div>
-      </div>
+      {toppsHeader}
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px"}}>
         <div style={{background:"#fff",border:"1px solid #e0ddd8",padding:"36px 32px",maxWidth:400,width:"100%"}} className="topps-reveal">
           <div style={{borderBottom:"3px solid #e8161e",paddingBottom:16,marginBottom:24}}>
@@ -2511,11 +2739,7 @@ function Onboarding(props) {
   // ── PROFILE SETUP ─────────────────────────────────────────────────────────
   if(phase==="profile_setup") return (
     <div className="topps-screen">
-            <div style={{background:"#fff",borderBottom:"3px solid #e8161e",padding:"0 20px",height:52,display:"flex",alignItems:"center"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:900,letterSpacing:"0.04em",textTransform:"uppercase",color:"#111"}}>
-          <span style={{color:"#e8161e"}}>CARD</span> DYNASTY
-        </div>
-      </div>
+      {toppsHeader}
       <div style={{background:"#f0ede8",minHeight:"calc(100vh - 88px)",display:"flex",alignItems:"flex-start",justifyContent:"center",padding:"40px 20px"}}>
         <ProfileSetupStep onComplete={function(prefs){
           if(prefs) onSavePrefs(prefs);
@@ -6084,190 +6308,8 @@ export default function App() {
   var claimedLevelsState=useState([]); var claimedLevels=claimedLevelsState[0]; var setClaimedLevels=claimedLevelsState[1];
   var levelUpRewardState=useState(null); var levelUpReward=levelUpRewardState[0]; var setLevelUpReward=levelUpRewardState[1];
   var prevLevelRef=useRef(0);
-  var isMobile=useIsMobile();
   var referralCountState=useState(0); var referralCount=referralCountState[0]; var setReferralCount=referralCountState[1];
   var showReferralState=useState(false); var showReferral=showReferralState[0]; var setShowReferral=showReferralState[1];
-  var phaseState=useState(typeof window!=="undefined"&&window.location.hash&&window.location.hash.indexOf("access_token")>=0?"app":"landing"); var phase=phaseState[0]; var setPhase=phaseState[1];
-  var liveTeamsState=useState([]); var liveTeams=liveTeamsState[0]; var setLiveTeams=liveTeamsState[1];
-  var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
-  var notifState=useState([]); var notifs=notifState[0]; var setNotifs=notifState[1];
-  var showHowToPlayState=useState(false); var showHowToPlay=showHowToPlayState[0]; var setShowHowToPlay=showHowToPlayState[1];
-  var pendingPrefsRef=useRef(null);
-  var tickerItems=["2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now","2026 Series 1 Now Available","5 Sports · 150+ Teams","Dynasty Cards Numbered to 10","Free Starter Pack with Registration","Live Score Boosts · Earn Daily Coins","Exchange Open Now"];
-  var toppsHeader=(
-    <div style={{display:"flex",flexDirection:"column"}}>
-      {/* Ticker */}
-      <div className="topps-ticker">
-        <div className="topps-ticker-inner">
-          {tickerItems.map(function(t,i){return <span key={i} className="topps-ticker-item">{t}</span>;})}
-        </div>
-      </div>
-      {/* Header — single row, no wrapping */}
-      <div className="topps-header">
-        {/* Logo — always visible, single line */}
-        <div style={{display:"flex",flexDirection:"column",justifyContent:"center",flexShrink:0}}>
-          <div className="topps-logo-main">CARD <em>DYNASTY</em></div>
-          <div className="topps-logo-sub">Official Collector · 2025</div>
-        </div>
-        {/* Nav links — hidden on mobile */}
-        <div className="topps-nav-links">
-        </div>
-        {/* Sign In — always visible */}
-        <button onClick={function(){setPhase("login");setOnboarded(false);}} className="topps-btn-outline"
-          style={{padding:"6px 16px",fontSize:12,flexShrink:0,whiteSpace:"nowrap"}}>Sign In</button>
-      </div>
-    </div>
-  );
-
-  // ── LANDING ────────────────────────────────────────────────────────────────
-  if(phase==="landing") {
-  var heroCards=[
-    {team:"Browns",  sport:"NFL", rarity:"Base",        col:"#4a2800",code:"CLE"},
-    {team:"Celtics", sport:"NBA", rarity:"Rare",        col:"#1a6b3a",code:"BOS"},
-    {team:"Thunder", sport:"NBA", rarity:"Elite",       col:"#007AC1",code:"OKC"},
-    {team:"Lakers",  sport:"NBA", rarity:"Dynasty",     col:"#4a0080",code:"LAL", featured:true},
-    {team:"Pistons", sport:"NBA", rarity:"Radioactive", col:"#00ff44",code:"DET", featured:true},
-    {team:"Patriots",sport:"NFL", rarity:"Legendary",   col:"#002244",code:"NE"},
-    {team:"Yankees", sport:"MLB", rarity:"Legacy",      col:"#003087",code:"NYY"},
-  ];
-  // Desktop arc positions
-  var arcPos=[
-    {rotate:-8,shift:40,scale:0.72},
-    {rotate:-5,shift:22,scale:0.80},
-    {rotate:-2,shift:10,scale:0.88},
-    {rotate:0, shift:0, scale:1.05},
-    {rotate:0, shift:0, scale:1.05},
-    {rotate:2, shift:10,scale:0.88},
-    {rotate:5, shift:22,scale:0.80},
-  ];
-  return (
-    <div className="topps-screen">
-      <style>{CSS}</style>
-      {toppsHeader}
-      {/* Hero */}
-      <div className="topps-hero">
-        <div className="topps-hero-stripes"/>
-        <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:32,flexWrap:"wrap",position:"relative",zIndex:2}}>
-          <div style={{flex:1,minWidth:240}} className="topps-reveal">
-            <div className="topps-eyebrow" style={{marginBottom:12}}>2026 Season · Free to Play</div>
-            <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(44px,8vw,72px)",fontWeight:900,letterSpacing:"0.02em",lineHeight:0.92,textTransform:"uppercase",color:"#fff",marginBottom:16}}>
-              Build Your<br/><em style={{color:"#f5c518",fontStyle:"normal"}}>Dynasty.</em>
-            </div>
-            <div style={{fontSize:16,color:"rgba(255,255,255,0.65)",lineHeight:1.65,marginBottom:28,maxWidth:380,fontFamily:"'Barlow',sans-serif"}}>
-              Collect official cards across NFL, NBA, MLB, MLS &amp; College. Every card earns real daily coins. Live scores boost your collection in real time.
-            </div>
-            <div style={{display:"flex",gap:12,flexWrap:"wrap",alignItems:"center",marginBottom:28}}>
-              <button onClick={function(){setPhase("signup");setIsNewUser(true);setOnboarded(false);}} className="topps-btn-primary" style={{fontSize:16,padding:"14px 40px"}}>
-                Claim Free Starter Pack
-              </button>
-              <button onClick={function(){setPhase("login");setIsNewUser(false);setOnboarded(false);}} className="topps-btn-secondary">
-                Sign In
-              </button>
-            </div>
-            <div style={{display:"flex",gap:32}}>
-              {[["150+","Teams"],["7","Rarities"],["Live","Scores"],["Free","To Play"]].map(function(s){
-                return <div key={s[0]}>
-                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:900,color:"#fff",lineHeight:1,letterSpacing:"0.02em"}}>{s[0]}</div>
-                  <div style={{fontSize:10,letterSpacing:"0.2em",color:"rgba(255,255,255,0.4)",textTransform:"uppercase",fontWeight:600,marginTop:2}}>{s[1]}</div>
-                </div>;
-              })}
-            </div>
-          </div>
-
-          {/* Hero cards — desktop arc, all 7 */}
-          {!isMobile&&<div style={{display:"flex",gap:8,alignItems:"flex-end",flexShrink:0,perspective:1200}}>
-            {heroCards.map(function(c,i){
-              var pos=arcPos[i];
-              var baseW=154; var W=Math.round(baseW*pos.scale); var H=Math.round(W*1.415);
-              return <div key={c.team} style={{transform:"rotate("+pos.rotate+"deg) translateY("+pos.shift+"px)",transition:"transform 0.2s"}}>
-                <HeroCard c={c} W={W} H={H}/>
-              </div>;
-            })}
-          </div>}
-
-          {/* Hero cards — mobile 2-col grid, all 7 visible */}
-          {isMobile&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,width:"100%",maxWidth:320,margin:"16px auto 0"}}>
-            {heroCards.map(function(c){
-              var isFeature=c.featured;
-              var W=isFeature?160:134; var H=Math.round(W*1.415);
-              return (
-                <div key={c.team} style={{gridColumn:isFeature?"1/3":"auto",display:"flex",justifyContent:"center"}}>
-                  <HeroCard c={c} W={W} H={H}/>
-                </div>
-              );
-            })}
-          </div>}
-        </div>
-      </div>
-
-      {/* Features strip */}
-      <div style={{background:"#fff",borderBottom:"1px solid #e8e8e8"}}>
-        <div style={{maxWidth:920,margin:"0 auto",display:"flex",flexWrap:"wrap"}}>
-          {[
-            {icon:"📦",title:"Open Packs",desc:"NFL, NBA, MLB, MLS & College cards from foil packs"},
-            {icon:"🪙",title:"Earn Daily Coins",desc:"Every card generates passive income every day"},
-            {icon:"🔴",title:"Live Score Boosts",desc:"Cards earn 1.5× when your team plays in real time"},
-            {icon:"📈",title:"Trade & Rank",desc:"List on the Exchange, complete sets, climb the board"},
-          ].map(function(f,i){
-            return (
-              <div key={i} style={{flex:"1 1 200px",padding:"20px 24px",borderRight:i<3?"1px solid #eee":"none",display:"flex",gap:14,alignItems:"flex-start"}}>
-                <span style={{fontSize:20,flexShrink:0}}>{f.icon}</span>
-                <div>
-                  <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:15,fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#111",marginBottom:3}}>{f.title}</div>
-                  <div style={{fontSize:13,color:"#777",lineHeight:1.5,fontFamily:"'Barlow',sans-serif"}}>{f.desc}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Rarity ladder */}
-      <div style={{background:"#f0ede8",padding:"20px",borderBottom:"1px solid #e0ddd8"}}>
-        <div style={{maxWidth:920,margin:"0 auto",display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.2em",textTransform:"uppercase",color:"#888",marginRight:8}}>Rarity Scale:</span>
-          {[{r:"Base",c:"#aaa"},{r:"Rare",c:"#4488ff"},{r:"Elite",c:"#22aaff"},{r:"Legacy",c:"#c8a800"},{r:"Legendary",c:"#e8161e"},{r:"Dynasty",c:"#8822cc"},{r:"Radioactive",c:"#00ff44"}].map(function(item){
-            return <span key={item.r} className="topps-rarity-pill" style={{borderColor:item.c,color:item.c,background:item.c+"11",boxShadow:item.r==="Radioactive"?"0 0 8px "+item.c+"44":"none"}}>{item.r}</span>;
-          })}
-          <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:11,color:"#aaa",marginLeft:"auto",letterSpacing:"0.1em",textTransform:"uppercase"}}>☢ Radioactive — only 10 exist worldwide</span>
-        </div>
-      </div>
-
-      {/* CTA footer band */}
-      <div style={{background:"#e8161e",padding:"28px 20px",textAlign:"center"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:"clamp(22px,4vw,30px)",fontWeight:900,letterSpacing:"0.06em",textTransform:"uppercase",color:"#fff",marginBottom:14}}>
-          Your free starter pack is waiting.
-        </div>
-        <button onClick={function(){setPhase("signup");setIsNewUser(true);}} style={{background:"#fff",color:"#e8161e",fontFamily:"'Barlow Condensed',sans-serif",fontSize:16,fontWeight:900,letterSpacing:"0.14em",textTransform:"uppercase",padding:"14px 48px",border:"none",cursor:"pointer",clipPath:"polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))"}}>
-          Get Started — It's Free
-        </button>
-      </div>
-
-      {/* Copyright footer */}
-      <div style={{background:"#111",padding:"16px 20px",textAlign:"center"}}>
-        <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:12,fontWeight:600,letterSpacing:"0.15em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)"}}>
-          © 2026 Card Dynasty · Created by Drew &amp; Shawn · All Rights Reserved
-        </div>
-      </div>
-    </div>
-  );
-  } // end if(phase==="landing")
-
-  if(phase==="signup"||phase==="login") return (
-    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
-      <style>{CSS}</style>
-      <Onboarding onComplete={completeOnboarding} isNewUser={phase==="signup"} userId={userId} onSavePrefs={function(prefs){
-        if(!prefs) return;
-        var updated=loadProfile();
-        if(prefs.username) updated.username=prefs.username;
-        if(prefs.favSport) updated.favSport=prefs.favSport;
-        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
-        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
-        saveProfileAndState(updated);
-        pendingPrefsRef.current=updated;
-      }}/>
-    </div>
-  );
 
   // ── SUPABASE DATA HELPERS ─────────────────────────────────────────────────
   function dbSaveProfile(uid, data) {
@@ -6397,14 +6439,14 @@ export default function App() {
           // Check packs_opened to distinguish: 0 = new user, >0 = existing player with read issue.
           var packsEver=(profileRes&&profileRes.data&&(profileRes.data.packs_opened||0))||0;
           if(packsEver>0){
+            // Existing player — cards may be blocked by RLS, don't wipe, just let them in
             setInventory([]);
             setOnboarded(true);
             setIsNewUser(false);
           } else {
-            // No packs opened and no cards — still let them in, don't re-onboard
-            setInventory([]);
-            setOnboarded(true);
-            setIsNewUser(false);
+            // Genuinely new user
+            setIsNewUser(true);
+            setOnboarded(false);
           }
         }
         setDbLoaded(true);
@@ -6425,6 +6467,7 @@ export default function App() {
         setUserId(session.user.id);
         dbLoadUser(session.user.id);
         setAuthReady(true);
+        // Clean up the hash fragment from the URL without triggering a reload
         if(window.location.hash&&window.location.hash.indexOf("access_token")>=0){
           window.history.replaceState(null,"",window.location.pathname);
         }
@@ -6433,8 +6476,6 @@ export default function App() {
         if(session&&session.user){
           setUserId(session.user.id);
           dbLoadUser(session.user.id);
-        } else {
-          setPhase("landing");
         }
         setAuthReady(true);
       }
@@ -6445,7 +6486,6 @@ export default function App() {
         setInventory([]);
         setBalance(0);
         setAuthReady(true);
-        setPhase("landing");
       }
     });
 
@@ -6527,6 +6567,7 @@ export default function App() {
   var grailFeedState=useState([]); var grailFeed=grailFeedState[0]; var setGrailFeed=grailFeedState[1];
   var lastRefreshState=useState(Date.now()); var lastRefresh=lastRefreshState[0]; var setLastRefresh=lastRefreshState[1];
   var listModalState=useState(null); var listModal=listModalState[0]; var setListModal=listModalState[1];
+  var notifsState=useState([]); var notifs=notifsState[0]; var setNotifs=notifsState[1];
   var socialVaultState=useState(null); var socialVault=socialVaultState[0]; var setSocialVault=socialVaultState[1];
   var loginModalState=useState(false); var showLoginModal=loginModalState[0]; var setShowLoginModal=loginModalState[1];
   var howToPlayState=useState(false); var showHowToPlay=howToPlayState[0]; var setShowHowToPlay=howToPlayState[1];
@@ -6536,6 +6577,7 @@ export default function App() {
   var inventoryRef=useRef(inventory);
   var claimedBadgesState=useState(function(){try{return JSON.parse(localStorage.getItem("cd_badges")||"[]");}catch(e){return [];}});
   var claimedBadges=claimedBadgesState[0]; var setClaimedBadges=claimedBadgesState[1];
+  var globalRankState=useState(null); var globalRank=globalRankState[0]; var setGlobalRank=globalRankState[1];
   // Load real global rank from Supabase — uses both user_cards yield and profiles.coins as fallback
   useEffect(function(){
     if(!supabase||!userId) return;
@@ -6561,29 +6603,6 @@ export default function App() {
   var pendingPrefsRef=useRef(null);
   useEffect(function(){ inventoryRef.current=inventory; }, [inventory]);
   var showOnboarding=(!onboarded&&inventory.length===0)||isNewUser;
-  // When SIGNED_IN fires during signup, don't jump to app until completeOnboarding runs
-
-  if(showOnboarding) return (
-    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
-      <style>{CSS}</style>
-      <Onboarding
-        onComplete={completeOnboarding}
-        isNewUser={isNewUser||phase==="signup"}
-        initialPhase={phase==="signup"?"signup":phase==="login"?"login":null}
-        userId={userId}
-        header={toppsHeader}
-        onSavePrefs={function(prefs){
-          if(!prefs) return;
-          var updated=loadProfile();
-          if(prefs.username) updated.username=prefs.username;
-          if(prefs.favSport) updated.favSport=prefs.favSport;
-          if(prefs.favTeam) updated.favTeam=prefs.favTeam;
-          if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
-          saveProfileAndState(updated);
-          pendingPrefsRef.current=updated;
-        }}/>
-    </div>
-  );
   function triggerShake(team) {
     setShakeTeams(function(prev){
       var n=Object.assign({},prev);
@@ -7027,6 +7046,22 @@ export default function App() {
     </div>
   );
 
+  if(showOnboarding) return (
+    <div style={{background:"#f0ede8",minHeight:"100vh"}}>
+      <style>{CSS}</style>
+      <Onboarding onComplete={completeOnboarding} isNewUser={isNewUser} userId={userId} onSavePrefs={function(prefs){
+        if(!prefs) return;
+        var updated=loadProfile();
+        if(prefs.username) updated.username=prefs.username;
+        if(prefs.favSport) updated.favSport=prefs.favSport;
+        if(prefs.favTeam) updated.favTeam=prefs.favTeam;
+        if(prefs.username) updated.avatarInitials=prefs.username.slice(0,2).toUpperCase();
+        saveProfileAndState(updated);
+        // Also store prefs in a ref so completeOnboarding can merge them
+        pendingPrefsRef.current=updated;
+      }}/>
+    </div>
+  );
   return (
     <div style={{background:"#f0ede8",minHeight:"100vh",color:"#111",fontFamily:"'Barlow',sans-serif"}}>
       <style>{CSS}</style>
